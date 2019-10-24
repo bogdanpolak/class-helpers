@@ -1,0 +1,103 @@
+# ########## OS X hidden file index data
+
+.DS_Store
+
+# ########## Delphi project file
+# (*.dproj) Delphi Project file
+# (*.cbproj) C++Builder Project file
+
+*.dproj
+
+# ########## Resource file
+# (*.rc, *.res) Compiled and uncompiled resource files
+# *.rc
+
+*.res
+
+# ########## Delphi binary files
+# (*.dll) A dynamically linked library file
+# (*.exe) Windows executable file
+# (*.bpl) Package shared library file
+# (*.bpi) Package import library file
+# (*.dcp) Delphi Compiled Package file
+# (*.drc) Delphi resource string file
+# (*.map) Map debug file
+# (*.dres) Delphi compiled resource file. (Used when you add to a project RESOURCE such as an icon or image.)
+# (*.dcu) Delphi Compiled Unit file 
+# (*.lib) static library file OR import library for the Win32/Win64
+# (*.ocx) OLE Control eXtension
+# (*.rsm) Used for remote debugging. (Include remote debug symbols option.)
+# (*.dylib) Dynamic library (.dll) or package (.bpl) compiled for the OS X
+# (*.tds) Remote debugger TDS debug file.
+# (*.tlb) Type library
+
+*.exe
+*.dll
+*.bpl
+*.bpi
+*.dcp
+*.drc
+*.map
+*.dres
+*.tds
+*.dcu
+*.lib
+*.ocx
+*.rsm
+*.tds
+*.tlb
+
+# ########## Android / iOS / OS X binary files
+# (*.apk) Android application package file.
+# (*.so) Unix-like systems shared libraries (OS X and Linux)
+# (*.a) Static library file (ELF-format) produced by Clang
+
+*.so
+*.apk
+*.a
+
+# ########## IDE files
+# (*.cfg) Project configuration file used for command-line compiles
+# (*.ddp): Diagram Portfolio file. Used by the diagram editor up to Delphi 7.
+# (*.vlb): Visual LiveBindings file. Added in Delphi XE2.
+# (*.deployproj): Deployment Manager configuration file for your project. Added in Delphi XE2.
+
+*.cfg
+*.ddp
+*.vlb
+*.deployproj
+
+
+# ########## Other IDE files
+# Delphi local files (user-specific info)
+
+*.local
+*.identcache
+*.projdata
+*.tvsconfig
+*.dsk
+*.otares
+
+# ########## Delphi history and backups
+# (__history) History folder
+# (__recovery) Recovery folder
+# (*.~*)  Local versions history file
+
+__history/
+__recovery/
+*.~*
+
+# ########## Castalia statistics file. Castalia add in Delphi XE7
+
+*.stat
+
+# ########## C++Builder
+# (*.obj) C++ Object File
+# (*.pch) C++ Precompiled Header File
+# (*.o) C++ object file or compiled translation unit.
+# (*.pch) C++ precompiled header file.
+
+# ########## Misc Files
+
+TestInsightSettings.ini
+*.groupproj
