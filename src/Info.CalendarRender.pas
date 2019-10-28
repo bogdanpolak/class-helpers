@@ -2,6 +2,9 @@ unit Info.CalendarRender;
 
 interface
 
+uses
+  System.SysUtils;
+
 type
   TCalendarRenderInfo = class
   public
@@ -10,6 +13,7 @@ type
     Weeks: byte;
     constructor Create(aDayOfWeekFirst: byte; aDayOfWeekLast: byte;
       aWeeks: byte);
+    function ToString: string; override;
   end;
 
 implementation
@@ -20,6 +24,11 @@ begin
   DayOfWeekFirst := aDayOfWeekFirst;
   DayOfWeekLast := aDayOfWeekLast;
   Weeks := aWeeks;
+end;
+
+function TCalendarRenderInfo.ToString: string;
+begin
+  Result := Format('[%d, %d, %d]', [DayOfWeekFirst, DayOfWeekLast, Weeks])
 end;
 
 end.

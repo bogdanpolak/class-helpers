@@ -2,6 +2,8 @@ unit Helper.TDateTime;
 
 interface
 
+uses Info.CalendarRender;
+
 type
   TDateTimeHelper = record helper for TDateTime
   const
@@ -33,12 +35,12 @@ uses
   System.SysUtils,
   System.DateUtils;
 
-function TDateTimeHelper.AsFloat: Double;
+function TDateTimeHelper.AsFloat: double;
 begin
   Result := Self;
 end;
 
-function TDateTimeHelper.AsDay: Word;
+function TDateTimeHelper.AsDay: word;
 begin
   Result := System.DateUtils.DayOf(Self);
 end;
@@ -60,7 +62,7 @@ end;
 
 function TDateTimeHelper.AsSecond: word;
 begin
-  Result :=SecondOf(Self);
+  Result := SecondOf(Self);
 end;
 
 function TDateTimeHelper.TimePart: TDateTime;
@@ -68,19 +70,19 @@ begin
   Result := Frac(Self);
 end;
 
-function TDateTimeHelper.DayOfWeek: Word;
+function TDateTimeHelper.DayOfWeek: word;
 begin
   Result := System.SysUtils.DayOfWeek(Self);
 end;
 
 function TDateTimeHelper.DayOfWeekName: string;
 begin
-  Result := System.SysUtils.FormatDateTime ('dddd',Self);
+  Result := System.SysUtils.FormatDateTime('dddd', Self);
 end;
 
 function TDateTimeHelper.DayOfWeekShortName: string;
 begin
-  Result := System.SysUtils.FormatDateTime ('ddd',Self)
+  Result := System.SysUtils.FormatDateTime('ddd', Self)
 end;
 
 function TDateTimeHelper.DaysInMonth: word;
@@ -88,12 +90,12 @@ begin
   Result := System.DateUtils.DaysInMonth(Self);
 end;
 
-function TDateTimeHelper.AsMonth: Word;
+function TDateTimeHelper.AsMonth: word;
 begin
   Result := System.DateUtils.MonthOf(Self);
 end;
 
-function TDateTimeHelper.AsYear: Word;
+function TDateTimeHelper.AsYear: word;
 begin
   Result := System.DateUtils.YearOf(Self);
 end;
@@ -108,8 +110,7 @@ end;
 
 function TDateTimeHelper.IncMonth(incerment: word): TDateTime;
 begin
-  Result := System.SysUtils.IncMonth(Self,incerment);
+  Result := System.SysUtils.IncMonth(Self, incerment);
 end;
 
 end.
-
