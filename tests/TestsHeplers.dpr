@@ -1,4 +1,4 @@
-program TestsTDateTimeHepler;
+program TestsHeplers;
 
 {$IFNDEF TESTINSIGHT}
 {$APPTYPE CONSOLE}
@@ -11,8 +11,13 @@ uses
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
-  Test.Main in 'Test.Main.pas',
-  Helper.TDateTime in '..\src\Helper.TDateTime.pas';
+  Test.Helper.TDateTime in 'Test.Helper.TDateTime.pas',
+  Helper.TApplication in '..\src\Helper.TApplication.pas',
+  Helper.TDataSet in '..\src\Helper.TDataSet.pas',
+  Helper.TDateTime in '..\src\Helper.TDateTime.pas',
+  Helper.TDBGrid in '..\src\Helper.TDBGrid.pas',
+  Helper.TJSONObject in '..\src\Helper.TJSONObject.pas',
+  Info.CalendarRender in '..\src\Info.CalendarRender.pas';
 
 var
   runner : ITestRunner;
