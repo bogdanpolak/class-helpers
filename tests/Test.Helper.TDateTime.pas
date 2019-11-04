@@ -47,6 +47,14 @@ type
     procedure Test_NumberOfWeeksInMonth;
   end;
 
+  [TestFixture]
+  TDate_Cases = class(TObject)
+  public
+    [TestCase('Month: II 2010','4,2010-02-01')]
+    [TestCase('Month: IV 2012','6,2012-04-01')]
+    procedure Test_NumberOfWeeks (expectedNumberOfWeeks: integer;
+      actualMohthYear: string);
+  end;
 
 implementation
 
@@ -197,6 +205,23 @@ begin
 end;
 
 {$ENDREGION}
+
+// -----------------------------------------------------------------------
+// Tests cases: TDate_Cases
+// -----------------------------------------------------------------------
+
+procedure TDate_Cases.Test_NumberOfWeeks(expectedNumberOfWeeks: integer;
+  actualMohthYear: string);
+var
+  yy, mm, dd: word;
+  actualDate: TDateTime;
+begin
+  yy := actualMohthYear.Substring(0,4).ToInteger();
+  mm := actualMohthYear.Substring(5,2).ToInteger();
+  dd := actualMohthYear.Substring(8,2).ToInteger();
+  actualDate := EncodeDate(yy,mm,dd);
+  Assert.AreEqual(word(expectedNumberOfWeeks),actualDate.NumberOfWeeksInMonth);
+end;
 
 initialization
 
