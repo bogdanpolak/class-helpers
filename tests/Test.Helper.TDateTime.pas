@@ -50,8 +50,14 @@ type
   [TestFixture]
   TDate_Cases = class(TObject)
   public
-    [TestCase('Month: II 2010','4,2010-02-01')]
-    [TestCase('Month: IV 2012','6,2012-04-01')]
+    [TestCase('Month: 02-2010','4,2010-02-01')]
+    [TestCase('Month: 04-2012','6,2012-04-01')]
+    [TestCase('Month: 02-2019','5,2019-02-28')]
+    [TestCase('Month: 10-2019','5,2019-10-02')]
+    [TestCase('Month: 11-2019','5,2019-11-30')]
+    [TestCase('Month: 12-2019','6,2019-12-31')]
+    [TestCase('Month: 01-2020','5,2020-01-01')]
+    [TestCase('Month: 02-2020','5,2020-02-29')]
     procedure Test_NumberOfWeeks (expectedNumberOfWeeks: integer;
       actualMohthYear: string);
   end;
