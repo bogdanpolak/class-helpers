@@ -155,7 +155,8 @@ end;
 
 function TDateTimeHelper.NumberOfWeeksInMonth: word;
 begin
-  Result := System.Math.Ceil ( (LastDayInMonth - FirstDayInMonth +1) / 7 );
+  Result := System.Math.Ceil((LastDayInMonth - FirstDayInMonth -
+    (7 - DayOfWeekFirstDayInMonth) - DayOfWeekLastDayInMonth + 1) / 7) + 1;
 end;
 
 end.
