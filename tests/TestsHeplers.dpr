@@ -16,8 +16,7 @@ uses
   Helper.TDataSet in '..\src\Helper.TDataSet.pas',
   Helper.TDateTime in '..\src\Helper.TDateTime.pas',
   Helper.TDBGrid in '..\src\Helper.TDBGrid.pas',
-  Helper.TJSONObject in '..\src\Helper.TJSONObject.pas',
-  Info.CalendarRender in '..\src\Info.CalendarRender.pas';
+  Helper.TJSONObject in '..\src\Helper.TJSONObject.pas';
 
 var
   runner : ITestRunner;

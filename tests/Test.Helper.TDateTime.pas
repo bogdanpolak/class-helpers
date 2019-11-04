@@ -40,9 +40,47 @@ type
     procedure Test_DayOfWeekShortName;
     procedure Test_DaysInMonth;
     procedure Test_IncMonth_5;
+    procedure Test_FirstDayInMonth;
+    procedure Test_LastDayInMonth;
+    procedure Test_DayOfWeekFirstDayInMonth;
+    procedure Test_DayOfWeekLastDayInMonth;
+    procedure Test_NumberOfWeeksInMonth;
+  end;
+
+  [TestFixture]
+  TDate_Cases = class(TObject)
+  public
+    [TestCase('Month: 02-2010','4,2010-02-01')]
+    [TestCase('Month: 04-2012','6,2012-04-01')]
+    [TestCase('Month: 02-2019','5,2019-02-28')]
+    [TestCase('Month: 10-2019','5,2019-10-02')]
+    [TestCase('Month: 11-2019','5,2019-11-30')]
+    [TestCase('Month: 12-2019','6,2019-12-31')]
+    [TestCase('Month: 01-2020','5,2020-01-01')]
+    [TestCase('Month: 02-2020','5,2020-02-29')]
+    procedure Test_NumberOfWeeks (expectedNumberOfWeeks: integer;
+      actualMohthYear: string);
   end;
 
 implementation
+
+type
+  TAssertClassHelper = class helper for Assert
+    class procedure AreDateEqual(expectedYY, expectedMM, expectedDD: word;
+      actualDate: TDateTime);
+  end;
+
+class procedure TAssertClassHelper.AreDateEqual(expectedYY, expectedMM,
+  expectedDD: word; actualDate: TDateTime);
+var
+  s1: string;
+  s2: string;
+begin
+  s1 := EncodeDate(expectedYY, expectedMM, expectedDD).ToString;
+  s2 := actualDate.ToString();
+  AreEqual(s1, s2);
+end;
+
 
 // -----------------------------------------------------------------------
 // Setup and TearDown section
@@ -144,11 +182,52 @@ end;
 
 procedure TDate2019_10_24_T_21_15_59.Test_IncMonth_5;
 begin
-  Assert.AreEqual(Int(EncodeDate(2020, 3, 24)), Int(fDate.IncMonth(5)));
+  Assert.AreDateEqual(2020, 3, 24, fDate.IncMonth(5));
+end;
+
+procedure TDate2019_10_24_T_21_15_59.Test_FirstDayInMonth;
+begin
+  Assert.AreDateEqual(2019, 10, 1, fDate.FirstDayInMonth);
+end;
+
+procedure TDate2019_10_24_T_21_15_59.Test_LastDayInMonth;
+begin
+  Assert.AreDateEqual(2019, 10, 31, fDate.LastDayInMonth);
+end;
+
+procedure TDate2019_10_24_T_21_15_59.Test_DayOfWeekFirstDayInMonth;
+begin
+  Assert.AreEqual(2, fDate.DayOfWeekFirstDayInMonth);
+end;
+
+procedure TDate2019_10_24_T_21_15_59.Test_DayOfWeekLastDayInMonth;
+begin
+  Assert.AreEqual(4, fDate.DayOfWeekLastDayInMonth);
+end;
+
+procedure TDate2019_10_24_T_21_15_59.Test_NumberOfWeeksInMonth;
+begin
+  Assert.AreEqual(5, fDate.NumberOfWeeksInMonth);
 end;
 
 {$ENDREGION}
 
+// -----------------------------------------------------------------------
+// Tests cases: TDate_Cases
+// -----------------------------------------------------------------------
+
+procedure TDate_Cases.Test_NumberOfWeeks(expectedNumberOfWeeks: integer;
+  actualMohthYear: string);
+var
+  yy, mm, dd: word;
+  actualDate: TDateTime;
+begin
+  yy := actualMohthYear.Substring(0,4).ToInteger();
+  mm := actualMohthYear.Substring(5,2).ToInteger();
+  dd := actualMohthYear.Substring(8,2).ToInteger();
+  actualDate := EncodeDate(yy,mm,dd);
+  Assert.AreEqual(word(expectedNumberOfWeeks),actualDate.NumberOfWeeksInMonth);
+end;
 
 initialization
 
