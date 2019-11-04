@@ -40,6 +40,7 @@ type
     procedure Test_DayOfWeekShortName;
     procedure Test_DaysInMonth;
     procedure Test_IncMonth_5;
+    procedure Test_IncMonth_Minus1;
     procedure Test_FirstDayInMonth;
     procedure Test_LastDayInMonth;
     procedure Test_DayOfWeekFirstDayInMonth;
@@ -183,6 +184,11 @@ end;
 procedure TDate2019_10_24_T_21_15_59.Test_IncMonth_5;
 begin
   Assert.AreDateEqual(2020, 3, 24, fDate.IncMonth(5));
+end;
+
+procedure TDate2019_10_24_T_21_15_59.Test_IncMonth_Minus1;
+begin
+  Assert.AreDateEqual(2019, 9, 24, fDate.IncMonth(-1));
 end;
 
 procedure TDate2019_10_24_T_21_15_59.Test_FirstDayInMonth;

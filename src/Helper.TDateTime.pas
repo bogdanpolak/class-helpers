@@ -24,7 +24,7 @@ type
     function DayOfWeekName: string;
     function DayOfWeekShortName: string;
     function DaysInMonth: word;
-    function IncMonth(incerment: word): TDateTime;
+    function IncMonth(incerment: integer): TDateTime;
     /// <summary>
     ///   Returns first day in current month
     /// </summary>
@@ -128,7 +128,7 @@ begin
     Result := System.SysUtils.DateToStr(Self);
 end;
 
-function TDateTimeHelper.IncMonth(incerment: word): TDateTime;
+function TDateTimeHelper.IncMonth(incerment: integer): TDateTime;
 begin
   Result := System.SysUtils.IncMonth(Self, incerment);
 end;
