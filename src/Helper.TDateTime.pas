@@ -6,8 +6,9 @@ type
   TDateTimeHelper = record helper for TDateTime
   const
     // * --------------------------------------------------------------------
-    ReleaseDate = '2019.08.30';
-    ReleaseVersion = '1.0';
+    ReleaseDate = '2019.11.04';
+    ReleaseVersion = '1.1';
+    // * --------------------------------------------------------------------
   private
   public
     function AsYear: word;
