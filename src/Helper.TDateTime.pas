@@ -2,15 +2,14 @@ unit Helper.TDateTime;
 
 interface
 
-uses Info.CalendarRender;
-
 type
   TDateTimeHelper = record helper for TDateTime
   const
     // * --------------------------------------------------------------------
-    ReleaseDate = '2019.08.30';
-    ReleaseVersion = '1.0';
+    ReleaseDate = '2019.11.04';
+    ReleaseVersion = '1.1';
     // * --------------------------------------------------------------------
+  private
   public
     function AsYear: word;
     function AsMonth: word;
@@ -26,13 +25,35 @@ type
     function DayOfWeekName: string;
     function DayOfWeekShortName: string;
     function DaysInMonth: word;
-    function IncMonth(incerment: word): TDateTime;
+    function IncMonth(incerment: integer): TDateTime;
+    /// <summary>
+    ///   Returns first day in current month
+    /// </summary>
+    function FirstDayInMonth: TDateTime;
+    /// <summary>
+    ///   Returns last day in current month
+    /// </summary>
+    function LastDayInMonth: TDateTime;
+    /// <summary>
+    ///   Returns info to render Calendar = DayOfTheWeek for LastDayInMonth
+    /// </summary>
+    function DayOfWeekFirstDayInMonth: word;
+    /// <summary>
+    ///   Returns info to render Calendar = DayOfTheWeek for FirstDayInMonth
+    /// </summary>
+    function DayOfWeekLastDayInMonth: word;
+    /// <summary>
+    ///   Returns numbers of weeks included starting week and last week in
+    ///   month (even if first and last are started partly only)
+    /// </summary>
+    function NumberOfWeeksInMonth: word;
   end;
 
 implementation
 
 uses
   System.SysUtils,
+  System.Math,
   System.DateUtils;
 
 function TDateTimeHelper.AsFloat: double;
@@ -108,9 +129,35 @@ begin
     Result := System.SysUtils.DateToStr(Self);
 end;
 
-function TDateTimeHelper.IncMonth(incerment: word): TDateTime;
+function TDateTimeHelper.IncMonth(incerment: integer): TDateTime;
 begin
   Result := System.SysUtils.IncMonth(Self, incerment);
+end;
+
+function TDateTimeHelper.FirstDayInMonth: TDateTime;
+begin
+  Result := EncodeDate(Self.AsYear, Self.AsMonth, 1);
+end;
+
+function TDateTimeHelper.LastDayInMonth: TDateTime;
+begin
+  Result := Self.FirstDayInMonth.IncMonth(1) - 1;
+end;
+
+function TDateTimeHelper.DayOfWeekFirstDayInMonth: word;
+begin
+  Result := DayOfTheWeek(Self.FirstDayInMonth);
+end;
+
+function TDateTimeHelper.DayOfWeekLastDayInMonth: word;
+begin
+  Result := DayOfTheWeek(Self.LastDayInMonth);
+end;
+
+function TDateTimeHelper.NumberOfWeeksInMonth: word;
+begin
+  Result := System.Math.Ceil((LastDayInMonth - FirstDayInMonth -
+    (7 - DayOfWeekFirstDayInMonth) - DayOfWeekLastDayInMonth + 1) / 7) + 1;
 end;
 
 end.

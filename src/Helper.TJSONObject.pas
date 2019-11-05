@@ -11,12 +11,12 @@ type
   TJSONObjectHelper = class helper for TJSONObject
   const
     // * --------------------------------------------------------------------
-    ReleaseDate = '2019.08.30';
-    ReleaseVersion = '1.0';
+    ReleaseDate = '2019.11.04';
+    ReleaseVersion = '1.1';
     // * --------------------------------------------------------------------
   public
     function fieldAvaliable(const fieldName: string): Boolean;
-    function IsValidIsoDateUtc(const Field: string; var dt: TDateTime): Boolean;
+    function IsValidIsoDateUtc(const Field: string): Boolean;
     function GetFieldInt(const Field: string): integer;
     function GetFieldDateIsoUtc(const Field: string): TDateTime;
     function GetFieldOrEmpty(const Field: string): string;
@@ -34,13 +34,17 @@ end;
 { TODO 2: [Helper] TJSONObject Class helpper and this method has two responsibilities }
 // Warning! In-out var parameter
 // extract separate:  GetIsoDateUtc
-function TJSONObjectHelper.IsValidIsoDateUtc(const Field: string;
-  var dt: TDateTime): Boolean;
+function TJSONObjectHelper.IsValidIsoDateUtc(const Field: string): Boolean;
+var
+  dt: TDateTime;
 begin
   dt := 0;
   try
     dt := System.DateUtils.ISO8601ToDate(Self.Values[Field].Value, False);
     Result := True;
+    // dummy code for no warning message - unused dt variable
+    if dt=-9999999 then
+      raise EAbort.Create('');
   except
     on E: Exception do
       Result := False;

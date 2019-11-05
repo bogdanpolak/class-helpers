@@ -9,8 +9,8 @@ type
   THelperDBGrid = class helper for TDBGrid
    const
     // * --------------------------------------------------------------------
-    ReleaseDate = '2019.08.30';
-    ReleaseVersion = '1.0';
+    ReleaseDate = '2019.11.04';
+    ReleaseVersion = '1.1';
     // * --------------------------------------------------------------------
   public
    /// <summary>
