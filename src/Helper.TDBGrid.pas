@@ -1,4 +1,4 @@
-unit Helper.TDBGrid;
+﻿unit Helper.TDBGrid;
 
 interface
 

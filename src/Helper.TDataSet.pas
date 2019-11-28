@@ -1,4 +1,4 @@
-unit Helper.TDataSet;
+﻿unit Helper.TDataSet;
 
 interface
 
@@ -42,7 +42,7 @@ var
   Bookmark: TBookmark;
 begin
   Bookmark := self.GetBookmark;
-  // stworzenie zak�adki
+  // stworzenie zakładki
   self.DisableControls;
   try
     self.First;

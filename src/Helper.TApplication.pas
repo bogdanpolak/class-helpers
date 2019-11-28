@@ -1,4 +1,4 @@
-unit Helper.TApplication;
+﻿unit Helper.TApplication;
 
 interface
 
