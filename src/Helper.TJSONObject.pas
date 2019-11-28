@@ -1,4 +1,4 @@
-unit Helper.TJSONObject;
+﻿unit Helper.TJSONObject;
 
 interface
 
