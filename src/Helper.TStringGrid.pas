@@ -18,6 +18,8 @@ type
   public
     procedure ColsWidth(aWidths: TArray<Integer>);
     procedure FillCells(aNewData: TArray < TArray < String >> );
+    procedure ClearCells;
+    procedure ClearDataRows;
   end;
 
 implementation
@@ -27,6 +29,26 @@ resourcestring
     '(array size = %d, but grid has %d collumns)';
   StrErrorTooManyColumnsInRow = 'In row % too many data in width table ' +
     '(array size = %d, but grid has %d collumns)';
+
+procedure TStringGridHelper.ClearCells;
+var
+  iRow: Integer;
+  iCol: Integer;
+begin
+  for iRow := 0 to Self.RowCount-1 do
+    for iCol := 0 to Self.ColCount-1 do
+      Self.Cells[iCol, iRow] := '';
+end;
+
+procedure TStringGridHelper.ClearDataRows;
+var
+  iRow: Integer;
+  iCol: Integer;
+begin
+  for iRow := Self.FixedRows to Self.RowCount-1 do
+    for iCol := 0 to Self.ColCount-1 do
+      Self.Cells[iCol, iRow] := '';
+end;
 
 procedure TStringGridHelper.ColsWidth(aWidths: TArray<Integer>);
 var
@@ -45,6 +67,7 @@ var
   iRow: Integer;
   iCol: Integer;
 begin
+  ClearDataRows;
   for iRow := 0 to High(aNewData) do
   begin
     if ColCount < Length(aNewData[iRow]) then
