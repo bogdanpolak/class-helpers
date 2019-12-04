@@ -35,8 +35,8 @@ var
   iRow: Integer;
   iCol: Integer;
 begin
-  for iRow := 0 to Self.RowCount-1 do
-    for iCol := 0 to Self.ColCount-1 do
+  for iRow := 0 to Self.RowCount - 1 do
+    for iCol := 0 to Self.ColCount - 1 do
       Self.Cells[iCol, iRow] := '';
 end;
 
@@ -45,8 +45,8 @@ var
   iRow: Integer;
   iCol: Integer;
 begin
-  for iRow := Self.FixedRows to Self.RowCount-1 do
-    for iCol := 0 to Self.ColCount-1 do
+  for iRow := Self.FixedRows to Self.RowCount - 1 do
+    for iCol := 0 to Self.ColCount - 1 do
       Self.Cells[iCol, iRow] := '';
 end;
 
@@ -77,7 +77,7 @@ begin
   Self.RowCount := Length(aNewData) + Self.FixedRows;
   for iRow := 0 to High(aNewData) do
     for iCol := 0 to High(aNewData[iRow]) do
-      Cells[iCol, Self.FixedRows+iRow] := aNewData[iRow,iCol];
+      Cells[iCol, Self.FixedRows + iRow] := aNewData[iRow, iCol];
 end;
 
 end.
