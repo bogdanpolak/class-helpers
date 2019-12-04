@@ -5,6 +5,7 @@ interface
 uses
   System.JSON,
   System.SysUtils,
+  System.Classes,
   System.DateUtils,
   Vcl.Grids;
 
@@ -15,11 +16,15 @@ type
     ReleaseDate = '2019.11.30';
     ReleaseVersion = '1.1';
     // ♥ ------------------------------------------------------------------ ♥
+  private
+    procedure DefineColumnsWithJson(jsStructure: TJSONArray;
+      ColumnNames: TStringList);
   public
     procedure ColsWidth(aWidths: TArray<Integer>);
     procedure FillCells(aNewData: TArray < TArray < String >> );
     procedure ClearCells;
     procedure ClearDataRows;
+    procedure FillWithJson(aJsonData: TJSONObject);
   end;
 
 implementation
@@ -78,6 +83,56 @@ begin
   for iRow := 0 to High(aNewData) do
     for iCol := 0 to High(aNewData[iRow]) do
       Cells[iCol, Self.FixedRows + iRow] := aNewData[iRow, iCol];
+end;
+
+// "structure": [{"column": "", "caption": "", "width": }, ...]
+procedure TStringGridHelper.DefineColumnsWithJson(jsStructure: TJSONArray;
+  ColumnNames: TStringList);
+var
+  i: Integer;
+  jsCoumnDef: TJSONObject;
+  jsValue: TJSONValue;
+begin
+  Self.FixedRows := 1;
+  Self.FixedCols := 0;
+  Self.ColCount := jsStructure.Count;
+  for i := 0 to jsStructure.Count - 1 do
+  begin
+    jsCoumnDef := jsStructure.Items[i] as TJSONObject;
+    ColumnNames.Add(jsCoumnDef.GetValue('column').Value);
+    if (jsCoumnDef.GetValue('caption') is TJSONValue) then
+      Self.Cells[i, 0] := jsCoumnDef.GetValue('caption').Value;
+    if (jsCoumnDef.GetValue('width') is TJSONNumber) then
+      Self.ColWidths[i] := jsCoumnDef.GetValue('width').GetValue<Integer>;
+  end;
+end;
+
+(*  Input structure:
+  * {
+ *   "structure": [{"column": "", "caption": "", "width": }, ...]
+ *   "data":[{"fieldname1": "", "fieldname1": "", ...}, ...]
+ * }
+*)
+procedure TStringGridHelper.FillWithJson(aJsonData: TJSONObject);
+var
+  ColumnNames: TStringList;
+begin
+  ColumnNames := TStringList.Create;
+  try
+    Assert(aJsonData.GetValue('structure') <> nil);
+    Assert(aJsonData.GetValue('structure') is TJSONArray);
+    DefineColumnsWithJson(aJsonData.GetValue('structure') as TJSONArray,
+      ColumnNames);
+
+    (*
+     Assert(aJsonData.GetValue('data') <> nil);
+     Assert(aJsonData.GetValue('data') is TJSONArray);
+    *)
+    // jsData := aJsonData.GetValue('structure') as TJSONArray;
+
+  finally
+    ColumnNames.Free;
+  end;
 end;
 
 end.
