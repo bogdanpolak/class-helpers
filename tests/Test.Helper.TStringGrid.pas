@@ -31,6 +31,7 @@ type
     procedure OneColumn_ColsWidth;
     procedure TwoColumns_ColsWidth;
     procedure FiveColumns_ColsWidth;
+    procedure GridWithTwoDataRows_FillCells;
   end;
 
 implementation
@@ -99,6 +100,22 @@ begin
   // A
   Assert.AreEqual(110, fGrid.ColWidths[3]);
   Assert.AreEqual(80, fGrid.ColWidths[4]);
+end;
+
+procedure TestTStringGridHelper.GridWithTwoDataRows_FillCells;
+begin
+  // A
+  fGrid.ColCount := 4;
+  fGrid.RowCount := 3;
+  // A
+  fGrid.FillCells([ (**)
+    ['1', 'Jonh Black', 'U21', '34'], (**)
+    ['2', 'Bogdan Polak', 'N47', '28'] (**)
+    ]);
+  // A
+  Assert.AreEqual('Jonh Black', fGrid.Cells[1, 1]);
+  Assert.AreEqual('2', fGrid.Cells[0, 2]);
+  Assert.AreEqual('28', fGrid.Cells[3, 2]);
 end;
 
 initialization
