@@ -19,6 +19,8 @@ type
   private
     procedure DefineColumnsWithJson(jsStructure: TJSONArray;
       ColumnNames: TStringList);
+    procedure FillDataRowsWithJson(jsData: TJSONArray;
+      ColumnNames: TStringList);
   public
     procedure ColsWidth(aWidths: TArray<Integer>);
     procedure FillCells(aNewData: TArray < TArray < String >> );
@@ -93,6 +95,7 @@ var
   jsCoumnDef: TJSONObject;
   jsValue: TJSONValue;
 begin
+  ColumnNames.Clear;
   Self.FixedRows := 1;
   Self.FixedCols := 0;
   Self.ColCount := jsStructure.Count;
@@ -107,6 +110,32 @@ begin
   end;
 end;
 
+// "data":[{"fieldname1": "", "fieldname1": "", ...}, ...]
+procedure TStringGridHelper.FillDataRowsWithJson(jsData: TJSONArray;
+  ColumnNames: TStringList);
+var
+  i: Integer;
+  jsCoumnDef: TJSONObject;
+  jsValue: TJSONValue;
+  aRow: Integer;
+  jsItem: TJSONObject;
+  j: Integer;
+  aCol: Integer;
+begin
+  Self.RowCount := Self.FixedRows + jsData.Count;
+  for i := 0 to jsData.Count - 1 do
+  begin
+    aRow := Self.FixedRows + i;
+    jsItem := jsData.Items[i] as TJSONObject;
+    for j := 0 to jsItem.Count - 1 do
+    begin
+      aCol := ColumnNames.IndexOf(jsItem.Get(j).JsonString.Value);
+      if (aCol >= 0) then
+        Self.Cells[aCol, aRow] := jsItem.Get(j).JsonValue.Value;
+    end;
+  end;
+end;
+
 (*  Input structure:
   * {
  *   "structure": [{"column": "", "caption": "", "width": }, ...]
@@ -117,6 +146,7 @@ procedure TStringGridHelper.FillWithJson(aJsonData: TJSONObject);
 var
   ColumnNames: TStringList;
   jsStructure: TJSONArray;
+  jsData: TJSONArray;
 begin
   ColumnNames := TStringList.Create;
   try
@@ -125,11 +155,10 @@ begin
     jsStructure := aJsonData.GetValue('structure') as TJSONArray;
     DefineColumnsWithJson(jsStructure, ColumnNames);
 
-    (*
-     Assert(aJsonData.GetValue('data') <> nil);
-     Assert(aJsonData.GetValue('data') is TJSONArray);
-    *)
-    // jsData := aJsonData.GetValue('structure') as TJSONArray;
+    Assert(aJsonData.GetValue('data') <> nil);
+    Assert(aJsonData.GetValue('data') is TJSONArray);
+    jsData := aJsonData.GetValue('data') as TJSONArray;
+    FillDataRowsWithJson(jsData, ColumnNames);
 
   finally
     ColumnNames.Free;
