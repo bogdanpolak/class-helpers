@@ -19,7 +19,8 @@ uses
   Helper.TJSONObject in '..\src\Helper.TJSONObject.pas',
   Helper.TWinControl in '..\src\Helper.TWinControl.pas',
   Test.Helper.TWinControl in 'Test.Helper.TWinControl.pas',
-  Helper.TStringGrid in '..\src\Helper.TStringGrid.pas';
+  Helper.TStringGrid in '..\src\Helper.TStringGrid.pas',
+  Test.Helper.TStringGrid in 'Test.Helper.TStringGrid.pas';
 
 var
   runner : ITestRunner;
