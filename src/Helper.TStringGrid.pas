@@ -116,13 +116,14 @@ end;
 procedure TStringGridHelper.FillWithJson(aJsonData: TJSONObject);
 var
   ColumnNames: TStringList;
+  jsStructure: TJSONArray;
 begin
   ColumnNames := TStringList.Create;
   try
     Assert(aJsonData.GetValue('structure') <> nil);
     Assert(aJsonData.GetValue('structure') is TJSONArray);
-    DefineColumnsWithJson(aJsonData.GetValue('structure') as TJSONArray,
-      ColumnNames);
+    jsStructure := aJsonData.GetValue('structure') as TJSONArray;
+    DefineColumnsWithJson(jsStructure, ColumnNames);
 
     (*
      Assert(aJsonData.GetValue('data') <> nil);
