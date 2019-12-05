@@ -70,24 +70,33 @@ end;
 
 procedure TestTStringGridHelper.OneColumn_ColsWidth;
 begin
+  // Arrange
   fGrid.FixedCols := 1;
   fGrid.ColCount := 1;
+  // Act
   fGrid.ColsWidth([110]);
+  // Assert
   Assert.AreEqual(110, fGrid.ColWidths[0]);
 end;
 
 procedure TestTStringGridHelper.TwoColumns_ColsWidth;
 begin
+  // A
   fGrid.ColCount := 2;
+  // A
   fGrid.ColsWidth([50, 100]);
+  // A
   Assert.AreEqual(50, fGrid.ColWidths[0]);
   Assert.AreEqual(100, fGrid.ColWidths[1]);
 end;
 
 procedure TestTStringGridHelper.FiveColumns_ColsWidth;
 begin
+  // A
   fGrid.ColCount := 5;
+  // A
   fGrid.ColsWidth([50, 100, 90, 110, 80]);
+  // A
   Assert.AreEqual(110, fGrid.ColWidths[3]);
   Assert.AreEqual(80, fGrid.ColWidths[4]);
 end;
