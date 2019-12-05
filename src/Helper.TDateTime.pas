@@ -1,4 +1,4 @@
-unit Helper.TDateTime;
+﻿unit Helper.TDateTime;
 
 interface
 
@@ -6,8 +6,8 @@ type
   TDateTimeHelper = record helper for TDateTime
   const
     // * --------------------------------------------------------------------
-    ReleaseDate = '2019.11.04';
-    ReleaseVersion = '1.1';
+    ReleaseDate = '2019-12-05';
+    ReleaseVersion = '1.2';
     // * --------------------------------------------------------------------
   private
   public

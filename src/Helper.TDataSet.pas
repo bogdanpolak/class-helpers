@@ -1,4 +1,4 @@
-unit Helper.TDataSet;
+﻿unit Helper.TDataSet;
 
 interface
 
@@ -9,8 +9,8 @@ type
   THelperDataSet = class helper for TDataSet
   const
     // * --------------------------------------------------------------------
-    ReleaseDate = '2019.08.30';
-    ReleaseVersion = '1.0';
+    ReleaseDate = '2019-12-05';
+    ReleaseVersion = '1.2';
     // * --------------------------------------------------------------------
   public
     procedure WhileNotEof(proc: TProc);
@@ -42,7 +42,7 @@ var
   Bookmark: TBookmark;
 begin
   Bookmark := self.GetBookmark;
-  // stworzenie zak�adki
+  // stworzenie zakładki
   self.DisableControls;
   try
     self.First;
