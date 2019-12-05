@@ -27,7 +27,7 @@ type
     [TearDown]
     procedure TearDown;
   published
-    procedure One;
+    procedure FindChildControlRecursiveByType;
   end;
 
 implementation
@@ -54,26 +54,35 @@ end;
 // Tests section 1
 // -----------------------------------------------------------------------
 
-procedure TestTWinControlHelper.One;
+procedure TestTWinControlHelper.FindChildControlRecursiveByType;
+var
+  aTopPanel: TPanel;
 begin
+  aTopPanel := TPanel.Create(fForm);
+  with aTopPanel do
+  begin
+    Name := 'TopPanel';
+    Parent := fForm;
+    Align := alTop;
+  end;
   with TPanel.Create(fForm) do
   begin
     Name := 'ClientPanel';
     Parent := fForm;
     Align := alClient;
   end;
-  with TPanel.Create(fForm) do
-  begin
-    Name := 'TopPanel';
-    Parent := fForm;
-    Align := alTop;
-  end;
-
   with TEdit.Create(fForm) do
   begin
     Name := 'EditTop';
-    Text := 'EditTop';
-    Parent := fForm.FindChildControl('TopPanel') as TWinControl;
+    Text := 'Edit Top';
+    Parent := aTopPanel;
+    Align := alTop;
+  end;
+  with TButton.Create(fForm) do
+  begin
+    Name := 'ButtonTop';
+    Caption := 'Button Top';
+    Parent := aTopPanel;
     Align := alTop;
   end;
   Assert.IsTrue(fForm.FindChildControlRecursiveByType(TButton) <> nil,
