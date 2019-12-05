@@ -6,6 +6,7 @@ uses
   DUnitX.TestFramework,
   System.Classes,
   System.SysUtils,
+  System.JSON,
 
   Vcl.Controls,
   Vcl.Forms,
@@ -22,6 +23,7 @@ type
   private
     fForm: TForm;
     fGrid: TStringGrid;
+    jsData: TJSONObject;
   public
     [Setup]
     procedure Setup;
@@ -32,6 +34,9 @@ type
     procedure TwoColumns_ColsWidth;
     procedure FiveColumns_ColsWidth;
     procedure GridWithTwoDataRows_FillCells;
+    procedure Grid_FillWithJson_ColumnsWidth;
+    procedure Grid_FillWithJson_ColumnsHeaderLabels;
+    procedure Grid_FillWithJson_DataCells;
   end;
 
 implementation
@@ -42,6 +47,8 @@ implementation
 
 procedure TestTStringGridHelper.Setup;
 begin
+  jsData := nil;
+  // --
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   fForm := TForm.Create(Application);
@@ -63,6 +70,8 @@ procedure TestTStringGridHelper.TearDown;
 begin
   fForm.Close;
   fForm.Free;
+  if Assigned(jsData) then
+    jsData.Free;
 end;
 
 // -----------------------------------------------------------------------
@@ -116,6 +125,59 @@ begin
   Assert.AreEqual('Jonh Black', fGrid.Cells[1, 1]);
   Assert.AreEqual('2', fGrid.Cells[0, 2]);
   Assert.AreEqual('28', fGrid.Cells[3, 2]);
+end;
+
+const
+  JsonStructureAndData = '{"structure": [' +
+    '{"column": "no", "caption": "No.", "width": 30}, ' +
+    '{"column": "mesure", "caption": "Mesure description", "width": 200}, ' +
+    '{"column": "acronym", "caption": "Acronym", "width": 70}, ' +
+    '{"column": "unit", "caption": "Unit name", "width": 120}, ' +
+    '{"column": "value", "caption": "Value", "width": 60}' + (**)
+    '], "data":[' +
+    '{"no": 1, "mesure": "Number of DI Containers", "acronym": "NDIC",' +
+    '  "unit": "n/a", "value": 120},' +
+    '{"no": 2, "mesure": "Maximum ctor injection", "acronym": "MCTI",' +
+    '  "unit": "PCLRecord.pas", "value": 56}' +  (**)
+    ']} ';
+
+procedure TestTStringGridHelper.Grid_FillWithJson_ColumnsWidth;
+begin
+  // A
+  jsData := TJSONObject.ParseJSONValue(JsonStructureAndData) as TJSONObject;
+  // A
+  fGrid.FillWithJson(jsData);
+  // A
+  Assert.AreEqual(5,fGrid.ColCount);
+  Assert.AreEqual(30,fGrid.ColWidths[0]);
+  Assert.AreEqual(200,fGrid.ColWidths[1]);
+  Assert.AreEqual(70,fGrid.ColWidths[2]);
+  Assert.AreEqual(60,fGrid.ColWidths[4]);
+end;
+
+procedure TestTStringGridHelper.Grid_FillWithJson_ColumnsHeaderLabels;
+begin
+  // A
+  jsData := TJSONObject.ParseJSONValue(JsonStructureAndData) as TJSONObject;
+  // A
+  fGrid.FillWithJson(jsData);
+  // A
+  Assert.AreEqual('No.',fGrid.Cells[0,0]);
+  Assert.AreEqual('Acronym',fGrid.Cells[2,0]);
+  Assert.AreEqual('Value',fGrid.Cells[4,0]);
+end;
+
+procedure TestTStringGridHelper.Grid_FillWithJson_DataCells;
+begin
+  // A
+  jsData := TJSONObject.ParseJSONValue(JsonStructureAndData) as TJSONObject;
+  // A
+  fGrid.FillWithJson(jsData);
+  // A
+  Assert.AreEqual('Number of DI Containers',fGrid.Cells[1,1]);
+  Assert.AreEqual('120',fGrid.Cells[4,1]);
+  Assert.AreEqual('2',fGrid.Cells[0,2]);
+  Assert.AreEqual('PCLRecord.pas',fGrid.Cells[3,2]);
 end;
 
 initialization
