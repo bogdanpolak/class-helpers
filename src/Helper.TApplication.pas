@@ -9,8 +9,8 @@ type
   THelperApplication = class helper for TApplication
   const
     // * --------------------------------------------------------------------
-    ReleaseDate = '2019.11.04';
-    ReleaseVersion = '1.1';
+    ReleaseDate = '2019-12-05';
+    ReleaseVersion = '1.2';
     // * --------------------------------------------------------------------
   public
     { TODO: Please add XML Documentation here }

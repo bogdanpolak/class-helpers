@@ -1,4 +1,4 @@
-unit Helper.TWinControl;
+﻿unit Helper.TWinControl;
 
 interface
 
@@ -11,7 +11,7 @@ type
   TWinControlHelper = class helper for TWinControl
   const
     // * --------------------------------------------------------------------
-    ReleaseDate = '2019.11.27';
+    ReleaseDate = '2019-12-05';
     ReleaseVersion = '1.2';
     // * --------------------------------------------------------------------
   private

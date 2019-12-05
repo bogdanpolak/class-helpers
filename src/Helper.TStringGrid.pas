@@ -13,8 +13,8 @@ type
   TStringGridHelper = class helper for TStringGrid
   const
     // ♥ ------------------------------------------------------------------ ♥
-    ReleaseDate = '2019.11.30';
-    ReleaseVersion = '1.1';
+    ReleaseDate = '2019-12-05';
+    ReleaseVersion = '1.2';
     // ♥ ------------------------------------------------------------------ ♥
   private
     procedure DefineColumnsWithJson(jsStructure: TJSONArray;

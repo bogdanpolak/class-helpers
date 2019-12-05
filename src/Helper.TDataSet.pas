@@ -9,8 +9,8 @@ type
   THelperDataSet = class helper for TDataSet
   const
     // * --------------------------------------------------------------------
-    ReleaseDate = '2019.08.30';
-    ReleaseVersion = '1.0';
+    ReleaseDate = '2019-12-05';
+    ReleaseVersion = '1.2';
     // * --------------------------------------------------------------------
   public
     procedure WhileNotEof(proc: TProc);
