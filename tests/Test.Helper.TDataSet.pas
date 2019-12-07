@@ -7,6 +7,7 @@ uses
   System.Classes,
   System.SysUtils,
   System.JSON,
+  Data.DB,
   Datasnap.DBClient,
 
   Helper.TDataSet;
@@ -18,14 +19,15 @@ type
   [TestFixture]
   TestTDataSetHelper = class(TObject)
   private
-    dataset: TClientDataSet;
+    fDataset: TClientDataSet;
+    procedure BuildDataSet1;
   public
     [Setup]
     procedure Setup;
     [TearDown]
     procedure TearDown;
   published
-    procedure Test1;
+    procedure GetMaxIntegerValue_546;
   end;
 
 implementation
@@ -36,26 +38,47 @@ implementation
 
 procedure TestTDataSetHelper.Setup;
 begin
-  dataset := TClientDataSet.Create(nil);
+  fDataset := TClientDataSet.Create(nil);
 end;
 
 procedure TestTDataSetHelper.TearDown;
 begin
-  dataset.Close;
+  fDataset.Close;
+end;
+
+// -----------------------------------------------------------------------
+// Utilities
+// -----------------------------------------------------------------------
+
+procedure TestTDataSetHelper.BuildDataSet1;
+begin
+  with fDataset do
+  begin
+    FieldDefs.Add('id', ftInteger);
+    FieldDefs.Add('info', ftWideString, 30);
+    FieldDefs.Add('rank', ftInteger);
+    CreateDataSet;
+  end;
 end;
 
 // -----------------------------------------------------------------------
 // Tests
 // -----------------------------------------------------------------------
 
-procedure TestTDataSetHelper.Test1;
+procedure TestTDataSetHelper.GetMaxIntegerValue_546;
+var
+  aMaxValue: Integer;
 begin
   // Arrange
-
+  BuildDataSet1;
+  fDataset.AppendRecord([1, 'Edynburgh', 5]);
+  fDataset.AppendRecord([2, 'Glassgow', 4]);
+  fDataset.AppendRecord([3, 'Cracow', 6]);
+  fDataset.First;
   // Act
-
+  aMaxValue := fDataset.GetMaxIntegerValue('rank');
   // Assert
-  Assert.AreEqual (0,1);
+  Assert.AreEqual (6,aMaxValue);
 end;
 
 initialization
