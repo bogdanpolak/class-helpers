@@ -55,8 +55,9 @@ begin
   with fDataset do
   begin
     FieldDefs.Add('id', ftInteger);
-    FieldDefs.Add('info', ftWideString, 30);
+    FieldDefs.Add('city', ftWideString, 30);
     FieldDefs.Add('rank', ftInteger);
+    FieldDefs.Add('visited', ftDateTime);
     CreateDataSet;
   end;
 end;
