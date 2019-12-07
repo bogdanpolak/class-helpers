@@ -78,7 +78,7 @@ begin
   // Act
   aMaxValue := fDataset.GetMaxIntegerValue('rank');
   // Assert
-  Assert.AreEqual (6,aMaxValue);
+  Assert.AreEqual(6, aMaxValue);
 end;
 
 initialization
