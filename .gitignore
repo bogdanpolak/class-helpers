@@ -101,3 +101,4 @@ __recovery/
 
 TestInsightSettings.ini
 *.groupproj
+.vscode
