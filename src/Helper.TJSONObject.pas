@@ -15,10 +15,25 @@ type
     ReleaseVersion = '1.2';
     // * --------------------------------------------------------------------
   public
+    /// <summary> 
+    ///   Checks is JSON object has field (key) provided through parameter and its value is not NULL
+    /// </summary>
     function IsFieldAvailable(const fieldName: string): Boolean;
+    /// <summary> 
+    ///   Checks is JSON object field (fieldName) is valid UTC date in ISO8601 format
+    /// </summary>
     function IsValidIsoDate(const fieldName: string): Boolean;
+    /// <summary> 
+    ///   Gets JSON object field (fieldName) value as integer
+    /// </summary>
     function GetFieldInt(const fieldName: string): integer;
+    /// <summary> 
+    ///   Gets JSON object field (fieldName) value as date in ISO8601 format 
+    /// </summary>
     function GetFieldIsoDate(const fieldName: string): TDateTime;
+    /// <summary> 
+    ///   Gets JSON object field (fieldName) value as date or returns empty string if field value is NULL
+    /// </summary>
     function GetFieldOrEmpty(const fieldName: string): string;
   end;
 
