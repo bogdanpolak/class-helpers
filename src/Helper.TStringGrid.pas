@@ -7,6 +7,7 @@ uses
   System.SysUtils,
   System.Classes,
   System.DateUtils,
+  System.Generics.Collections,
   Vcl.Grids;
 
 type
@@ -115,8 +116,6 @@ procedure TStringGridHelper.FillDataRowsWithJson(jsData: TJSONArray;
   ColumnNames: TStringList);
 var
   i: Integer;
-  jsCoumnDef: TJSONObject;
-  jsValue: TJSONValue;
   aRow: Integer;
   jsItem: TJSONObject;
   j: Integer;
