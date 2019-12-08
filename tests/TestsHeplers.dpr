@@ -21,7 +21,8 @@ uses
   Test.Helper.TDateTime in 'Test.Helper.TDateTime.pas',
   Test.Helper.TWinControl in 'Test.Helper.TWinControl.pas',
   Test.Helper.TStringGrid in 'Test.Helper.TStringGrid.pas',
-  Test.Helper.TDataSet in 'Test.Helper.TDataSet.pas';
+  Test.Helper.TDataSet in 'Test.Helper.TDataSet.pas',
+  Test.Helper.TJSONObject in 'Test.Helper.TJSONObject.pas';
 
 var
   runner : ITestRunner;
