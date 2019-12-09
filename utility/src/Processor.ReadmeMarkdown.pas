@@ -24,18 +24,25 @@ var
   idx1: Integer;
   len: Integer;
   idx2: Integer;
+  idx3: Integer;
 begin
+  // ---------------------------------------------------------------------
   // ![ version ](https://img.shields.io/badge/version-%201.2-yellow.svg)
-  idx1 := aSearchPattern.IndexOf(aSource);
-  if idx1 = -1 then
-  raise EProcessError.Create
-    ('No version pattern found in main README file. Please update configuration file.');
+  //              ^----------- search pattern -------^
+  // ---------------------------------------------------------------------
+  idx1 := aSource.IndexOf(aSearchPattern);
   len := length(aSearchPattern);
+  if idx1 = -1 then
+    raise EProcessError.Create
+      ('No version pattern found in main README file. Please update configuration file.');
   idx2 := aSource.IndexOf('-', idx1 + len);
-  if idx2 = -1 then
+  idx3 := aSource.IndexOf('-', idx2+1);
+  if (idx2 = -1) or (idx3 = -1) then
     raise EProcessError.Create
       ('Invalid format of version stored in main README');
-  Result := aSource.Substring(0,idx1+len) + aNewVersion + aSource.Substring(idx2,9999999)
+  Result := aSource.Substring(0, idx2+1) + '%20'+aNewVersion +
+    aSource.Substring(idx3, 9999999);
+  writeln('      Bumped README.md version to: '+aNewVersion)
 end;
 
 end.
