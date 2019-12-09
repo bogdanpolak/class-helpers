@@ -13,6 +13,7 @@ type
   TMainApplication = class
   private
     fAppConfig: TAppConfiguration;
+    fSilentMode: boolean;
     procedure ValidateSourceDir();
     function ExtractInputParameters(): string;
     function ScanSourceDir(const aFilter: string): TArray<string>;
@@ -82,7 +83,12 @@ begin
     if aSourceText <> aNewSource then
       TFile.WriteAllText(aPath, aNewSource, TEncoding.UTF8);
   end;
-  readln;
+  if fSilentMode = false then
+  begin
+    writeln('');
+    write('All files was updated. Press [Enter] to close application ...');
+    readln;
+  end;
 end;
 
 function TMainApplication.ExtractInputParameters: string;
@@ -106,6 +112,7 @@ begin
     readln(version);
     if Trim(version) = '' then
       Halt(2);
+    writeln('');
   end
   else
     version := ParamStr(1);
