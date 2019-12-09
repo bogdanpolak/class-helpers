@@ -12,11 +12,8 @@ uses
 
 type
   TStringGridHelper = class helper for TStringGrid
-  const
-    // ♥ ------------------------------------------------------------------ ♥
-    ReleaseDate = '2019-12-05';
-    ReleaseVersion = '1.2';
-    // ♥ ------------------------------------------------------------------ ♥
+  private const
+    Version = '1.2';
   private
     procedure DefineColumnsWithJson(jsStructure: TJSONArray;
       ColumnNames: TStringList);

@@ -14,9 +14,10 @@ type
       const aNewVersion: string; const aSearchPattern: string): string; static;
   end;
 
-  EProcessError = class(Exception);
-
 implementation
+
+uses
+  Processor.Utils;
 
 class function TReadmeMarkdownProcessor.ProcessReadme(const aSource: string;
   const aNewVersion: string; const aSearchPattern: string): string;
@@ -33,12 +34,12 @@ begin
   idx1 := aSource.IndexOf(aSearchPattern);
   len := length(aSearchPattern);
   if idx1 = -1 then
-    raise EProcessError.Create
+    raise Processor.Utils.EProcessError.Create
       ('No version pattern found in main README file. Please update configuration file.');
   idx2 := aSource.IndexOf('-', idx1 + len);
   idx3 := aSource.IndexOf('-', idx2+1);
   if (idx2 = -1) or (idx3 = -1) then
-    raise EProcessError.Create
+    raise Processor.Utils.EProcessError.Create
       ('Invalid format of version stored in main README');
   Result := aSource.Substring(0, idx2+1) + '%20'+aNewVersion +
     aSource.Substring(idx3, 9999999);

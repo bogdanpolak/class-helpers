@@ -9,11 +9,8 @@ uses
 
 type
   TJSONObjectHelper = class helper for TJSONObject
-  const
-    // * --------------------------------------------------------------------
-    ReleaseDate = '2019-12-05';
-    ReleaseVersion = '1.2';
-    // * --------------------------------------------------------------------
+  private const
+    Version = '1.2';
   public
     /// <summary>
     ///   Checks is JSON object has field (key) provided through parameter and its value is not NULL

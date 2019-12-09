@@ -7,11 +7,8 @@ uses
 
 type
   TDBGridHelper = class helper for TDBGrid
-   const
-    // * --------------------------------------------------------------------
-    ReleaseDate = '2019-12-05';
-    ReleaseVersion = '1.2';
-    // * --------------------------------------------------------------------
+  private const
+    Version = '1.2';
   public
    /// <summary>
     ///   Counts and sets the width of the grid columns in pixels
