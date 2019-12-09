@@ -14,9 +14,10 @@ type
   private
     fAppConfig: TAppConfiguration;
     fSilentMode: boolean;
-    procedure ValidateSourceDir();
+    procedure ValidateSourceConfiguration();
     function ExtractInputParameters(): string;
-    function ScanSourceDir(const aFilter: string): TArray<string>;
+    procedure ProcessReadmeMarkdown(const aNewVersion: string);
+    procedure ProcessSourcePasFiles(const aNewVersion: string);
   public
     constructor Create();
     destructor Destroy; override;
@@ -27,7 +28,8 @@ type
 implementation
 
 uses
-  Processor.PascalUnit;
+  Processor.PascalUnit,
+  Processor.ReadmeMarkdown;
 
 constructor TMainApplication.Create();
 begin
@@ -42,7 +44,7 @@ begin
   inherited;
 end;
 
-procedure TMainApplication.ValidateSourceDir();
+procedure TMainApplication.ValidateSourceConfiguration();
 var
   aSourceDir: string;
 begin
@@ -56,12 +58,38 @@ begin
   end;
 end;
 
-function TMainApplication.ScanSourceDir(const aFilter: string): TArray<string>;
+procedure TMainApplication.ProcessReadmeMarkdown(const aNewVersion: string);
 var
-  FilePath: String;
-  Source: String;
+  aFilePath: string;
+  aSourceText: string;
+  aNewSource: string;
 begin
-  Result := TDirectory.GetFiles(fAppConfig.HeplersSourceDir, aFilter);
+  aFilePath := fAppConfig.ReadmeFilePath;
+  writeln('Updating: ' + aFilePath);
+  aSourceText := TFile.ReadAllText(aFilePath, TEncoding.UTF8);
+  aNewSource := TReadmeMarkdownProcessor.ProcessReadme(aSourceText, aNewVersion,
+    fAppConfig.ReadmeSearchPattern);
+  TFile.WriteAllText(aFilePath, aNewSource, TEncoding.UTF8);
+end;
+
+procedure TMainApplication.ProcessSourcePasFiles(const aNewVersion: string);
+var
+  aSourceDir: string;
+  aFiles: TArray<string>;
+  aPath: string;
+  aSourceText: string;
+  aNewSource: string;
+begin
+  aSourceDir := fAppConfig.HeplersSourceDir;
+  aFiles := TDirectory.GetFiles(aSourceDir, 'Helper.*.pas');
+  for aPath in aFiles do
+  begin
+    aSourceText := TFile.ReadAllText(aPath, TEncoding.UTF8);
+    writeln('Updating: ' + aPath);
+    aNewSource := TPascalUnitProcessor.ProcessUnit(aSourceText, aNewVersion);
+    if aSourceText <> aNewSource then
+      TFile.WriteAllText(aPath, aNewSource, TEncoding.UTF8);
+  end;
 end;
 
 procedure TMainApplication.ExecuteApplication();
@@ -72,17 +100,11 @@ var
   aSourceText: string;
   aNewSource: string;
 begin
-  ValidateSourceDir;
+  ValidateSourceConfiguration;
   aNewVersion := ExtractInputParameters;
-  aFiles := ScanSourceDir('Helper.*.pas');
-  for aPath in aFiles do
-  begin
-    aSourceText := TFile.ReadAllText(aPath, TEncoding.UTF8);
-    writeln('Updating: ' + aPath);
-    aNewSource := TPascalUnitProcessor.ProcessUnit(aSourceText, aNewVersion);
-    if aSourceText <> aNewSource then
-      TFile.WriteAllText(aPath, aNewSource, TEncoding.UTF8);
-  end;
+  if fAppConfig.ReadmeIsUpdate then
+    ProcessReadmeMarkdown(aNewVersion);
+  ProcessSourcePasFiles(aNewVersion);
   if fSilentMode = false then
   begin
     writeln('');
