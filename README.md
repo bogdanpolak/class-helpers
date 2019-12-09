@@ -29,3 +29,17 @@ GetDictionary (reAvaliable, 1, MyBooks, true);
 // improved class:
 MyBooks.GetDictionaryActive(reAvaliable, 1);
 ```
+
+## Helpers
+
+| Helper name | Expanded class | Information |
+| --- | --- | --- |
+| TApplicationHelper | TApplication | concept solution for storing general reusable functions  |
+| TDataSetHelper | TDataSet | extension function for data manipulation and storage |
+| TDateTimeHelper | TDateTime | sample record helper  |
+| TDBGridHelper | TDBGrid | expanding classic DBGrid |
+| TJSONObjectHelper | TJSONObject | function manipulating on JSON memory DOM |
+| TStringGridHelper | TStringGrid | more advanced features added to StringGrid control |
+| TWinControlHelper | TWinControl | utility methods available for all TWinControl descendants (TForm, TPanel, etc.)  |
+
+[Full helper catalog](https://github.com/bogdanpolak/class-helpers/tree/master/src)
