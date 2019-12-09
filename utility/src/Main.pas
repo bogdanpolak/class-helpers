@@ -79,7 +79,7 @@ begin
   begin
     aSourceText := TFile.ReadAllText(aPath, TEncoding.UTF8);
     writeln('Updating: ' + aPath);
-    aNewSource := THelperPascalProcessor.ProcessUnit(aSourceText, aNewVersion);
+    aNewSource := TPascalUnitProcessor.ProcessUnit(aSourceText, aNewVersion);
     if aSourceText <> aNewSource then
       TFile.WriteAllText(aPath, aNewSource, TEncoding.UTF8);
   end;
