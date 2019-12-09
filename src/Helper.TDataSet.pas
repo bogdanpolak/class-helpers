@@ -6,7 +6,7 @@ uses
   Data.DB, System.SysUtils;
 
 type
-  THelperDataSet = class helper for TDataSet
+  TDataSetHelper = class helper for TDataSet
   const
     // * --------------------------------------------------------------------
     ReleaseDate = '2019-12-05';
@@ -21,7 +21,7 @@ type
 
 implementation
 
-function THelperDataSet.GetMaxIntegerValue(const fieldName: string): integer;
+function TDataSetHelper.GetMaxIntegerValue(const fieldName: string): integer;
 var
   MaxValue: integer;
   CurrentValue: integer;
@@ -37,7 +37,7 @@ begin
   Result := MaxValue;
 end;
 
-procedure THelperDataSet.WhileNotEof(proc: TProc);
+procedure TDataSetHelper.WhileNotEof(proc: TProc);
 var
   Bookmark: TBookmark;
 begin
@@ -59,7 +59,7 @@ begin
   end;
 end;
 
-procedure THelperDataSet.ForEachRow(proc: TProc);
+procedure TDataSetHelper.ForEachRow(proc: TProc);
 begin
   WhileNotEof(proc);
 end;
