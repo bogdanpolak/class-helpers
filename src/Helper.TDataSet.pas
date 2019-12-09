@@ -8,7 +8,7 @@ uses
 type
   TDataSetHelper = class helper for TDataSet
   private const
-    Version = '1.2';
+    Version = '1.3';
   public
     procedure WhileNotEof(proc: TProc);
     procedure ForEachRow(proc: TProc);
