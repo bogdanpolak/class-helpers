@@ -28,11 +28,11 @@ implementation
 uses
   HelperPascalProcessor;
 
-
 constructor TMainApplication.Create();
 begin
   fAppConfig := TAppConfiguration.Create;
   fAppConfig.LoadFromFile;
+  fSilentMode := true;
 end;
 
 destructor TMainApplication.Destroy;
@@ -60,8 +60,7 @@ var
   FilePath: String;
   Source: String;
 begin
-  Result := TDirectory.GetFiles(fAppConfig.GetHelperSourceDiectory,
-    aFilter);
+  Result := TDirectory.GetFiles(fAppConfig.GetHelperSourceDiectory, aFilter);
 end;
 
 procedure TMainApplication.ExecuteApplication();
@@ -75,13 +74,13 @@ begin
   ValidateSourceDir;
   aNewVersion := ExtractInputParameters;
   aFiles := ScanSourceDir('Helper.*.pas');
-  for aPath in  aFiles do
+  for aPath in aFiles do
   begin
-    aSourceText := TFile.ReadAllText(aPath,TEncoding.UTF8);
-    writeln('Updating: '+aPath);
-    aNewSource := THelperPascalProcessor.ProcessUnit(aSourceText,aNewVersion);
+    aSourceText := TFile.ReadAllText(aPath, TEncoding.UTF8);
+    writeln('Updating: ' + aPath);
+    aNewSource := THelperPascalProcessor.ProcessUnit(aSourceText, aNewVersion);
     if aSourceText <> aNewSource then
-      TFile.WriteAllText(aPath,aNewSource,TEncoding.UTF8);
+      TFile.WriteAllText(aPath, aNewSource, TEncoding.UTF8);
   end;
   readln;
 end;
@@ -90,22 +89,23 @@ function TMainApplication.ExtractInputParameters: string;
 var
   version: string;
 begin
-  if ParamCount=0 then
+  if ParamCount = 0 then
   begin
-    Writeln('+--------------------------------------------------------+');
-    Writeln('|   Class Helper Version Bumper                          |');
-    Writeln('+--------------------------------------------------------+');
-    Writeln('| Can''t execute - required version string as parameter   |');
-    Writeln('| Syntax: version_bumper.exe version                     |');
-    Writeln('| Sample: version_bumper.exe "1.3"                       |');
-    Writeln('+--------------------------------------------------------+');
-    Writeln('');
-    Writeln('   Version number is required!');
-    Writeln('   * Type new version ([Enter] exits application):');
-    Write('   New version: ');
-    Readln(version);
-    if Trim(version)='' then
-      Halt(2)
+    fSilentMode := false;
+    writeln('+--------------------------------------------------------+');
+    writeln('|   Class Helper Version Bumper                          |');
+    writeln('+--------------------------------------------------------+');
+    writeln('| Can''t execute - required version string as parameter   |');
+    writeln('| Syntax: version_bumper.exe version                     |');
+    writeln('| Sample: version_bumper.exe "1.3"                       |');
+    writeln('+--------------------------------------------------------+');
+    writeln('');
+    writeln('New version number is required to update files!');
+    writeln('  Type new version ([Enter] exits application):');
+    Write('  New version: ');
+    readln(version);
+    if Trim(version) = '' then
+      Halt(2);
   end
   else
     version := ParamStr(1);
