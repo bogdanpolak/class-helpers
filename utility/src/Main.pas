@@ -27,7 +27,7 @@ type
 implementation
 
 uses
-  HelperPascalProcessor;
+  Processor.PascalUnit;
 
 constructor TMainApplication.Create();
 begin
