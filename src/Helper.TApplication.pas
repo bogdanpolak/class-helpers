@@ -6,7 +6,7 @@ uses
   Vcl.Forms;
 
 type
-  THelperApplication = class helper for TApplication
+  TApplicationHelper = class helper for TApplication
   const
     // * --------------------------------------------------------------------
     ReleaseDate = '2019-12-05';
@@ -22,7 +22,7 @@ implementation
 uses
   System.SysUtils;
 
-function THelperApplication.InDeveloperMode: boolean;
+function TApplicationHelper.InDeveloperMode: boolean;
 var
   Extention: string;
   AExeName: string;

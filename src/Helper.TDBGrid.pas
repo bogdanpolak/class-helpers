@@ -6,7 +6,7 @@ uses
   Vcl.DBGrids;
 
 type
-  THelperDBGrid = class helper for TDBGrid
+  TDBGridHelper = class helper for TDBGrid
    const
     // * --------------------------------------------------------------------
     ReleaseDate = '2019-12-05';
@@ -27,7 +27,7 @@ implementation
 uses
   Data.DB, System.Math, System.Classes;
 
-function THelperDBGrid.AutoSizeColumns (const CalcForNumberOfRows: integer = 25): integer;
+function TDBGridHelper.AutoSizeColumns (const CalcForNumberOfRows: integer = 25): integer;
 var
   DataSet: TDataSet;
   Bookmark: TBookmark;
