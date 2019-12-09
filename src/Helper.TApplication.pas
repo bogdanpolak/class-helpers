@@ -6,12 +6,9 @@ uses
   Vcl.Forms;
 
 type
-  THelperApplication = class helper for TApplication
-  const
-    // * --------------------------------------------------------------------
-    ReleaseDate = '2019-12-05';
-    ReleaseVersion = '1.2';
-    // * --------------------------------------------------------------------
+  TApplicationHelper = class helper for TApplication
+  private const
+    Version = '1.3';
   public
     { TODO: Please add XML Documentation here }
     function InDeveloperMode: boolean;
@@ -22,7 +19,7 @@ implementation
 uses
   System.SysUtils;
 
-function THelperApplication.InDeveloperMode: boolean;
+function TApplicationHelper.InDeveloperMode: boolean;
 var
   Extention: string;
   AExeName: string;

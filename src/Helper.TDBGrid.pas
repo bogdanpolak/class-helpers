@@ -6,12 +6,9 @@ uses
   Vcl.DBGrids;
 
 type
-  THelperDBGrid = class helper for TDBGrid
-   const
-    // * --------------------------------------------------------------------
-    ReleaseDate = '2019-12-05';
-    ReleaseVersion = '1.2';
-    // * --------------------------------------------------------------------
+  TDBGridHelper = class helper for TDBGrid
+  private const
+    Version = '1.3';
   public
    /// <summary>
     ///   Counts and sets the width of the grid columns in pixels
@@ -27,7 +24,7 @@ implementation
 uses
   Data.DB, System.Math, System.Classes;
 
-function THelperDBGrid.AutoSizeColumns (const CalcForNumberOfRows: integer = 25): integer;
+function TDBGridHelper.AutoSizeColumns (const CalcForNumberOfRows: integer = 25): integer;
 var
   DataSet: TDataSet;
   Bookmark: TBookmark;

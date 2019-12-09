@@ -8,7 +8,9 @@ uses
   System.SysUtils,
   Main in 'Main.pas',
   AppConfiguration in 'AppConfiguration.pas',
-  HelperPascalProcessor in 'HelperPascalProcessor.pas';
+  Processor.PascalUnit in 'Processor.PascalUnit.pas',
+  Processor.ReadmeMarkdown in 'Processor.ReadmeMarkdown.pas',
+  Processor.Utils in 'Processor.Utils.pas';
 
 begin
   try

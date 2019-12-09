@@ -4,11 +4,8 @@ interface
 
 type
   TDateTimeHelper = record helper for TDateTime
-  const
-    // * --------------------------------------------------------------------
-    ReleaseDate = '2019-12-05';
-    ReleaseVersion = '1.2';
-    // * --------------------------------------------------------------------
+  private const
+    Version = '1.3';
   private
   public
     function AsYear: word;

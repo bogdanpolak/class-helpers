@@ -7,15 +7,13 @@ uses
   System.SysUtils,
   System.Classes,
   System.DateUtils,
+  System.Generics.Collections,
   Vcl.Grids;
 
 type
   TStringGridHelper = class helper for TStringGrid
-  const
-    // ♥ ------------------------------------------------------------------ ♥
-    ReleaseDate = '2019-12-05';
-    ReleaseVersion = '1.2';
-    // ♥ ------------------------------------------------------------------ ♥
+  private const
+    Version = '1.3';
   private
     procedure DefineColumnsWithJson(jsStructure: TJSONArray;
       ColumnNames: TStringList);
@@ -115,8 +113,6 @@ procedure TStringGridHelper.FillDataRowsWithJson(jsData: TJSONArray;
   ColumnNames: TStringList);
 var
   i: Integer;
-  jsCoumnDef: TJSONObject;
-  jsValue: TJSONValue;
   aRow: Integer;
   jsItem: TJSONObject;
   j: Integer;

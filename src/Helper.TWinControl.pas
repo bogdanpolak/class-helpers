@@ -9,11 +9,8 @@ uses
 
 type
   TWinControlHelper = class helper for TWinControl
-  const
-    // * --------------------------------------------------------------------
-    ReleaseDate = '2019-12-05';
-    ReleaseVersion = '1.2';
-    // * --------------------------------------------------------------------
+  private const
+    Version = '1.3';
   private
   public
     function FindChildControlByType(aClass: TClass): TControl;

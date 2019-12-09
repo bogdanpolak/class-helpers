@@ -1,4 +1,4 @@
-unit HelperPascalProcessor;
+unit Processor.PascalUnit;
 
 interface
 
@@ -7,7 +7,7 @@ uses
   System.StrUtils;
 
 type
-  THelperPascalProcessor = class
+  TPascalUnitProcessor = class
   const
     Aphostrophe = '''';
   private
@@ -22,7 +22,10 @@ type
 
 implementation
 
-class function THelperPascalProcessor.FindSignature(const aSource,
+uses
+  Processor.Utils;
+
+class function TPascalUnitProcessor.FindSignature(const aSource,
   FieldName: string): integer;
 var
   idx1: integer;
@@ -38,7 +41,7 @@ begin
   Result := -1;
 end;
 
-class function THelperPascalProcessor.TextLength(const aSource: string;
+class function TPascalUnitProcessor.TextLength(const aSource: string;
   aTextStartIdx: integer): integer;
 var
   j: integer;
@@ -52,42 +55,25 @@ begin
   Result := 0;
 end;
 
-class function THelperPascalProcessor.ProcessUnit(const aSource: string;
+class function TPascalUnitProcessor.ProcessUnit(const aSource: string;
   const aNewVersion: string): string;
 var
-  idx1: integer;
-  len1: integer;
-  aReleseDate: string;
   idx2: integer;
   len2: integer;
   aReleaseVersion: string;
-  aNewDate: string;
   aNewSource: string;
 begin
-  idx1 := FindSignature(aSource, 'ReleaseDate');
-  len1 := TextLength(aSource, idx1);
-  aReleseDate := aSource.Substring(idx1, len1);
-  idx2 := FindSignature(aSource, 'ReleaseVersion');
+  idx2 := FindSignature(aSource, 'Version');
   len2 := TextLength(aSource, idx2);
   aReleaseVersion := aSource.Substring(idx2, len2);
-  if len1 = 0 then
-  begin
-    writeln('Error!!! No sugnature with ReleaseDate constant');
-    Halt(3);
-  end;
   if len2 = 0 then
-  begin
-    writeln('Error!!! No sugnature with ReleaseDate constant');
-    Halt(3);
-  end;
-  aNewDate := FormatDateTime('yyyy-mm-dd', Now);
-  aNewSource := aSource.Substring(0, idx1) + aNewDate +
-    aSource.Substring(idx1 + len1, idx2 - idx1 - len1) + aNewVersion +
+    raise EProcessError.Create('No found Version const in class helper.');
+  aNewSource := aSource.Substring(0, idx2) + aNewVersion +
     aSource.Substring(idx2 + len2, 99999);
   write('      ');
   if aSource <> aNewSource then
-    writeln(Format('Updated. Version: %s -> %s  (Release Date: %s -> %s)',
-      [aReleaseVersion, aNewVersion, aReleseDate, aNewDate]))
+    writeln(Format('Updated. Version: %s -> %s', [aReleaseVersion,
+      aNewVersion]))
   else
     writeln('No changes. Nothing to update');
   Result := aNewSource;

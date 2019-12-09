@@ -9,65 +9,66 @@ uses
 
 type
   TJSONObjectHelper = class helper for TJSONObject
-  const
-    // * --------------------------------------------------------------------
-    ReleaseDate = '2019-12-05';
-    ReleaseVersion = '1.2';
-    // * --------------------------------------------------------------------
+  private const
+    Version = '1.3';
   public
-    function fieldAvaliable(const fieldName: string): Boolean;
-    function IsValidIsoDateUtc(const Field: string): Boolean;
-    function GetFieldInt(const Field: string): integer;
-    function GetFieldDateIsoUtc(const Field: string): TDateTime;
-    function GetFieldOrEmpty(const Field: string): string;
+    /// <summary>
+    ///   Checks is JSON object has field (key) provided through parameter and its value is not NULL
+    /// </summary>
+    function IsFieldAvailable(const fieldName: string): Boolean;
+    /// <summary>
+    ///   Checks is JSON object field (fieldName) is valid UTC date in ISO8601 format
+    /// </summary>
+    function IsValidIsoDate(const fieldName: string): Boolean;
+    /// <summary>
+    ///   Gets JSON object field (fieldName) value as integer
+    /// </summary>
+    function GetFieldInt(const fieldName: string): integer;
+    /// <summary>
+    ///   Gets JSON object field (fieldName) value as date in ISO8601 format
+    /// </summary>
+    function GetFieldIsoDate(const fieldName: string): TDateTime;
+    /// <summary>
+    ///   Gets JSON object field (fieldName) value as date or returns empty string if field value is NULL
+    /// </summary>
+    function GetFieldOrEmpty(const fieldName: string): string;
   end;
 
 implementation
 
-function TJSONObjectHelper.fieldAvaliable(const fieldName: string)
-  : Boolean;
+function TJSONObjectHelper.IsFieldAvailable(const fieldName: string): Boolean;
 begin
   Result := Assigned(Self.Values[fieldName]) and not Self.Values
     [fieldName].Null;
 end;
 
-{ TODO 2: [Helper] TJSONObject Class helpper and this method has two responsibilities }
-// Warning! In-out var parameter
-// extract separate:  GetIsoDateUtc
-function TJSONObjectHelper.IsValidIsoDateUtc(const Field: string): Boolean;
-var
-  dt: TDateTime;
+function TJSONObjectHelper.IsValidIsoDate(const fieldName: string): Boolean;
 begin
-  dt := 0;
   try
-    dt := System.DateUtils.ISO8601ToDate(Self.Values[Field].Value, False);
+    System.DateUtils.ISO8601ToDate(Self.Values[fieldName].Value, False);
     Result := True;
-    // dummy code for no warning message - unused dt variable
-    if dt=-9999999 then
-      raise EAbort.Create('');
   except
     on E: Exception do
       Result := False;
   end
 end;
 
-function TJSONObjectHelper.GetFieldDateIsoUtc(const Field: string): TDateTime;
+function TJSONObjectHelper.GetFieldIsoDate(const fieldName: string): TDateTime;
 begin
-  Result := System.DateUtils.ISO8601ToDate(Self.Values[Field].Value, False);
+  Result := System.DateUtils.ISO8601ToDate(Self.Values[fieldName].Value, False);
 end;
 
-function TJSONObjectHelper.GetFieldInt(const Field: string): integer;
+function TJSONObjectHelper.GetFieldInt(const fieldName: string): integer;
 begin
-  Result := (Self.Values[Field] as TJSONNumber).AsInt;
+  Result := (Self.Values[fieldName] as TJSONNumber).AsInt;
 end;
 
-
-function TJSONObjectHelper.GetFieldOrEmpty(const Field: string): string;
+function TJSONObjectHelper.GetFieldOrEmpty(const fieldName: string): string;
 var
   jv: TJSONValue;
 begin
-  jv := Self.Values[Field];
-  if (jv=nil) or (jv.Null) then
+  jv := Self.Values[fieldName];
+  if (jv = nil) or (jv.Null) then
     Result := ''
   else
     Result := jv.Value;
