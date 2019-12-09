@@ -45,3 +45,22 @@ mysqlDataSet.StoreAndUpdateLibrary(reAvaliable, 1);
 | TWinControlHelper | TWinControl | utility methods available for all TWinControl descendants (TForm, TPanel, etc.)  |
 
 [Full helper catalog](https://github.com/bogdanpolak/class-helpers/tree/master/src)
+
+
+## Unit testing
+
+One of the important purposes of using class helpers is to learn how to write unit tests. This repository contains a sample DUnitX test project for the included helpers. I encourage to start analyzing this collection from opening and executing this project. Unit test sets can be easily expanded to provide better (tighter) test coverage. To have better unit testing experience I suggest to install the best TDD Delphi IDE extension: [TestInsight](https://bitbucket.org/sglienke/testinsight/wiki/Home) - very productive platform of working with unit test project (glory to the author! Stefan Glienke).
+
+Sample unit test can be found in `tests` repository folder. [Jump to this folder ...](https://github.com/bogdanpolak/class-helpers/tree/master/tests)
+
+Sample test of `TStringGrid` class helper `ColsWidth` method:
+
+```pas
+procedure TestTStringGridHelper.FiveColumns_ColsWidth;
+begin
+  fGrid.ColCount := 5;
+  fGrid.ColsWidth([50, 100, 90, 110, 80]);
+  Assert.AreEqual(110, fGrid.ColWidths[3]);
+  Assert.AreEqual(80, fGrid.ColWidths[4]);
+end;
+```
