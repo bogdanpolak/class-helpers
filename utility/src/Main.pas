@@ -18,6 +18,7 @@ type
     function ExtractInputParameters(): string;
     procedure ProcessReadmeMarkdown(const aNewVersion: string);
     procedure ProcessSourcePasFiles(const aNewVersion: string);
+    procedure WriteProcessErrorAndHalt(const AErrorMsg: string);
   public
     constructor Create();
     destructor Destroy; override;
@@ -28,6 +29,7 @@ type
 implementation
 
 uses
+  Processor.Utils,
   Processor.PascalUnit,
   Processor.ReadmeMarkdown;
 
@@ -58,6 +60,13 @@ begin
   end;
 end;
 
+procedure TMainApplication.WriteProcessErrorAndHalt(const AErrorMsg: string);
+begin
+  writeln('    [Error] Processing error!');
+  writeln('    ' + AErrorMsg);
+  Halt(3);
+end;
+
 procedure TMainApplication.ProcessReadmeMarkdown(const aNewVersion: string);
 var
   aFilePath: string;
@@ -67,8 +76,13 @@ begin
   aFilePath := fAppConfig.ReadmeFilePath;
   writeln('Updating: ' + aFilePath);
   aSourceText := TFile.ReadAllText(aFilePath, TEncoding.UTF8);
-  aNewSource := TReadmeMarkdownProcessor.ProcessReadme(aSourceText, aNewVersion,
-    fAppConfig.ReadmeSearchPattern);
+  try
+    aNewSource := TReadmeMarkdownProcessor.ProcessReadme(aSourceText,
+      aNewVersion, fAppConfig.ReadmeSearchPattern);
+  except
+    on E: Processor.Utils.EProcessError do
+      WriteProcessErrorAndHalt(E.Message);
+  end;
   TFile.WriteAllText(aFilePath, aNewSource, TEncoding.UTF8);
 end;
 
@@ -86,7 +100,12 @@ begin
   begin
     aSourceText := TFile.ReadAllText(aPath, TEncoding.UTF8);
     writeln('Updating: ' + aPath);
-    aNewSource := TPascalUnitProcessor.ProcessUnit(aSourceText, aNewVersion);
+    try
+      aNewSource := TPascalUnitProcessor.ProcessUnit(aSourceText, aNewVersion);
+    except
+      on E: Processor.Utils.EProcessError do
+        WriteProcessErrorAndHalt(E.Message);
+    end;
     if aSourceText <> aNewSource then
       TFile.WriteAllText(aPath, aNewSource, TEncoding.UTF8);
   end;
