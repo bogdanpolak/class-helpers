@@ -46,7 +46,7 @@ procedure TMainApplication.ValidateSourceDir();
 var
   aSourceDir: string;
 begin
-  aSourceDir := fAppConfig.GetHelperSourceDiectory;
+  aSourceDir := fAppConfig.HeplersSourceDir;
   if not DirectoryExists(aSourceDir) then
   begin
     writeln(Format
@@ -61,7 +61,7 @@ var
   FilePath: String;
   Source: String;
 begin
-  Result := TDirectory.GetFiles(fAppConfig.GetHelperSourceDiectory, aFilter);
+  Result := TDirectory.GetFiles(fAppConfig.HeplersSourceDir, aFilter);
 end;
 
 procedure TMainApplication.ExecuteApplication();
