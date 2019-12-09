@@ -10,30 +10,26 @@ uses
 
 type
   TAppConfiguration = class
-  const
-    KeyRootDirectory = 'rootDirectory';
-    KeyHeplersSrcDir = 'heplersSourceSubdirectory';
-    KeyUpdateReadme = 'updateVersionInReadme';
+  private const
+    KeyHeplersSrcDir = 'heplersUnitsSubdirectory';
+    KeyReadmeIsUpdate = 'readmeIsUpdateVersion';
+    KeyReadmeFilePath = 'readmeFileName';
+    KeyReadmeSearchPattern = 'readmeSearchPattern';
   private
     FRootDirectory: string;
     FHeplersSubDir: string;
-    FIsReadmeUpdate: boolean;
+    FReadmeIsUpdate: boolean;
+    FReadmeFilePath: string;
+    FReadmeSearchPattern: string;
   public
     procedure LoadFromFile;
-    function GetHelperSourceDiectory: string;
-    property RootDirectory: string read FRootDirectory write FRootDirectory;
-    property HeplersSubDir: string read FHeplersSubDir write FHeplersSubDir;
-    property IsReadmeUpdate: boolean read FIsReadmeUpdate write FIsReadmeUpdate;
+    property HeplersSourceDir: string read FHeplersSubDir write FHeplersSubDir;
+    property ReadmeIsUpdate: boolean read FReadmeIsUpdate write FReadmeIsUpdate;
+    property ReadmeFilePath: string read FReadmeFilePath write FReadmeFilePath;
+    property ReadmeSearchPattern: string read FReadmeSearchPattern write FReadmeSearchPattern;
   end;
 
 implementation
-
-{ TAppConfiguration }
-
-function TAppConfiguration.GetHelperSourceDiectory: string;
-begin
-  Result := RootDirectory + HeplersSubDir;
-end;
 
 procedure TAppConfiguration.LoadFromFile;
 var
@@ -45,9 +41,10 @@ begin
   jsObject := TJSONObject.ParseJSONValue(aJsonData) as TJSONObject;
   jsTrue := TJSONTrue.Create;
   try
-    RootDirectory := jsObject.GetValue(KeyRootDirectory).Value;
-    HeplersSubDir := jsObject.GetValue(KeyHeplersSrcDir).Value;
-    IsReadmeUpdate := (jsObject.GetValue(KeyUpdateReadme).Value = jsTrue.Value);
+    HeplersSourceDir := jsObject.GetValue(KeyHeplersSrcDir).Value;
+    ReadmeIsUpdate := (jsObject.GetValue(KeyReadmeIsUpdate).Value = jsTrue.Value);
+    ReadmeFilePath := jsObject.GetValue(KeyReadmeFilePath).Value;
+    ReadmeSearchPattern := jsObject.GetValue(KeyReadmeSearchPattern).Value;
   finally
     jsObject.Free;
     jsTrue.Free;

@@ -13,9 +13,11 @@ type
   TMainApplication = class
   private
     fAppConfig: TAppConfiguration;
-    procedure ValidateSourceDir();
-    procedure ExtractInputParameters();
-    function ScanSourceDir(const aFilter: string): TArray<string>;
+    fSilentMode: boolean;
+    procedure ValidateSourceConfiguration();
+    function ExtractInputParameters(): string;
+    procedure ProcessReadmeMarkdown(const aNewVersion: string);
+    procedure ProcessSourcePasFiles(const aNewVersion: string);
   public
     constructor Create();
     destructor Destroy; override;
@@ -26,13 +28,14 @@ type
 implementation
 
 uses
-  HelperPascalProcessor;
-
+  Processor.PascalUnit,
+  Processor.ReadmeMarkdown;
 
 constructor TMainApplication.Create();
 begin
   fAppConfig := TAppConfiguration.Create;
   fAppConfig.LoadFromFile;
+  fSilentMode := true;
 end;
 
 destructor TMainApplication.Destroy;
@@ -41,11 +44,11 @@ begin
   inherited;
 end;
 
-procedure TMainApplication.ValidateSourceDir();
+procedure TMainApplication.ValidateSourceConfiguration();
 var
   aSourceDir: string;
 begin
-  aSourceDir := fAppConfig.GetHelperSourceDiectory;
+  aSourceDir := fAppConfig.HeplersSourceDir;
   if not DirectoryExists(aSourceDir) then
   begin
     writeln(Format
@@ -55,51 +58,87 @@ begin
   end;
 end;
 
-function TMainApplication.ScanSourceDir(const aFilter: string): TArray<string>;
+procedure TMainApplication.ProcessReadmeMarkdown(const aNewVersion: string);
 var
-  FilePath: String;
-  Source: String;
+  aFilePath: string;
+  aSourceText: string;
+  aNewSource: string;
 begin
-  Result := TDirectory.GetFiles(fAppConfig.GetHelperSourceDiectory,
-    aFilter);
+  aFilePath := fAppConfig.ReadmeFilePath;
+  writeln('Updating: ' + aFilePath);
+  aSourceText := TFile.ReadAllText(aFilePath, TEncoding.UTF8);
+  aNewSource := TReadmeMarkdownProcessor.ProcessReadme(aSourceText, aNewVersion,
+    fAppConfig.ReadmeSearchPattern);
+  TFile.WriteAllText(aFilePath, aNewSource, TEncoding.UTF8);
+end;
+
+procedure TMainApplication.ProcessSourcePasFiles(const aNewVersion: string);
+var
+  aSourceDir: string;
+  aFiles: TArray<string>;
+  aPath: string;
+  aSourceText: string;
+  aNewSource: string;
+begin
+  aSourceDir := fAppConfig.HeplersSourceDir;
+  aFiles := TDirectory.GetFiles(aSourceDir, 'Helper.*.pas');
+  for aPath in aFiles do
+  begin
+    aSourceText := TFile.ReadAllText(aPath, TEncoding.UTF8);
+    writeln('Updating: ' + aPath);
+    aNewSource := TPascalUnitProcessor.ProcessUnit(aSourceText, aNewVersion);
+    if aSourceText <> aNewSource then
+      TFile.WriteAllText(aPath, aNewSource, TEncoding.UTF8);
+  end;
 end;
 
 procedure TMainApplication.ExecuteApplication();
 var
+  aNewVersion: string;
   aFiles: TArray<string>;
   aPath: string;
   aSourceText: string;
-  NewVersion: string;
   aNewSource: string;
 begin
-  ValidateSourceDir;
-  ExtractInputParameters;
-  NewVersion := ParamStr(1);
-  aFiles := ScanSourceDir('Helper.*.pas');
-  for aPath in  aFiles do
+  ValidateSourceConfiguration;
+  aNewVersion := ExtractInputParameters;
+  if fAppConfig.ReadmeIsUpdate then
+    ProcessReadmeMarkdown(aNewVersion);
+  ProcessSourcePasFiles(aNewVersion);
+  if fSilentMode = false then
   begin
-    aSourceText := TFile.ReadAllText(aPath,TEncoding.UTF8);
-    writeln('Updating: '+aPath);
-    aNewSource := THelperPascalProcessor.ProcessUnit(aSourceText,NewVersion);
-    if aSourceText <> aNewSource then
-      TFile.WriteAllText(aPath,aNewSource,TEncoding.UTF8);
+    writeln('');
+    write('All files was updated. Press [Enter] to close application ...');
+    readln;
   end;
-  readln;
 end;
 
-procedure TMainApplication.ExtractInputParameters;
+function TMainApplication.ExtractInputParameters: string;
+var
+  version: string;
 begin
-  if ParamCount=0 then
+  if ParamCount = 0 then
   begin
-    Writeln('+--------------------------------------------------------+');
-    Writeln('|   Class Helper Version Bumper                          |');
-    Writeln('+--------------------------------------------------------+');
-    Writeln('| Can''t execute - required version string as parameter   |');
-    Writeln('| Syntax: version_bumper.exe version                     |');
-    Writeln('| Sample: version_bumper.exe "1.3"                       |');
-    Writeln('+--------------------------------------------------------+');
-    Halt(2);
-  end;
+    fSilentMode := false;
+    writeln('+--------------------------------------------------------+');
+    writeln('|   Class Helper Version Bumper                          |');
+    writeln('+--------------------------------------------------------+');
+    writeln('| Can''t execute - required version string as parameter   |');
+    writeln('| Syntax: version_bumper.exe version                     |');
+    writeln('| Sample: version_bumper.exe "1.3"                       |');
+    writeln('+--------------------------------------------------------+');
+    writeln('');
+    writeln('New version number is required to update files!');
+    writeln('  Type new version ([Enter] exits application):');
+    Write('  New version: ');
+    readln(version);
+    if Trim(version) = '' then
+      Halt(2);
+    writeln('');
+  end
+  else
+    version := ParamStr(1);
+  Result := version;
 end;
 
 class procedure TMainApplication.Run;

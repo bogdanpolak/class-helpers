@@ -1,4 +1,4 @@
-unit HelperPascalProcessor;
+unit Processor.PascalUnit;
 
 interface
 
@@ -7,7 +7,7 @@ uses
   System.StrUtils;
 
 type
-  THelperPascalProcessor = class
+  TPascalUnitProcessor = class
   const
     Aphostrophe = '''';
   private
@@ -22,7 +22,7 @@ type
 
 implementation
 
-class function THelperPascalProcessor.FindSignature(const aSource,
+class function TPascalUnitProcessor.FindSignature(const aSource,
   FieldName: string): integer;
 var
   idx1: integer;
@@ -38,7 +38,7 @@ begin
   Result := -1;
 end;
 
-class function THelperPascalProcessor.TextLength(const aSource: string;
+class function TPascalUnitProcessor.TextLength(const aSource: string;
   aTextStartIdx: integer): integer;
 var
   j: integer;
@@ -52,7 +52,7 @@ begin
   Result := 0;
 end;
 
-class function THelperPascalProcessor.ProcessUnit(const aSource: string;
+class function TPascalUnitProcessor.ProcessUnit(const aSource: string;
   const aNewVersion: string): string;
 var
   idx1: integer;
