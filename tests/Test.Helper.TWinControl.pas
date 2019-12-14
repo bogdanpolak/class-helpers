@@ -54,6 +54,19 @@ end;
 // Tests section 1
 // -----------------------------------------------------------------------
 
+type
+  TControlsSet1 = record
+    TopPanel: TPanel;
+    ClientPanel: TPanel;
+    EditTop: TEdit;
+    ButtonTop1: TButton;
+    ButtonTop2: TButton;
+  end;
+
+function Given_TwoPanels_WithEditAndTwoButton (aForm: TForm): TControlsSet1;
+begin
+end;
+
 procedure TestTWinControlHelper.FindChildControlRecursiveByType;
 var
   aTopPanel: TPanel;
