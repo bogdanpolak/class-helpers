@@ -28,6 +28,7 @@ type
     procedure TearDown;
   published
     procedure FindChildControlRecursiveByType;
+    procedure FindChildControlRecursiveByName;
   end;
 
 implementation
@@ -48,6 +49,7 @@ end;
 
 procedure TestTWinControlHelper.TearDown;
 begin
+  fForm.Free;
 end;
 
 // -----------------------------------------------------------------------
@@ -121,6 +123,18 @@ begin
   aButton := fForm.FindChildControlRecursiveByType(TButton) as TButton;
 
   Assert.AreEqual(controls.ButtonTop1.Name, aButton.Name);
+end;
+
+procedure TestTWinControlHelper.FindChildControlRecursiveByName;
+var
+  controls: TControlsSet1;
+  aButton: TButton;
+begin
+  controls := Given_TwoPanels_WithEditAndTwoButton(fForm);
+
+  aButton := fForm.FindChildControlRecursive('ButtonTop2') as TButton;
+
+  Assert.AreEqual(controls.ButtonTop2.Name, aButton.Name);
 end;
 
 initialization
