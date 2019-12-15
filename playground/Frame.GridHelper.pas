@@ -1,4 +1,4 @@
-unit Frame.GridHelper;
+﻿unit Frame.GridHelper;
 
 interface
 
@@ -51,15 +51,22 @@ end;
 
 procedure TFrameGridHelper.Button3Click(Sender: TObject);
 const
-  JsonStructureAndData = '{"structure": [' +
-    '{"column": "no", "caption": "No.", "width": 30}, ' +
-    '{"column": "mesure", "caption": "Mesure description", "width": 200}, ' +
-    '{"column": "acronym", "caption": "Acronym", "width": 70}, ' +
-    '{"column": "unit", "caption": "Unit name", "width": 120}, ' +
-    '{"column": "value", "caption": "Value", "width": 60}' + (**)
-    '], "data":[' +
-    '{"no": 1, "mesure": "Number of DI Containers", "acronym": "NDIC", "unit": "n/a", "value": 120},'
-    + '{"no": 2, "mesure": "Maximum ctor injection", "acronym": "MCTI", "unit": "PCLRecord.pas", "value": 56}'
+  JsonStructureAndData =   //→
+    '{"structure": [' //→
+    + '  {"column": "id", "caption": "ID.", "width": 30},' //→
+    + '  {"column": "fullname", "caption": "Full Name", "width": 140},' //→
+    + '  {"column": "spouse", "caption": "Spouse", "width": 110},' //→
+    + '  {"column": "born", "caption": "Born", "width": 80},' //→
+    + '  {"column": "died", "caption": "Died", "width": 80},' //→
+    + '  {"column": "parrents", "caption": "Parrents", "width": 240},' //→
+    + '  {"column": "house", "caption": "House", "width": 80}' //→
+    + '], "data":[' //→
+    + '  {"id":1,"fullname":"Harry James Potter","nickname":"The Boy Who Lived / The Chosen One","parrents":"James Potter & Lily Potter","spouse":"Ginny Weasley","born":"1980-07-31","house":"Gryffindor"},'
+    + '  {"id":2,"fullname":"Ronald Bilius Weasley","parrents":"Arthur Weasley & Molly Weasley","brothers":"Bill, Charlie, Percy, Fred and George","sisters":"Ginny","spouse":"Hermione Granger","born":"1980-03-01","house":"Gryffindor"},'
+    + '  {"id":3,"fullname":"Hermione Jean Granger","spouse":"Ron Weasley","born":"1979-09-19","house":"Gryffindor"},'
+    + '  {"id":4,"fullname":"Draco Malfoy","parrents":"Lucius Malfoy & Narcissa Malfoy","spouse":"Astoria Greengrass","born":"1980-06-05","house":"Slytherin"},'
+    + '  {"id":5,"fullname":"Severus Snape","parrents":"Tobias Snape & Eileen Snape","born":"1960-01-09","died":"1998-05-02","house":"Slytherin"},'
+    + '  {"id":6,"fullname":"Albus Percival Dumbledore","parrents":"Percival Dumbledore & Kendra Dumbledore","brothers":"Aberforth, Aurelius (alleged brother)","sisters":"Ariana","spouse":"","born":"1881-01-01","died":"1997-06-30","house":"Gryffindor"}'
     + ']} ';
 var
   jsData: TJSONObject;
