@@ -10,7 +10,8 @@ uses
   Helper.TDBGrid in '..\src\Helper.TDBGrid.pas',
   Helper.TJSONObject in '..\src\Helper.TJSONObject.pas',
   Helper.TStringGrid in '..\src\Helper.TStringGrid.pas',
-  Helper.TWinControl in '..\src\Helper.TWinControl.pas';
+  Helper.TWinControl in '..\src\Helper.TWinControl.pas',
+  Frame.DataSetHelper in 'Frame.DataSetHelper.pas' {FrameDataSetHelper: TFrame};
 
 {$R *.res}
 
