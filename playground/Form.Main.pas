@@ -26,7 +26,6 @@ type
   TFormMain = class(TForm)
     GroupBox1: TGroupBox;
     PageControl1: TPageControl;
-    Button1: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ButtonCommandClick(Sender: TObject);

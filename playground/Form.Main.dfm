@@ -24,18 +24,6 @@ object FormMain: TFormMain
     Align = alLeft
     Caption = 'GroupBox1'
     TabOrder = 0
-    object Button1: TButton
-      AlignWithMargins = True
-      Left = 5
-      Top = 18
-      Width = 164
-      Height = 25
-      Align = alTop
-      Caption = 'Button1'
-      TabOrder = 0
-      OnClick = ButtonCommandClick
-      ExplicitLeft = 7
-    end
   end
   object PageControl1: TPageControl
     AlignWithMargins = True
@@ -45,9 +33,6 @@ object FormMain: TFormMain
     Height = 376
     Align = alClient
     TabOrder = 1
-    ExplicitLeft = 384
-    ExplicitTop = 64
-    ExplicitWidth = 289
-    ExplicitHeight = 193
+    ExplicitTop = -2
   end
 end
