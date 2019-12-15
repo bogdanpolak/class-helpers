@@ -101,6 +101,14 @@ begin
     Align := alTop;
     Top := 999;
   end;
+  with Result.ButtonTop2 do
+  begin
+    Name := 'ButtonTop2';
+    Caption := 'Button Top Two';
+    Parent := Result.TopPanel;
+    Align := alTop;
+    Top := 999;
+  end;
 end;
 
 procedure TestTWinControlHelper.FindChildControlRecursiveByType;
