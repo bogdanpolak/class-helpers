@@ -43,15 +43,27 @@ begin
       begin
         Result := (Self.Controls[i] as TWinControl)
           .FindChildControlRecursiveByType(aClass);
-        if Result<>nil then
-          exit;
+        if Result <> nil then
+          Exit;
       end;
 end;
 
 function TWinControlHelper.FindChildControlRecursive(const aName: string)
   : TControl;
+var
+  i: Integer;
+  winControl: TWinControl;
 begin
-
+  Result := Self.FindChildControl(aName);
+  if Result = nil then
+    for i := 0 to Self.ControlCount - 1 do
+      if Self.Controls[i] is TWinControl then
+      begin
+        winControl := (Self.Controls[i] as TWinControl);
+        Result := winControl.FindChildControlRecursive(aName);
+        if Result <> nil then
+          Exit;
+      end;
 end;
 
 end.
