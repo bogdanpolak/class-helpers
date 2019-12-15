@@ -34,7 +34,8 @@ implementation
 {$R *.dfm}
 
 uses
-  Frame.GridHelper;
+  Frame.GridHelper,
+  Frame.DataSetHelper;
 
 type
   TFrameType = type of TFrame;
@@ -45,9 +46,12 @@ type
   end;
 
 const
-  PlaygroudItems = 1;
-  PlaygroudDefs: array [0 .. PlaygroudItems - 1] of TPlaygroundItem =
-    ((caption: 'Helper - TStringGrid'; frameType: TFrameGridHelper));
+  PlaygroudItems = 2;
+  PlaygroudDefs: array [0 .. PlaygroudItems - 1] of TPlaygroundItem = //.
+    ( //.
+    (caption: 'Helper - TStringGrid'; frameType: TFrameGridHelper), //.
+    (caption: 'Helper - TDataSet && TDBGrid'; frameType: TFrameDataSetHelper) //.
+    );
 
 function BuildButton(const aCaption: string; const aParent: TWinControl;
   const aOnClick: TNotifyEvent): TButton;
