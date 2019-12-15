@@ -87,22 +87,22 @@ end;
 
 procedure TFormMain.ButtonCommandClick(Sender: TObject);
 var
-  frame: TFrame;
+  Frame: TFrame;
   tabsheet: TTabSheet;
   btn: TButton;
 begin
   btn := Sender as TButton;
   tabsheet := fDemoTabSheets.Items[btn];
-  frame := fDemoFrames.Items[btn];
+  Frame := fDemoFrames.Items[btn];
   if tabsheet = nil then
   begin
     tabsheet := TTabSheet.Create(PageControl1);
-    tabsheet.Caption := (Sender as TButton).Caption;
+    tabsheet.caption := (Sender as TButton).caption;
     tabsheet.PageControl := PageControl1;
     fDemoTabSheets.Items[btn] := tabsheet;
-    frame.Parent := tabsheet;
-    frame.Visible := True;
-    frame.Align := alClient;
+    Frame.Parent := tabsheet;
+    Frame.Visible := True;
+    Frame.Align := alClient;
   end
   else
     PageControl1.ActivePage := fDemoTabSheets[btn];
