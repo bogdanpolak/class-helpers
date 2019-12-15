@@ -102,6 +102,7 @@ begin
     fDemoTabSheets.Items[btn] := tabsheet;
     frame.Parent := tabsheet;
     frame.Visible := True;
+    frame.Align := alClient;
   end
   else
     PageControl1.ActivePage := fDemoTabSheets[btn];
