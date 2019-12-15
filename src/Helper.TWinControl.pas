@@ -43,8 +43,8 @@ begin
       begin
         Result := (Self.Controls[i] as TWinControl)
           .FindChildControlRecursiveByType(aClass);
-        if Result<>nil then
-          exit;
+        if Result <> nil then
+          Exit;
       end;
 end;
 
