@@ -104,10 +104,15 @@ begin
 end;
 
 procedure TestTWinControlHelper.FindChildControlRecursiveByType;
+var
+  controls: TControlsSet1;
+  aButton: TButton;
 begin
-  Given_TwoPanels_WithEditAndTwoButton(fForm);
-  Assert.IsTrue(fForm.FindChildControlRecursiveByType(TButton) <> nil,
-    'expected TButton control, but is nil');
+  controls := Given_TwoPanels_WithEditAndTwoButton(fForm);
+
+  aButton := fForm.FindChildControlRecursiveByType(TButton) as TButton;
+
+  Assert.AreEqual(controls.ButtonTop1.Name, aButton.Name);
 end;
 
 initialization
