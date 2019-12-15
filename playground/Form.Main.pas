@@ -14,15 +14,6 @@ uses
   Vcl.StdCtrls, Vcl.Grids, Vcl.ComCtrls;
 
 type
-  TFrameType = type of TFrame;
-
-  TPlaygroundItem = class
-    Caption: string;
-    Frame: TFrame;
-    FrameType: TFrameType;
-    constructor Create(const aCaption: string; aFrameType: TFrameType);
-  end;
-
   TFormMain = class(TForm)
     GroupBox1: TGroupBox;
     PageControl1: TPageControl;
@@ -30,10 +21,9 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ButtonCommandClick(Sender: TObject);
   private
-    fCatalog: TObjectDictionary<TButton, TPlaygroundItem>;
-    procedure FillButtonCaptions;
+    fDemoTabSheets: TDictionary<TButton, TTabSheet>;
+    fDemoFrames: TDictionary<TButton, TFrame>;
   public
-    { Public declarations }
   end;
 
 var
@@ -46,58 +36,75 @@ implementation
 uses
   Frame.GridHelper;
 
-{ TPlaygroundCatalog }
+type
+  TFrameType = type of TFrame;
 
-constructor TPlaygroundItem.Create(const aCaption: string;
-  aFrameType: TFrameType);
-begin
-  Caption := aCaption;
-  FrameType := aFrameType;
-end;
-
-{ TFormMain }
-
-procedure TFormMain.FormClose(Sender: TObject; var Action: TCloseAction);
-begin
-  fCatalog.Free;
-end;
-
-procedure TFormMain.ButtonCommandClick(Sender: TObject);
-var
-  item: TPlaygroundItem;
-  tsh: TTabSheet;
-begin
-  item := fCatalog.Items[Sender as TButton];
-  if item.Frame=nil then
-  begin
-    (Sender as TButton).Enabled := False;
-    tsh := TTabSheet.Create(PageControl1);
-    tsh.Caption := item.Caption;
-    tsh.PageControl := PageControl1;
-    tsh.Tag := NativeInt(Pointer(item));
-    item.Frame := item.FrameType.Create(Self);
-    item.Frame.Parent := tsh;
-    item.Frame.Visible := True;
+  TPlaygroundItem = record
+    caption: string;
+    frameType: TFrameType;
   end;
-end;
 
-procedure TFormMain.FillButtonCaptions;
-var
-  pair: TPair<TButton,TPlaygroundItem>;
+const
+  PlaygroudItems = 1;
+  PlaygroudDefs: array [0 .. PlaygroudItems - 1] of TPlaygroundItem =
+    ((caption: 'Helper - TStringGrid'; frameType: TFrameGridHelper));
+
+function BuildButton(const aCaption: string; const aParent: TWinControl;
+  const aOnClick: TNotifyEvent): TButton;
 begin
-  for pair in fCatalog do
+  Result := TButton.Create(aParent);
+  with Result do
   begin
-    pair.Key.Caption := pair.Value.Caption;
-    pair.Key.OnClick := ButtonCommandClick;
+    Top := 999;
+    caption := aCaption;
+    OnClick := aOnClick;
+    Parent := aParent;
+    Align := alTop;
+    AlignWithMargins := True;
   end;
 end;
 
 procedure TFormMain.FormCreate(Sender: TObject);
+var
+  i: Integer;
+  btn: TButton;
 begin
-  fCatalog := TObjectDictionary<TButton, TPlaygroundItem>.Create();
-  fCatalog.Add(Button1, TPlaygroundItem.Create('Helper.TStringGrid',
-    TFrameGridHelper));
-  FillButtonCaptions;
+  fDemoTabSheets := TDictionary<TButton, TTabSheet>.Create();
+  fDemoFrames := TDictionary<TButton, TFrame>.Create();
+  for i := 0 to PlaygroudItems - 1 do
+  begin
+    btn := BuildButton(PlaygroudDefs[i].caption, GroupBox1, ButtonCommandClick);
+    fDemoTabSheets.Add(btn, nil);
+    fDemoFrames.Add(btn, PlaygroudDefs[i].frameType.Create(Self));
+  end;
+end;
+
+procedure TFormMain.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  fDemoTabSheets.Free;
+  fDemoFrames.Free;
+end;
+
+procedure TFormMain.ButtonCommandClick(Sender: TObject);
+var
+  frame: TFrame;
+  tabsheet: TTabSheet;
+  btn: TButton;
+begin
+  btn := Sender as TButton;
+  tabsheet := fDemoTabSheets.Items[btn];
+  frame := fDemoFrames.Items[btn];
+  if tabsheet = nil then
+  begin
+    tabsheet := TTabSheet.Create(PageControl1);
+    tabsheet.Caption := (Sender as TButton).Caption;
+    tabsheet.PageControl := PageControl1;
+    fDemoTabSheets.Items[btn] := tabsheet;
+    frame.Parent := tabsheet;
+    frame.Visible := True;
+  end
+  else
+    PageControl1.ActivePage := fDemoTabSheets[btn];
 end;
 
 end.
