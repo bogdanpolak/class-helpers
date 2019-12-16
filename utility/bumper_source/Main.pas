@@ -50,7 +50,7 @@ procedure TMainApplication.ValidateSourceConfiguration();
 var
   aSourceDir: string;
 begin
-  aSourceDir := fAppConfig.HeplersSourceDir;
+  aSourceDir := fAppConfig.SourceDir;
   if not DirectoryExists(aSourceDir) then
   begin
     writeln(Format
@@ -94,8 +94,8 @@ var
   aSourceText: string;
   aNewSource: string;
 begin
-  aSourceDir := fAppConfig.HeplersSourceDir;
-  aFiles := TDirectory.GetFiles(aSourceDir, 'Helper.*.pas');
+  aSourceDir := fAppConfig.SourceDir;
+  aFiles := TDirectory.GetFiles(aSourceDir, fAppConfig.SrcSearchPattern);
   for aPath in aFiles do
   begin
     aSourceText := TFile.ReadAllText(aPath, TEncoding.UTF8);
