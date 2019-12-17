@@ -38,6 +38,7 @@ type
     procedure AutoSizeColumns_KeepsSameRowPosition;
     procedure AutoSizeColumns_CurrencyColumn;
     procedure LoadColumns_TwoColumns;
+    procedure LoadColumns_OneFieldInvalid;
   end;
 
 implementation
@@ -194,6 +195,20 @@ begin
 
   Assert.AreEqual('id', fDBGrid.Columns.Items[0].FieldName);
   Assert.AreEqual('visited', fDBGrid.Columns.Items[1].FieldName);
+end;
+
+procedure TestTDBGridHelper.LoadColumns_OneFieldInvalid;
+var
+  aDataSet: TDataSet;
+begin
+  fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
+
+  LoadColumnsFromString(fDBGrid, '[' //.
+  +'  {"fieldName":"id"}' //.
+  +', {"fieldName":"ciiiity"} ' // invalid column name
+  +']');
+
+  Assert.AreEqual(1, fDBGrid.Columns.Count);
 end;
 
 initialization
