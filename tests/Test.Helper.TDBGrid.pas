@@ -193,6 +193,7 @@ begin
   +']');
 
   Assert.AreEqual(2, fDBGrid.Columns.Count);
+  Assert.AreEqual('city', fDBGrid.Columns.Items[1].FieldName);
 end;
 
 initialization
