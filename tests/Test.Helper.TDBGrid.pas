@@ -150,7 +150,6 @@ begin
   fDBGrid.AutoSizeColumns();
 
   // 49{px} = fForm.Canvas.TextWidth ('£125.99' + fDBGrid.SufixForAdditionalColumnWidth);
-  Assert.AreEqual('£125.99', fBudgetField.DisplayText);
   Assert.AreEqual(49{px}, fDBGrid.Columns.Items[4].Width);
 end;
 
