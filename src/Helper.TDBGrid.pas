@@ -82,11 +82,11 @@ end;
 
 procedure TDBGridHelper.LoadColumnsFromJson(aStoredColumns: TJSONArray);
 var
-  i: Integer;
+  i: integer;
   jsCol: TJSONObject;
 begin
-  Self.Columns.Clear;
-  for i := 0 to aStoredColumns.Count-1 do
+  self.Columns.Clear;
+  for i := 0 to aStoredColumns.Count - 1 do
   begin
     jsCol := aStoredColumns.Items[i] as TJSONObject;
     Self.Columns.Add.FieldName := jsCol.GetValue('fieldName').Value;
