@@ -57,7 +57,7 @@ begin
         for i := 0 to self.Columns.Count - 1 do
           if self.Columns[i].Visible then
             ColumnsWidth[i] := Max(ColumnsWidth[i],
-              self.Canvas.TextWidth(self.Columns[i].Field.Text +
+              self.Canvas.TextWidth(self.Columns[i].Field.DisplayText +
               SufixForAdditionalColumnWidth));
         Inc(Count);
         DataSet.Next;
