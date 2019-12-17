@@ -189,11 +189,11 @@ begin
 
   LoadColumnsFromString(fDBGrid, '[' //.
   +'  {"fieldName":"id"}' //.
-  +', {"fieldName":"city"} ' //.
+  +', {"fieldName":"visited"} ' //.
   +']');
 
-  Assert.AreEqual(2, fDBGrid.Columns.Count);
-  Assert.AreEqual('city', fDBGrid.Columns.Items[1].FieldName);
+  Assert.AreEqual('id', fDBGrid.Columns.Items[0].FieldName);
+  Assert.AreEqual('visited', fDBGrid.Columns.Items[1].FieldName);
 end;
 
 initialization
