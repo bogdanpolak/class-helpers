@@ -3,7 +3,8 @@
 interface
 
 uses
-  Vcl.DBGrids;
+  Vcl.DBGrids,
+  System.JSON;
 
 type
   TDBGridHelper = class helper for TDBGrid
@@ -19,6 +20,7 @@ type
     ///   The number of rows for which widths are counted
     /// </param>
     function AutoSizeColumns(const CalcForNumberOfRows: integer = 25): integer;
+    procedure LoadColumnsFromJson(aStoredColumns: TJSONArray);
   end;
 
 implementation
@@ -76,6 +78,11 @@ begin
       Inc(Count, ColumnsWidth[i]);
     end;
   Result := Count - self.ClientWidth;
+end;
+
+procedure TDBGridHelper.LoadColumnsFromJson(aStoredColumns: TJSONArray);
+begin
+
 end;
 
 end.

@@ -6,6 +6,7 @@ uses
   DUnitX.TestFramework,
   System.Classes,
   System.SysUtils,
+  System.JSON,
   Vcl.Controls,
   Vcl.Forms,
   Vcl.DBGrids,
@@ -24,6 +25,8 @@ type
     fForm: TForm;
     fDBGrid: TDBGrid;
     function GivenEmptyDataset(aOwner: TComponent): TDataSet;
+    function GivenDataSet_WithOneCity(aOwner: TComponent): TDataSet;
+    procedure LoadColumnsFromString(aDBGrid: TDBGrid; const sColumns: string);
   public
     [Setup]
     procedure Setup;
@@ -34,6 +37,7 @@ type
     procedure AutoSizeColumns_TextColumn;
     procedure AutoSizeColumns_KeepsSameRowPosition;
     procedure AutoSizeColumns_CurrencyColumn;
+    procedure LoadColumns_TwoColumns;
   end;
 
 implementation
@@ -151,6 +155,44 @@ begin
 
   // 49{px} = fForm.Canvas.TextWidth ('£125.99' + fDBGrid.SufixForAdditionalColumnWidth);
   Assert.AreEqual(49{px}, fDBGrid.Columns.Items[4].Width);
+end;
+
+// -----------------------------------------------------------------------
+// Tests for LoadColumns
+// -----------------------------------------------------------------------
+
+function TestTDBGridHelper.GivenDataSet_WithOneCity(aOwner: TComponent)
+  : TDataSet;
+begin
+  Result := GivenEmptyDataset(aOwner);
+  Result.AppendRecord([1, 'Edinburgh', 7, EncodeDate(2013, 06, 21), 1250]);
+end;
+
+procedure TestTDBGridHelper.LoadColumnsFromString(aDBGrid: TDBGrid;
+  const sColumns: string);
+var
+  jsColumns: TJSONArray;
+begin
+  jsColumns := TJSONObject.ParseJSONValue(sColumns) as TJSONArray;
+  try
+    aDBGrid.LoadColumnsFromJson(jsColumns);
+  finally
+    jsColumns.Free;
+  end;
+end;
+
+procedure TestTDBGridHelper.LoadColumns_TwoColumns;
+var
+  aDataSet: TDataSet;
+begin
+  fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
+
+  LoadColumnsFromString(fDBGrid, '[' //.
+  +'  {"fieldName":"id"}' //.
+  +', {"fieldName":"city"} ' //.
+  +']');
+
+  Assert.AreEqual(2, fDBGrid.Columns.Count);
 end;
 
 initialization
