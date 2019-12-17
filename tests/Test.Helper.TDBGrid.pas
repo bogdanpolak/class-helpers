@@ -1,4 +1,4 @@
-unit Test.Helper.TDBGrid;
+﻿unit Test.Helper.TDBGrid;
 
 interface
 
@@ -49,7 +49,8 @@ begin
   fForm.Name := 'MainForm';
   fForm.Caption := 'Main Form';
   fDBGrid := TDBGrid.Create(fForm);
-  with fDBGrid do begin
+  with fDBGrid do
+  begin
     Align := alClient;
     Parent := fForm;
     DataSource := TDataSource.Create(fForm);
@@ -65,7 +66,7 @@ end;
 // Utilities
 // -----------------------------------------------------------------------
 
-function TestTDBGridHelper.GivenEmptyDataset(aOwner:TComponent): TDataSet;
+function TestTDBGridHelper.GivenEmptyDataset(aOwner: TComponent): TDataSet;
 var
   cds: TClientDataSet;
 begin
@@ -79,7 +80,7 @@ begin
     FieldDefs.Add('budget', ftCurrency);
     CreateDataSet;
   end;
-  Result :=  cds;
+  Result := cds;
 end;
 
 // -----------------------------------------------------------------------
@@ -89,18 +90,18 @@ end;
 procedure TestTDBGridHelper.DeviceDPI;
 var
   aDataSet: TDataSet;
-  expectColumn2Widht: Integer;
+  expectColumn2Width: Integer;
 begin
   aDataSet := GivenEmptyDataset(fForm);
-  aDataset.AppendRecord([1, 'Edinburgh', EncodeDate(2013, 06, 21)]);
+  aDataSet.AppendRecord([1, 'Edinburgh', EncodeDate(2013, 06, 21)]);
   fDBGrid.DataSource.DataSet := aDataSet;
 
   // no Act session - just asserting device dpi
 
   // Column with in pixels is device dependent (dpi)
   // requires more investigation how to tes this in more device independent way
-  expectColumn2Widht := 184;  // px -
-  Assert.AreEqual(expectColumn2Widht,fDBGrid.Columns.Items[1].Width);
+  expectColumn2Width := 184; // px -
+  Assert.AreEqual(expectColumn2Width, fDBGrid.Columns.Items[1].Width);
 end;
 
 procedure TestTDBGridHelper.AutoSizeColumns_TextColumn;
@@ -108,12 +109,12 @@ var
   aDataSet: TDataSet;
 begin
   aDataSet := GivenEmptyDataset(fForm);
-  aDataset.AppendRecord([1, 'Edinburgh', EncodeDate(2013, 06, 21)]);
+  aDataSet.AppendRecord([1, 'Edinburgh', 7, EncodeDate(2013, 06, 21)]);
   fDBGrid.DataSource.DataSet := aDataSet;
 
   fDBGrid.AutoSizeColumns();
 
-  Assert.AreEqual(57{px},fDBGrid.Columns.Items[1].Width);
+  Assert.AreEqual(57{px}, fDBGrid.Columns.Items[1].Width);
 end;
 
 procedure TestTDBGridHelper.AutoSizeColumns_KeepsSameRowPosition;
@@ -121,16 +122,16 @@ var
   aDataSet: TDataSet;
 begin
   aDataSet := GivenEmptyDataset(fForm);
-  aDataset.AppendRecord([1, 'Edinburgh', EncodeDate(2013, 06, 21)]);
-  aDataset.AppendRecord([2, 'Glassgow', 4, EncodeDate(2015, 09, 13)]);
-  aDataset.AppendRecord([3, 'Cracow', 6, EncodeDate(2019, 01, 01)]);
-  aDataset.AppendRecord([4, 'Prague', 4, EncodeDate(2013, 06, 21)]);
-  aDataset.Locate('id',3,[]);
+  aDataSet.AppendRecord([1, 'Edinburgh', 7, EncodeDate(2013, 06, 21)]);
+  aDataSet.AppendRecord([2, 'Glassgow', 4, EncodeDate(2015, 09, 13)]);
+  aDataSet.AppendRecord([3, 'Cracow', 6, EncodeDate(2019, 01, 01)]);
+  aDataSet.AppendRecord([4, 'Prague', 4, EncodeDate(2013, 06, 21)]);
+  aDataSet.Locate('id', 3, []);
   fDBGrid.DataSource.DataSet := aDataSet;
 
   fDBGrid.AutoSizeColumns();
 
-  Assert.AreEqual('Cracow',aDataset.FieldByName('city').AsString);
+  Assert.AreEqual('Cracow', aDataSet.FieldByName('city').AsString);
 end;
 
 initialization

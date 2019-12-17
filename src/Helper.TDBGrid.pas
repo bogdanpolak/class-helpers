@@ -10,7 +10,7 @@ type
   private const
     Version = '1.3';
   public
-   /// <summary>
+    /// <summary>
     ///   Counts and sets the width of the grid columns in pixels
     /// </summary>
     /// <param name="CalcForNumberOfRows">
@@ -24,7 +24,8 @@ implementation
 uses
   Data.DB, System.Math, System.Classes;
 
-function TDBGridHelper.AutoSizeColumns (const CalcForNumberOfRows: integer = 25): integer;
+function TDBGridHelper.AutoSizeColumns(const CalcForNumberOfRows
+  : integer = 25): integer;
 var
   DataSet: TDataSet;
   Bookmark: TBookmark;
