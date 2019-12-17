@@ -33,6 +33,7 @@ type
     procedure DeviceDPI;
     procedure AutoSizeColumns_TextColumn;
     procedure AutoSizeColumns_KeepsSameRowPosition;
+    procedure AutoSizeColumns_CurrencyColumn;
   end;
 
 implementation
@@ -132,6 +133,25 @@ begin
   fDBGrid.AutoSizeColumns();
 
   Assert.AreEqual('Cracow', aDataSet.FieldByName('city').AsString);
+end;
+
+procedure TestTDBGridHelper.AutoSizeColumns_CurrencyColumn;
+var
+  aDataSet: TDataSet;
+  fBudgetField: TCurrencyField;
+  expectedWidth: Integer;
+begin
+  FormatSettings := TFormatSettings.Create('en-GB');
+  aDataSet := GivenEmptyDataset(fForm);
+  aDataSet.AppendRecord([1, 'Edinburgh', 7, TDateTime(0), 125.99]);
+  fDBGrid.DataSource.DataSet := aDataSet;
+  fBudgetField := aDataSet.FieldByName('budget') as TCurrencyField;
+
+  fDBGrid.AutoSizeColumns();
+
+  // 49{px} = fForm.Canvas.TextWidth ('£125.99' + fDBGrid.SufixForAdditionalColumnWidth);
+  Assert.AreEqual('£125.99', fBudgetField.DisplayText);
+  Assert.AreEqual(49{px}, fDBGrid.Columns.Items[4].Width);
 end;
 
 initialization
