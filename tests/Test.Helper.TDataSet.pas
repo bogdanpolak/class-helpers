@@ -91,7 +91,7 @@ begin
   // Arrange
   BuildDataSet1;
   // .   GivenDataSetWithFourVisitedCities
-  fDataset.AppendRecord([1, 'Edynburgh', 5, EncodeDate(2018, 05, 28)]);
+  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
   fDataset.AppendRecord([2, 'Glassgow', 4, EncodeDate(2015, 09, 13)]);
   fDataset.AppendRecord([3, 'Cracow', 6, EncodeDate(2019, 01, 01)]);
   fDataset.AppendRecord([4, 'Prague', 4, EncodeDate(2013, 06, 21)]);
