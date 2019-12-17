@@ -39,6 +39,7 @@ type
     procedure AutoSizeColumns_CurrencyColumn;
     procedure LoadColumns_TwoColumns;
     procedure LoadColumns_OneFieldInvalid;
+    procedure LoadColumns_TwoColumnsWithCaption;
   end;
 
 implementation
@@ -209,6 +210,20 @@ begin
   +']');
 
   Assert.AreEqual(1, fDBGrid.Columns.Count);
+end;
+
+procedure TestTDBGridHelper.LoadColumns_TwoColumnsWithCaption;
+var
+  aDataSet: TDataSet;
+begin
+  fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
+
+  LoadColumnsFromString(fDBGrid, '[' //.
+  +'  {"fieldName":"id", "title":"CityID"}' //.
+  +', {"fieldName":"city", "title":"City name"} ' //.
+  +']');
+
+  Assert.AreEqual('City name', fDBGrid.Columns.Items[1].Title.Caption);
 end;
 
 initialization
