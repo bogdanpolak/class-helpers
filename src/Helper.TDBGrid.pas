@@ -7,6 +7,8 @@ uses
 
 type
   TDBGridHelper = class helper for TDBGrid
+  public const
+    SufixForAdditionalColumnWidth = '   ';
   private const
     Version = '1.3';
   public
@@ -35,8 +37,8 @@ begin
   SetLength(ColumnsWidth, self.Columns.Count);
   for i := 0 to self.Columns.Count - 1 do
     if self.Columns[i].Visible then
-      ColumnsWidth[i] := self.Canvas.TextWidth
-        (self.Columns[i].Title.Caption + '   ')
+      ColumnsWidth[i] := self.Canvas.TextWidth(self.Columns[i].Title.Caption +
+        SufixForAdditionalColumnWidth)
     else
       ColumnsWidth[i] := 0;
   if self.DataSource <> nil then
@@ -55,7 +57,8 @@ begin
         for i := 0 to self.Columns.Count - 1 do
           if self.Columns[i].Visible then
             ColumnsWidth[i] := Max(ColumnsWidth[i],
-              self.Canvas.TextWidth(self.Columns[i].Field.Text + '   '));
+              self.Canvas.TextWidth(self.Columns[i].Field.Text +
+              SufixForAdditionalColumnWidth));
         Inc(Count);
         DataSet.Next;
       end;
