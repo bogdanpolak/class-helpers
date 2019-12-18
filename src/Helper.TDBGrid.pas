@@ -80,11 +80,24 @@ begin
   Result := Count - self.ClientWidth;
 end;
 
+function GetJsonObjectValue(jsObj: TJSONObject; const key: string): string;
+var
+  jv: TJSONValue;
+begin
+  jv := jsObj.Values[key];
+  if (jv = nil) or (jv.Null) then
+    Result := ''
+  else
+    Result := jv.Value;
+end;
+
 procedure TDBGridHelper.LoadColumnsFromJson(aStoredColumns: TJSONArray);
 var
   i: integer;
   jsCol: TJSONObject;
   fieldName: string;
+  columnTitle: string;
+  aColumn: TColumn;
 begin
   self.Columns.Clear;
   if (self.DataSource = nil) or (self.DataSource.DataSet = nil) then
@@ -93,8 +106,14 @@ begin
   begin
     jsCol := aStoredColumns.Items[i] as TJSONObject;
     fieldName := jsCol.GetValue('fieldName').Value;
+    columnTitle := GetJsonObjectValue(jsCol,'title');
     if self.DataSource.DataSet.Fields.FindField(fieldName)<>nil then
-      self.Columns.Add.FieldName := fieldName;
+    begin
+      aColumn := self.Columns.Add;
+      aColumn.FieldName := fieldName;
+      if columnTitle<>'' then
+        aColumn.Title.Caption := columnTitle;
+    end;
   end;
 end;
 
