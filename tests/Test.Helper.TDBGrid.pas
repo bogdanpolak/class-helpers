@@ -6,6 +6,7 @@ uses
   DUnitX.TestFramework,
   System.Classes,
   System.SysUtils,
+  System.JSON,
   Vcl.Controls,
   Vcl.Forms,
   Vcl.DBGrids,
@@ -24,6 +25,7 @@ type
     fForm: TForm;
     fDBGrid: TDBGrid;
     function GivenEmptyDataset(aOwner: TComponent): TDataSet;
+    function GivenDataSet_WithOneCity(aOwner: TComponent): TDataSet;
   public
     [Setup]
     procedure Setup;
@@ -34,6 +36,13 @@ type
     procedure AutoSizeColumns_TextColumn;
     procedure AutoSizeColumns_KeepsSameRowPosition;
     procedure AutoSizeColumns_CurrencyColumn;
+    procedure LoadColumns_TwoColumns;
+    procedure LoadColumns_OneFieldInvalid;
+    procedure LoadColumns_TwoColumnsWithCaption;
+    procedure LoadColumns_SecondColumnWithoutField;
+    procedure LoadColumns_ThreeColumnsAndOneInvible;
+    procedure LoadColumns_TwoColumnsWidth;
+    procedure LoadColumns_LoadFromJson;
   end;
 
 implementation
@@ -151,6 +160,121 @@ begin
 
   // 49{px} = fForm.Canvas.TextWidth ('£125.99' + fDBGrid.SufixForAdditionalColumnWidth);
   Assert.AreEqual(49{px}, fDBGrid.Columns.Items[4].Width);
+end;
+
+// -----------------------------------------------------------------------
+// Tests for LoadColumns
+// -----------------------------------------------------------------------
+
+function TestTDBGridHelper.GivenDataSet_WithOneCity(aOwner: TComponent)
+  : TDataSet;
+begin
+  Result := GivenEmptyDataset(aOwner);
+  Result.AppendRecord([1, 'Edinburgh', 7, EncodeDate(2013, 06, 21), 1250]);
+end;
+
+procedure TestTDBGridHelper.LoadColumns_TwoColumns;
+var
+  aDataSet: TDataSet;
+begin
+  fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
+
+  fDBGrid.LoadColumnsFromJsonString('[' //.
+    + '  {"fieldName":"id"}' //.
+    + ', {"fieldName":"visited"} ' //.
+    + ']');
+
+  Assert.AreEqual('id', fDBGrid.Columns.Items[0].FieldName);
+  Assert.AreEqual('visited', fDBGrid.Columns.Items[1].FieldName);
+end;
+
+procedure TestTDBGridHelper.LoadColumns_OneFieldInvalid;
+var
+  aDataSet: TDataSet;
+begin
+  fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
+
+  fDBGrid.LoadColumnsFromJsonString('[' //.
+    + '  {"fieldName":"id"}' //.
+    + ', {"fieldName":"ciiiity"} ' // invalid column name
+    + ']');
+
+  Assert.AreEqual(1, fDBGrid.Columns.Count);
+end;
+
+procedure TestTDBGridHelper.LoadColumns_TwoColumnsWithCaption;
+begin
+  fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
+
+  fDBGrid.LoadColumnsFromJsonString('[' //.
+    + '  {"fieldName":"id", "title":"CityID"}' //.
+    + ', {"fieldName":"city", "title":"City name"} ' //.
+    + ']');
+
+  Assert.AreEqual('City name', fDBGrid.Columns.Items[1].Title.Caption);
+end;
+
+procedure TestTDBGridHelper.LoadColumns_SecondColumnWithoutField;
+begin
+  fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
+
+  fDBGrid.LoadColumnsFromJsonString('[' //.
+    + '  {"fieldName":"id", "title":"CityID"}' //.
+    + ', {"title":"User column"} ' //.
+    + ']');
+
+  Assert.AreEqual(2, fDBGrid.Columns.Count);
+end;
+
+procedure TestTDBGridHelper.LoadColumns_ThreeColumnsAndOneInvible;
+begin
+  fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
+
+  fDBGrid.LoadColumnsFromJsonString('[' //.
+    + '  {"fieldName":"id", "title":"CityID", "visible":true}' //.
+    + ', {"fieldName":"city", "title":"City name", "visible":false} ' //.
+    + ', {"fieldName":"budget", "title":"City Budget"} ' //.
+    + ']');
+
+  Assert.AreEqual(false, fDBGrid.Columns.Items[1].Visible);
+end;
+
+procedure TestTDBGridHelper.LoadColumns_TwoColumnsWidth;
+begin
+  fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
+
+  fDBGrid.LoadColumnsFromJsonString('[' //.
+    + '  {"fieldName":"id", "width":90}' //.
+    + ', {"fieldName":"city", "width":250} ' //.
+    + ']');
+
+  Assert.AreEqual(250, fDBGrid.Columns.Items[1].Width);
+end;
+
+procedure TestTDBGridHelper.LoadColumns_LoadFromJson;
+var
+  sColumns: String;
+  jsColumns: TJSONArray;
+begin
+  fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
+  sColumns := '[' //.
+    + '  {"fieldName":"id", "title":"CityID", "width":90, "visible":true}' //.
+    + ', {"fieldName":"city", "title":"City name", "width":160, "visible":false} '
+    + ', {"fieldName":"rank", "title":"Rank", "width":80, "visible":false} ' //.
+    + ', {"fieldName":"visited", "title":"Last time visited", "width":120} ' //.
+    + ', {"fieldName":"budget", "title":"City Budget", "width":100} ' //.
+    + ', {"title":"Budget Graph", "width":280} ' //.
+    + ']';
+  jsColumns := TJSONObject.ParseJSONValue(sColumns) as TJSONArray;
+
+  fDBGrid.LoadColumnsFromJson(jsColumns);
+  jsColumns.Free;
+
+  Assert.AreEqual(6, fDBGrid.Columns.Count);
+  Assert.AreEqual('id', fDBGrid.Columns.Items[0].Field.FieldName);
+  Assert.AreEqual('City name', fDBGrid.Columns.Items[1].Title.Caption);
+  Assert.AreEqual(False, fDBGrid.Columns.Items[2].Visible);
+  Assert.AreEqual(120, fDBGrid.Columns.Items[3].Width);
 end;
 
 initialization
