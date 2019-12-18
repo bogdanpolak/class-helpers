@@ -190,9 +190,9 @@ begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
 
   LoadColumnsFromString(fDBGrid, '[' //.
-  +'  {"fieldName":"id"}' //.
-  +', {"fieldName":"visited"} ' //.
-  +']');
+    + '  {"fieldName":"id"}' //.
+    + ', {"fieldName":"visited"} ' //.
+    + ']');
 
   Assert.AreEqual('id', fDBGrid.Columns.Items[0].FieldName);
   Assert.AreEqual('visited', fDBGrid.Columns.Items[1].FieldName);
@@ -205,9 +205,9 @@ begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
 
   LoadColumnsFromString(fDBGrid, '[' //.
-  +'  {"fieldName":"id"}' //.
-  +', {"fieldName":"ciiiity"} ' // invalid column name
-  +']');
+    + '  {"fieldName":"id"}' //.
+    + ', {"fieldName":"ciiiity"} ' // invalid column name
+    + ']');
 
   Assert.AreEqual(1, fDBGrid.Columns.Count);
 end;
@@ -219,9 +219,9 @@ begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
 
   LoadColumnsFromString(fDBGrid, '[' //.
-  +'  {"fieldName":"id", "title":"CityID"}' //.
-  +', {"fieldName":"city", "title":"City name"} ' //.
-  +']');
+    + '  {"fieldName":"id", "title":"CityID"}' //.
+    + ', {"fieldName":"city", "title":"City name"} ' //.
+    + ']');
 
   Assert.AreEqual('City name', fDBGrid.Columns.Items[1].Title.Caption);
 end;
