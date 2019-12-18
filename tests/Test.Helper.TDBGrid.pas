@@ -42,6 +42,7 @@ type
     procedure LoadColumns_SecondColumnWithoutField;
     procedure LoadColumns_ThreeColumnsAndOneInvible;
     procedure LoadColumns_TwoColumnsWidth;
+    procedure LoadColumns_LoadFromJson;
   end;
 
 implementation
@@ -248,6 +249,32 @@ begin
     + ']');
 
   Assert.AreEqual(250, fDBGrid.Columns.Items[1].Width);
+end;
+
+procedure TestTDBGridHelper.LoadColumns_LoadFromJson;
+var
+  sColumns: String;
+  jsColumns: TJSONArray;
+begin
+  fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
+  sColumns := '[' //.
+    + '  {"fieldName":"id", "title":"CityID", "width":90, "visible":true}' //.
+    + ', {"fieldName":"city", "title":"City name", "width":160, "visible":false} '
+    + ', {"fieldName":"rank", "title":"Rank", "width":80, "visible":false} ' //.
+    + ', {"fieldName":"visited", "title":"Last time visited", "width":120} ' //.
+    + ', {"fieldName":"budget", "title":"City Budget", "width":100} ' //.
+    + ', {"title":"Budget Graph", "width":280} ' //.
+    + ']';
+  jsColumns := TJSONObject.ParseJSONValue(sColumns) as TJSONArray;
+
+  fDBGrid.LoadColumnsFromJson(jsColumns);
+  jsColumns.Free;
+
+  Assert.AreEqual(6, fDBGrid.Columns.Count);
+  Assert.AreEqual('id', fDBGrid.Columns.Items[0].Field.FieldName);
+  Assert.AreEqual('City name', fDBGrid.Columns.Items[1].Title.Caption);
+  Assert.AreEqual(False, fDBGrid.Columns.Items[2].Visible);
+  Assert.AreEqual(120, fDBGrid.Columns.Items[3].Width);
 end;
 
 initialization
