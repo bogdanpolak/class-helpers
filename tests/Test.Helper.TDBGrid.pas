@@ -40,6 +40,9 @@ type
     procedure LoadColumns_TwoColumns;
     procedure LoadColumns_OneFieldInvalid;
     procedure LoadColumns_TwoColumnsWithCaption;
+    procedure LoadColumns_SecondColumnWithoutField;
+    procedure LoadColumns_ThreeColumnsAndOneInvible;
+    procedure LoadColumns_TwoColumnsWidth;
   end;
 
 implementation
@@ -224,6 +227,49 @@ begin
     + ']');
 
   Assert.AreEqual('City name', fDBGrid.Columns.Items[1].Title.Caption);
+end;
+
+procedure TestTDBGridHelper.LoadColumns_SecondColumnWithoutField;
+var
+  aDataSet: TDataSet;
+begin
+  fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
+
+  LoadColumnsFromString(fDBGrid, '[' //.
+    + '  {"fieldName":"id", "title":"CityID"}' //.
+    + ', {"title":"User column"} ' //.
+    + ']');
+
+  Assert.AreEqual(2, fDBGrid.Columns.Count);
+end;
+
+procedure TestTDBGridHelper.LoadColumns_ThreeColumnsAndOneInvible;
+var
+  aDataSet: TDataSet;
+begin
+  fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
+
+  LoadColumnsFromString(fDBGrid, '[' //.
+    + '  {"fieldName":"id", "title":"CityID", "visible":true}' //.
+    + ', {"fieldName":"city", "title":"City name", "visible":false} ' //.
+    + ', {"fieldName":"budget", "title":"City Budget"} ' //.
+    + ']');
+
+  Assert.AreEqual(false, fDBGrid.Columns.Items[1].Visible);
+end;
+
+procedure TestTDBGridHelper.LoadColumns_TwoColumnsWidth;
+var
+  aDataSet: TDataSet;
+begin
+  fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
+
+  LoadColumnsFromString(fDBGrid, '[' //.
+    + '  {"fieldName":"id", "width":90}' //.
+    + ', {"fieldName":"city", "width":250} ' //.
+    + ']');
+
+  Assert.AreEqual(250, fDBGrid.Columns.Items[1].Width);
 end;
 
 initialization
