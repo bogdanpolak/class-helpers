@@ -26,7 +26,6 @@ type
     fDBGrid: TDBGrid;
     function GivenEmptyDataset(aOwner: TComponent): TDataSet;
     function GivenDataSet_WithOneCity(aOwner: TComponent): TDataSet;
-    procedure LoadColumnsFromString(aDBGrid: TDBGrid; const sColumns: string);
   public
     [Setup]
     procedure Setup;
@@ -173,26 +172,13 @@ begin
   Result.AppendRecord([1, 'Edinburgh', 7, EncodeDate(2013, 06, 21), 1250]);
 end;
 
-procedure TestTDBGridHelper.LoadColumnsFromString(aDBGrid: TDBGrid;
-  const sColumns: string);
-var
-  jsColumns: TJSONArray;
-begin
-  jsColumns := TJSONObject.ParseJSONValue(sColumns) as TJSONArray;
-  try
-    aDBGrid.LoadColumnsFromJson(jsColumns);
-  finally
-    jsColumns.Free;
-  end;
-end;
-
 procedure TestTDBGridHelper.LoadColumns_TwoColumns;
 var
   aDataSet: TDataSet;
 begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
 
-  LoadColumnsFromString(fDBGrid, '[' //.
+  fDBGrid.LoadColumnsFromJsonString('[' //.
     + '  {"fieldName":"id"}' //.
     + ', {"fieldName":"visited"} ' //.
     + ']');
@@ -207,7 +193,7 @@ var
 begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
 
-  LoadColumnsFromString(fDBGrid, '[' //.
+  fDBGrid.LoadColumnsFromJsonString('[' //.
     + '  {"fieldName":"id"}' //.
     + ', {"fieldName":"ciiiity"} ' // invalid column name
     + ']');
@@ -216,12 +202,10 @@ begin
 end;
 
 procedure TestTDBGridHelper.LoadColumns_TwoColumnsWithCaption;
-var
-  aDataSet: TDataSet;
 begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
 
-  LoadColumnsFromString(fDBGrid, '[' //.
+  fDBGrid.LoadColumnsFromJsonString('[' //.
     + '  {"fieldName":"id", "title":"CityID"}' //.
     + ', {"fieldName":"city", "title":"City name"} ' //.
     + ']');
@@ -230,12 +214,10 @@ begin
 end;
 
 procedure TestTDBGridHelper.LoadColumns_SecondColumnWithoutField;
-var
-  aDataSet: TDataSet;
 begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
 
-  LoadColumnsFromString(fDBGrid, '[' //.
+  fDBGrid.LoadColumnsFromJsonString('[' //.
     + '  {"fieldName":"id", "title":"CityID"}' //.
     + ', {"title":"User column"} ' //.
     + ']');
@@ -244,12 +226,10 @@ begin
 end;
 
 procedure TestTDBGridHelper.LoadColumns_ThreeColumnsAndOneInvible;
-var
-  aDataSet: TDataSet;
 begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
 
-  LoadColumnsFromString(fDBGrid, '[' //.
+  fDBGrid.LoadColumnsFromJsonString('[' //.
     + '  {"fieldName":"id", "title":"CityID", "visible":true}' //.
     + ', {"fieldName":"city", "title":"City name", "visible":false} ' //.
     + ', {"fieldName":"budget", "title":"City Budget"} ' //.
@@ -259,12 +239,10 @@ begin
 end;
 
 procedure TestTDBGridHelper.LoadColumns_TwoColumnsWidth;
-var
-  aDataSet: TDataSet;
 begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
 
-  LoadColumnsFromString(fDBGrid, '[' //.
+  fDBGrid.LoadColumnsFromJsonString('[' //.
     + '  {"fieldName":"id", "width":90}' //.
     + ', {"fieldName":"city", "width":250} ' //.
     + ']');
