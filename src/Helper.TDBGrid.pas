@@ -24,6 +24,7 @@ type
     /// </param>
     function AutoSizeColumns(const CalcForNumberOfRows: integer = 25): integer;
     procedure LoadColumnsFromJson(aStoredColumns: TJSONArray);
+    procedure LoadColumnsFromJsonString(const aJsonString: string);
   end;
 
 type
@@ -160,6 +161,26 @@ begin
       if aWidth <> System.Variants.Null() then
         aColumn.Width := aWidth;
     end;
+  end;
+end;
+
+procedure TDBGridHelper.LoadColumnsFromJsonString(const aJsonString: string);
+var
+  jsValue: TJSONValue;
+  jsColumns: TJSONArray;
+begin
+  jsValue := TJSONObject.ParseJSONValue(aJsonString);
+  if jsValue = nil then
+    raise EJSONProcessing.Create
+      ('Parsing error! Expected valid JSON string as parameter.');
+  try
+    if not(jsValue is TJSONArray) then
+      raise EJSONProcessing.Create
+        ('Expected JSON array in provided string parameter.');
+    jsColumns := jsValue as TJSONArray;
+    Self.LoadColumnsFromJson(jsColumns);
+  finally
+    jsValue.Free;
   end;
 end;
 
