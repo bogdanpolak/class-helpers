@@ -4,7 +4,10 @@ interface
 
 uses
   Vcl.DBGrids,
-  System.JSON;
+  System.JSON,
+  System.SysUtils,
+  System.Generics.Collections,
+  System.Variants;
 
 type
   TDBGridHelper = class helper for TDBGrid
@@ -22,6 +25,9 @@ type
     function AutoSizeColumns(const CalcForNumberOfRows: integer = 25): integer;
     procedure LoadColumnsFromJson(aStoredColumns: TJSONArray);
   end;
+
+type
+  EJSONProcessing = class(Exception);
 
 implementation
 
@@ -91,13 +97,46 @@ begin
     Result := jv.Value;
 end;
 
+function GetJsonObjectValueBoolen(jsObj: TJSONObject; const key: string;
+  deafultValue: boolean): boolean;
+var
+  jv: TJSONValue;
+begin
+  jv := jsObj.Values[key];
+  if (jv <> nil) and not(jv is TJSONBool) then
+    raise EJSONProcessing.Create
+      (Format('Expected boolean value in JSON object for key:"%s"', [key]));
+  if (jv = nil) or (jv.Null) then
+    Result := deafultValue
+  else
+    Result := (jv is TJSONTrue);
+end;
+
+function GetJsonObjectValueInteger(jsObj: TJSONObject;
+  const key: string): Variant;
+var
+  jv: TJSONValue;
+begin
+  jv := jsObj.Values[key];
+  if (jv <> nil) and not(jv is TJSONNumber) then
+    raise EJSONProcessing.Create
+      (Format('Expected number value in JSON object for key:"%s"', [key]));
+  if (jv = nil) or (jv.Null) then
+    Result := System.Variants.Null()
+  else
+    Result := (jv as TJSONNumber).AsInt;
+end;
+
 procedure TDBGridHelper.LoadColumnsFromJson(aStoredColumns: TJSONArray);
 var
   i: integer;
   jsCol: TJSONObject;
-  fieldName: string;
-  columnTitle: string;
+  aFieldName: string;
+  aColumnTitle: string;
   aColumn: TColumn;
+  aField: TField;
+  aVisible: boolean;
+  aWidth: Variant;
 begin
   self.Columns.Clear;
   if (self.DataSource = nil) or (self.DataSource.DataSet = nil) then
@@ -105,14 +144,21 @@ begin
   for i := 0 to aStoredColumns.Count - 1 do
   begin
     jsCol := aStoredColumns.Items[i] as TJSONObject;
-    fieldName := jsCol.GetValue('fieldName').Value;
-    columnTitle := GetJsonObjectValue(jsCol,'title');
-    if self.DataSource.DataSet.Fields.FindField(fieldName)<>nil then
+    aFieldName := GetJsonObjectValue(jsCol, 'fieldName');
+    aColumnTitle := GetJsonObjectValue(jsCol, 'title');
+    aVisible := GetJsonObjectValueBoolen(jsCol, 'visible', True);
+    aWidth := GetJsonObjectValueInteger(jsCol, 'width');
+    // --
+    aField := self.DataSource.DataSet.FindField(aFieldName);
+    if (aField <> nil) or (aColumnTitle <> '') then
     begin
       aColumn := self.Columns.Add;
-      aColumn.FieldName := fieldName;
-      if columnTitle<>'' then
-        aColumn.Title.Caption := columnTitle;
+      aColumn.Field := aField;
+      if aColumnTitle <> '' then
+        aColumn.Title.Caption := aColumnTitle;
+      aColumn.Visible := aVisible;
+      if aWidth <> System.Variants.Null() then
+        aColumn.Width := aWidth;
     end;
   end;
 end;
