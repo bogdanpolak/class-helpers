@@ -71,13 +71,19 @@ Class helpers are look really nice on the first contact, but they have some dang
 
 You can protect your project against the effects of these weaknesses. Before defining a new class helper you should ask yourself a few questions:
 
-1. **Is not possible to introduce expected functionality within a new class?** 
+1. Better alternatives.
+   - Q: **Is not possible to introduce expected functionality within a new class?** 
    - Definition of a new class is better approach, easier to understand and more popular, all dependencies should be inject to this class and whole composition should be easy to decouple into independent units.
    - A class helper could be a temporary solution during code refactoring (when developer is not sure about the responsibilities of the new class).
-1. **Which VCL / FMX or RTL classes should be chosen as a base for helpers?**
+1. Base class
+   - Q: **Which VCL / FMX or RTL classes should be chosen as a base for helpers?**
    - The class helper should be defined as high in the component hierarchy as possible. If it's possible define helper for class `TButton` not for `TControl` or `TComponent`.
-1. **Are you able to spend extra time on maintaining helpers?**
+1. Extra cost - time
+   - Q: **Are you able to spend extra time on maintaining helpers?**
    - Usually class helper are added as the supporting code together with more general tasks. This is OK, but after closing this task you need to spend some extra time on extracting this helper and adding it into helper repository
-1. **What version of the helpers class project is being used now?**
+1. Version
+   - Q: **What version of the helpers class project is being used now?**
    - Application should be using the most recent version of helpers, but migration from previous one to most recent one could cost some time, and have to be plan accordingly.
-1. **Are you able to write unit tests for class helper methods?**
+1. Unit test coverages
+   - Q: **Are you able to write unit tests for class helper methods?**
+   - Class helpers should be well documented and achieve the highest possible quality. Bugs inside class helpers could be really confusing for the developers
