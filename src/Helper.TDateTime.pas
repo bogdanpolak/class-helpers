@@ -5,7 +5,7 @@ interface
 type
   TDateTimeHelper = record helper for TDateTime
   private const
-    Version = '1.3';
+    Version = '1.4';
   private
   public
     function AsYear: word;
