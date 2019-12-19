@@ -13,7 +13,7 @@ uses
 type
   TStringGridHelper = class helper for TStringGrid
   private const
-    Version = '1.3';
+    Version = '1.4';
   private
     procedure DefineColumnsWithJson(jsStructure: TJSONArray;
       ColumnNames: TStringList);
@@ -68,7 +68,6 @@ end;
 
 procedure TStringGridHelper.FillCells(aNewData: TArray < TArray < String >> );
 var
-  i: Integer;
   iRow: Integer;
   iCol: Integer;
 begin
@@ -91,7 +90,6 @@ procedure TStringGridHelper.DefineColumnsWithJson(jsStructure: TJSONArray;
 var
   i: Integer;
   jsCoumnDef: TJSONObject;
-  jsValue: TJSONValue;
 begin
   ColumnNames.Clear;
   Self.FixedRows := 1;
@@ -125,9 +123,9 @@ begin
     jsItem := jsData.Items[i] as TJSONObject;
     for j := 0 to jsItem.Count - 1 do
     begin
-      aCol := ColumnNames.IndexOf(jsItem.Get(j).JsonString.Value);
+      aCol := ColumnNames.IndexOf(jsItem.Pairs[j].JsonString.Value);
       if (aCol >= 0) then
-        Self.Cells[aCol, aRow] := jsItem.Get(j).JsonValue.Value;
+        Self.Cells[aCol, aRow] := jsItem.Pairs[j].JsonValue.Value;
     end;
   end;
 end;

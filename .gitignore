@@ -102,3 +102,4 @@ __recovery/
 TestInsightSettings.ini
 *.groupproj
 .vscode
+src-concept-helpers

@@ -28,6 +28,7 @@ type
     procedure TearDown;
   published
     procedure FindChildControlRecursiveByType;
+    procedure FindChildControlRecursiveByName;
   end;
 
 implementation
@@ -48,45 +49,92 @@ end;
 
 procedure TestTWinControlHelper.TearDown;
 begin
+  fForm.Free;
 end;
 
 // -----------------------------------------------------------------------
 // Tests section 1
 // -----------------------------------------------------------------------
 
-procedure TestTWinControlHelper.FindChildControlRecursiveByType;
-var
-  aTopPanel: TPanel;
+type
+  TControlsSet1 = record
+    TopPanel: TPanel;
+    ClientPanel: TPanel;
+    EditTop: TEdit;
+    ButtonTop1: TButton;
+    ButtonTop2: TButton;
+  end;
+
+function Given_TwoPanels_WithEditAndTwoButton(aForm: TForm): TControlsSet1;
 begin
-  aTopPanel := TPanel.Create(fForm);
-  with aTopPanel do
+  with Result do
+  begin
+    TopPanel := TPanel.Create(aForm);
+    ClientPanel := TPanel.Create(aForm);
+    EditTop := TEdit.Create(aForm);
+    ButtonTop1 := TButton.Create(aForm);
+    ButtonTop2 := TButton.Create(aForm);
+  end;
+  with Result.TopPanel do
   begin
     Name := 'TopPanel';
-    Parent := fForm;
+    Parent := aForm;
     Align := alTop;
   end;
-  with TPanel.Create(fForm) do
+  with Result.ClientPanel do
   begin
     Name := 'ClientPanel';
-    Parent := fForm;
+    Parent := aForm;
     Align := alClient;
   end;
-  with TEdit.Create(fForm) do
+  with Result.EditTop do
   begin
-    Name := 'EditTop';
+    Name := 'EditTop1';
     Text := 'Edit Top';
-    Parent := aTopPanel;
+    Parent := Result.TopPanel;
     Align := alTop;
+    Top := 999;
   end;
-  with TButton.Create(fForm) do
+  with Result.ButtonTop1 do
   begin
-    Name := 'ButtonTop';
-    Caption := 'Button Top';
-    Parent := aTopPanel;
+    Name := 'ButtonTop1';
+    Caption := 'Button Top One';
+    Parent := Result.TopPanel;
     Align := alTop;
+    Top := 999;
   end;
-  Assert.IsTrue(fForm.FindChildControlRecursiveByType(TButton) <> nil,
-    'expected TButton control, but is nil');
+  with Result.ButtonTop2 do
+  begin
+    Name := 'ButtonTop2';
+    Caption := 'Button Top Two';
+    Parent := Result.TopPanel;
+    Align := alTop;
+    Top := 999;
+  end;
+end;
+
+procedure TestTWinControlHelper.FindChildControlRecursiveByType;
+var
+  controls: TControlsSet1;
+  aButton: TButton;
+begin
+  controls := Given_TwoPanels_WithEditAndTwoButton(fForm);
+
+  aButton := fForm.FindChildControlRecursiveByType(TButton) as TButton;
+
+  Assert.AreEqual(controls.ButtonTop1.Name, aButton.Name);
+end;
+
+procedure TestTWinControlHelper.FindChildControlRecursiveByName;
+var
+  controls: TControlsSet1;
+  aButton: TButton;
+begin
+  controls := Given_TwoPanels_WithEditAndTwoButton(fForm);
+
+  aButton := fForm.FindChildControlRecursive('ButtonTop2') as TButton;
+
+  Assert.AreEqual(controls.ButtonTop2.Name, aButton.Name);
 end;
 
 initialization

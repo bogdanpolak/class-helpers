@@ -22,7 +22,8 @@ uses
   Test.Helper.TWinControl in 'Test.Helper.TWinControl.pas',
   Test.Helper.TStringGrid in 'Test.Helper.TStringGrid.pas',
   Test.Helper.TDataSet in 'Test.Helper.TDataSet.pas',
-  Test.Helper.TJSONObject in 'Test.Helper.TJSONObject.pas';
+  Test.Helper.TJSONObject in 'Test.Helper.TJSONObject.pas',
+  Test.Helper.TDBGrid in 'Test.Helper.TDBGrid.pas';
 
 var
   runner : ITestRunner;

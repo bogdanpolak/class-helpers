@@ -8,12 +8,12 @@ uses
 type
   TDataSetHelper = class helper for TDataSet
   private const
-    Version = '1.3';
+    Version = '1.4';
   public
     procedure WhileNotEof(proc: TProc);
     procedure ForEachRow(proc: TProc);
     function GetMaxIntegerValue(const fieldName: string): integer;
-
+    function CreateDataSource: TDataSource;
   end;
 
 implementation
@@ -54,6 +54,12 @@ begin
     self.FreeBookmark(Bookmark);
     self.EnableControls;
   end;
+end;
+
+function TDataSetHelper.CreateDataSource: TDataSource;
+begin
+  Result := TDataSource.Create(Self);
+  Result.DataSet := Self;
 end;
 
 procedure TDataSetHelper.ForEachRow(proc: TProc);

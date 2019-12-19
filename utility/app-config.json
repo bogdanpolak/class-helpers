@@ -1,5 +1,5 @@
 {
-	"heplersUnitsSubdirectory": "..\\src\\",
+	"sourceUnitsSearch": "..\\src\\Helper.*.pas",
 	"readmeIsUpdateVersion": true,
         "readmeFileName": "..\\README.md",
         "readmeSearchPattern": "https://img.shields.io/badge/version"
