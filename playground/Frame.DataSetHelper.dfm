@@ -1,19 +1,20 @@
 object FrameDataSetHelper: TFrameDataSetHelper
   Left = 0
   Top = 0
-  Width = 519
+  Width = 658
   Height = 240
   TabOrder = 0
   object TDataSetHelper: TGroupBox
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 513
+    Width = 652
     Height = 54
     Align = alTop
     Caption = 'TDataSet'
     TabOrder = 0
-    object Button1: TButton
+    ExplicitWidth = 513
+    object btnGetMaxIntegerValue: TButton
       AlignWithMargins = True
       Left = 5
       Top = 18
@@ -22,14 +23,14 @@ object FrameDataSetHelper: TFrameDataSetHelper
       Align = alLeft
       Caption = 'GetMaxIntegerValue'
       TabOrder = 0
-      OnClick = Button1Click
+      OnClick = btnGetMaxIntegerValueClick
     end
   end
   object DBGrid1: TDBGrid
     AlignWithMargins = True
     Left = 3
     Top = 116
-    Width = 513
+    Width = 652
     Height = 121
     Align = alClient
     TabOrder = 1
@@ -42,23 +43,44 @@ object FrameDataSetHelper: TFrameDataSetHelper
   object GroupBox1: TGroupBox
     Left = 0
     Top = 60
-    Width = 519
+    Width = 658
     Height = 53
     Align = alTop
     Caption = 'TDBGrid'
     TabOrder = 2
-    object Button2: TButton
+    ExplicitWidth = 519
+    object btnAutoSizeColumns: TButton
       AlignWithMargins = True
       Left = 5
       Top = 18
-      Width = 151
+      Width = 132
       Height = 30
       Align = alLeft
       Caption = 'AutoSizeColumns'
       TabOrder = 0
-      OnClick = Button2Click
-      ExplicitLeft = 3
-      ExplicitTop = 20
+      OnClick = btnAutoSizeColumnsClick
+    end
+    object btnLoadColumnsLayout: TButton
+      AlignWithMargins = True
+      Left = 143
+      Top = 18
+      Width = 186
+      Height = 30
+      Align = alLeft
+      Caption = 'LoadColumnsFromJsonString'
+      TabOrder = 1
+      OnClick = btnLoadColumnsLayoutClick
+    end
+    object btnResetDBGrid: TButton
+      AlignWithMargins = True
+      Left = 335
+      Top = 18
+      Width = 106
+      Height = 30
+      Align = alLeft
+      Caption = 'Reset Grid'
+      TabOrder = 2
+      OnClick = btnResetDBGridClick
     end
   end
   object tmrOnReady: TTimer
