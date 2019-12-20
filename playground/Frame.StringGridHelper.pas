@@ -1,4 +1,4 @@
-﻿unit Frame.GridHelper;
+﻿unit Frame.StringGridHelper;
 
 interface
 
@@ -11,7 +11,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.StdCtrls;
 
 type
-  TFrameGridHelper = class(TFrame)
+  TFrameStringGridHelper = class(TFrame)
     GroupBox1: TGroupBox;
     Button1: TButton;
     Button2: TButton;
@@ -35,21 +35,21 @@ implementation
 uses
   Helper.TStringGrid;
 
-procedure TFrameGridHelper.Button1Click(Sender: TObject);
+procedure TFrameStringGridHelper.Button1Click(Sender: TObject);
 begin
   StringGrid1.ColCount := 5;
   StringGrid1.ColsWidth([30, 200, 70, 120, 60]);
   StringGrid1.Rows[0].CommaText := 'No,"Mesure Name",Acronym,"Unit name",Value'
 end;
 
-procedure TFrameGridHelper.Button2Click(Sender: TObject);
+procedure TFrameStringGridHelper.Button2Click(Sender: TObject);
 begin
   StringGrid1.FillCells([
     (**) ['1', 'Number of DI Containers', 'NDIC', 'n/a', '120'],
     (**) ['2', 'Maximum ctor injection', 'MCTI', 'PCLRecord.pas', '56']]);
 end;
 
-procedure TFrameGridHelper.Button3Click(Sender: TObject);
+procedure TFrameStringGridHelper.Button3Click(Sender: TObject);
 const
   JsonStructureAndData =   //→
     '{"structure": [' //→
@@ -75,7 +75,7 @@ begin
   StringGrid1.FillWithJson(jsData);
 end;
 
-procedure TFrameGridHelper.Button4Click(Sender: TObject);
+procedure TFrameStringGridHelper.Button4Click(Sender: TObject);
 begin
   StringGrid1.Free;
   StringGrid1 := TStringGrid.Create(Self);

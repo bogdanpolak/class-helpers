@@ -34,7 +34,7 @@ implementation
 {$R *.dfm}
 
 uses
-  Frame.GridHelper,
+  Frame.StringGridHelper,
   Frame.DataSetHelper;
 
 type
@@ -49,7 +49,7 @@ const
   PlaygroudItems = 2;
   PlaygroudDefs: array [0 .. PlaygroudItems - 1] of TPlaygroundItem = //.
     ( //.
-    (caption: 'Helper - TStringGrid'; frameType: TFrameGridHelper), //.
+    (caption: 'Helper - TStringGrid'; frameType: TFrameStringGridHelper), //.
     (caption: 'Helper - TDataSet && TDBGrid'; frameType: TFrameDataSetHelper) //.
     );
 
