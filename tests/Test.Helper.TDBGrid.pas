@@ -180,8 +180,8 @@ begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
 
   fDBGrid.LoadColumnsFromJsonString('[' //.
-    + '  {"fieldName":"id"}' //.
-    + ', {"fieldName":"visited"} ' //.
+    + '  {"fieldname":"id"}' //.
+    + ', {"fieldname":"visited"} ' //.
     + ']');
 
   Assert.AreEqual('id', fDBGrid.Columns.Items[0].FieldName);
@@ -195,8 +195,8 @@ begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
 
   fDBGrid.LoadColumnsFromJsonString('[' //.
-    + '  {"fieldName":"id"}' //.
-    + ', {"fieldName":"ciiiity"} ' // invalid column name
+    + '  {"fieldname":"id"}' //.
+    + ', {"fieldname":"ciiiity"} ' // invalid column name
     + ']');
 
   Assert.AreEqual(1, fDBGrid.Columns.Count);
@@ -207,8 +207,8 @@ begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
 
   fDBGrid.LoadColumnsFromJsonString('[' //.
-    + '  {"fieldName":"id", "title":"CityID"}' //.
-    + ', {"fieldName":"city", "title":"City name"} ' //.
+    + '  {"fieldname":"id", "title":"CityID"}' //.
+    + ', {"fieldname":"city", "title":"City name"} ' //.
     + ']');
 
   Assert.AreEqual('City name', fDBGrid.Columns.Items[1].Title.Caption);
@@ -219,7 +219,7 @@ begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
 
   fDBGrid.LoadColumnsFromJsonString('[' //.
-    + '  {"fieldName":"id", "title":"CityID"}' //.
+    + '  {"fieldname":"id", "title":"CityID"}' //.
     + ', {"title":"User column"} ' //.
     + ']');
 
@@ -231,9 +231,9 @@ begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
 
   fDBGrid.LoadColumnsFromJsonString('[' //.
-    + '  {"fieldName":"id", "title":"CityID", "visible":true}' //.
-    + ', {"fieldName":"city", "title":"City name", "visible":false} ' //.
-    + ', {"fieldName":"budget", "title":"City Budget"} ' //.
+    + '  {"fieldname":"id", "title":"CityID", "visible":true}' //.
+    + ', {"fieldname":"city", "title":"City name", "visible":false} ' //.
+    + ', {"fieldname":"budget", "title":"City Budget"} ' //.
     + ']');
 
   Assert.AreEqual(false, fDBGrid.Columns.Items[1].Visible);
@@ -244,8 +244,8 @@ begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
 
   fDBGrid.LoadColumnsFromJsonString('[' //.
-    + '  {"fieldName":"id", "width":90}' //.
-    + ', {"fieldName":"city", "width":250} ' //.
+    + '  {"fieldname":"id", "width":90}' //.
+    + ', {"fieldname":"city", "width":250} ' //.
     + ']');
 
   Assert.AreEqual(250, fDBGrid.Columns.Items[1].Width);
@@ -258,11 +258,11 @@ var
 begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
   sColumns := '[' //.
-    + '  {"fieldName":"id", "title":"CityID", "width":90, "visible":true}' //.
-    + ', {"fieldName":"city", "title":"City name", "width":160, "visible":false} '
-    + ', {"fieldName":"rank", "title":"Rank", "width":80, "visible":false} ' //.
-    + ', {"fieldName":"visited", "title":"Last time visited", "width":120} ' //.
-    + ', {"fieldName":"budget", "title":"City Budget", "width":100} ' //.
+    + '  {"fieldname":"id", "title":"CityID", "width":90, "visible":true}' //.
+    + ', {"fieldname":"city", "title":"City name", "width":160, "visible":false} '
+    + ', {"fieldname":"rank", "title":"Rank", "width":80, "visible":false} ' //.
+    + ', {"fieldname":"visited", "title":"Last time visited", "width":120} ' //.
+    + ', {"fieldname":"budget", "title":"City Budget", "width":100} ' //.
     + ', {"title":"Budget Graph", "width":280} ' //.
     + ']';
   jsColumns := TJSONObject.ParseJSONValue(sColumns) as TJSONArray;

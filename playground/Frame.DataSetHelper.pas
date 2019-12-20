@@ -109,11 +109,11 @@ var
   sColumns: String;
 begin
   sColumns := '[' //.
-    + '  {"fieldName":"ID", "width":30} ' //.
-    + ', {"fieldName":"Text1", "title":"Character name", "width":120}' //.
-    + ', {"fieldName":"Date", "title":"Last activity", "width":80, "visible":true} '
-    + ', {"fieldName":"Saved", "title":"Current savings", "width":90} ' //.
-    + ', {"fieldName":"Text2", "title":"More information", "width":500} ' //.
+    + '  {"fieldname":"ID", "width":30, "visible":false} ' //.
+    + ', {"fieldname":"Text1", "title":"Character name", "width":120}' //.
+    + ', {"fieldname":"Date", "title":"Last activity", "width":80, "visible":true} '
+    + ', {"fieldname":"Saved", "title":"Current savings", "width":90} ' //.
+    + ', {"fieldname":"Text2", "title":"More information", "width":500} ' //.
     + ']';
   DBGrid1.LoadColumnsFromJsonString(sColumns);
 end;
@@ -137,7 +137,7 @@ var
   Value: Integer;
 begin
   Value := fDataSet.GetMaxIntegerValue('ID');
-  Button1.Caption := Format('Max value = %d', [Value]);
+  (Sender as TButton).Caption := Format('Max value = %d', [Value]);
 end;
 
 procedure TFrameDataSetHelper.btnAutoSizeColumnsClick(Sender: TObject);
