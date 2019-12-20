@@ -181,7 +181,7 @@ begin
   for i := 0 to aStoredColumns.Count - 1 do
   begin
     jsCol := aStoredColumns.Items[i] as TJSONObject;
-    aFieldName := GetJsonObjectValue(jsCol, 'fieldName');
+    aFieldName := GetJsonObjectValue(jsCol, 'fieldname');
     aColumnTitle := GetJsonObjectValue(jsCol, 'title');
     aVisible := GetJsonObjectValueBoolen(jsCol, 'visible', True);
     aWidth := GetJsonObjectValueInteger(jsCol, 'width');
