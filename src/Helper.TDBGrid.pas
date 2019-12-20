@@ -35,7 +35,7 @@ type
     /// <remarks>
     ///   Parameter <b>aStoredColumns</b> is JSON array contains JSON
     ///   objects and each of them can has following fields:
-    ///   <b>fieldName</b> - name of DataSet field displayed in this column.
+    ///   <b>fieldname</b> - name of DataSet field displayed in this column.
     ///   <b>title</b> - title of the column displayed in header.
     ///   <b>width</b> - column width in pixels (numeric value).
     ///   <b>visible</b> - column visibility (boolean value)
@@ -55,7 +55,7 @@ type
     ///   Parameter <b>aJsonString</b> is well formatted JSON array stored
     ///   in String. This JSON array has contain JSON objects with following
     ///   fields:
-    ///   <b>fieldName</b> - name of DataSet field displayed in this column.
+    ///   <b>fieldname</b> - name of DataSet field displayed in this column.
     ///   <b>title</b> - title of the column displayed in header.
     ///   <b>width</b> - column width in pixels (numeric value).
     ///   <b>visible</b> - column visibility (boolean value)
