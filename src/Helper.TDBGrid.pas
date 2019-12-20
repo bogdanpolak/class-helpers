@@ -23,7 +23,43 @@ type
     ///   The number of rows for which widths are counted
     /// </param>
     function AutoSizeColumns(const CalcForNumberOfRows: integer = 25): integer;
+    /// <summary>
+    ///   Allows to set TDBGrid columns layout: column visibility, column
+    ///   width and display column title. Layout definition is provided
+    ///   through JSON array.
+    /// </summary>
+    /// <exception cref="EJSONProcessing">
+    ///   Exception <b>EJSONProcessing</b> is thrown when then passed JSON
+    ///   array has unexpected structure.
+    /// </exception>
+    /// <remarks>
+    ///   Parameter <b>aStoredColumns</b> is JSON array contains JSON
+    ///   objects and each of them can has following fields:
+    ///   <b>fieldName</b> - name of DataSet field displayed in this column.
+    ///   <b>title</b> - title of the column displayed in header.
+    ///   <b>width</b> - column width in pixels (numeric value).
+    ///   <b>visible</b> - column visibility (boolean value)
+    /// </remarks>
     procedure LoadColumnsFromJson(aStoredColumns: TJSONArray);
+    /// <summary>
+    ///   Allows to set TDBGrid columns layout: column visibility, column
+    ///   width and column title. Layout definition is provided through
+    ///   string parameter containg valid JSON array.
+    /// </summary>
+    /// <exception cref="EJSONProcessing">
+    ///   Exception <b>EJSONProcessing</b> is thrown when string parameter
+    ///   contains not valid JSON text or JSONArray stored there has
+    ///   unexpected structure.
+    /// </exception>
+    /// <remarks>
+    ///   Parameter <b>aJsonString</b> is well formatted JSON array stored
+    ///   in String. This JSON array has contain JSON objects with following
+    ///   fields:
+    ///   <b>fieldName</b> - name of DataSet field displayed in this column.
+    ///   <b>title</b> - title of the column displayed in header.
+    ///   <b>width</b> - column width in pixels (numeric value).
+    ///   <b>visible</b> - column visibility (boolean value)
+    /// </remarks>
     procedure LoadColumnsFromJsonString(const aJsonString: string);
   end;
 
