@@ -1,4 +1,4 @@
-object FrameGridHelper: TFrameGridHelper
+object FrameStringGridHelper: TFrameStringGridHelper
   Left = 0
   Top = 0
   Width = 744
@@ -13,8 +13,6 @@ object FrameGridHelper: TFrameGridHelper
     Align = alTop
     Caption = 'GroupBox1'
     TabOrder = 0
-    ExplicitLeft = -2
-    ExplicitWidth = 725
     object Button1: TButton
       AlignWithMargins = True
       Left = 5
@@ -47,7 +45,6 @@ object FrameGridHelper: TFrameGridHelper
       Caption = 'Fill with JSON'
       TabOrder = 2
       OnClick = Button3Click
-      ExplicitTop = 20
     end
     object Button4: TButton
       AlignWithMargins = True
@@ -59,7 +56,6 @@ object FrameGridHelper: TFrameGridHelper
       Caption = 'Reset (grid)'
       TabOrder = 3
       OnClick = Button4Click
-      ExplicitTop = 20
     end
   end
   object StringGrid1: TStringGrid
@@ -70,9 +66,5 @@ object FrameGridHelper: TFrameGridHelper
     Height = 306
     Align = alClient
     TabOrder = 1
-    ExplicitLeft = 216
-    ExplicitTop = 128
-    ExplicitWidth = 320
-    ExplicitHeight = 120
   end
 end

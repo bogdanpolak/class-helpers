@@ -3,7 +3,7 @@ program HelperPlayground;
 uses
   Vcl.Forms,
   Form.Main in 'Form.Main.pas' {FormMain},
-  Frame.GridHelper in 'Frame.GridHelper.pas' {FrameGridHelper: TFrame},
+  Frame.StringGridHelper in 'Frame.StringGridHelper.pas' {FrameStringGridHelper: TFrame},
   Helper.TApplication in '..\src\Helper.TApplication.pas',
   Helper.TDataSet in '..\src\Helper.TDataSet.pas',
   Helper.TDateTime in '..\src\Helper.TDateTime.pas',
