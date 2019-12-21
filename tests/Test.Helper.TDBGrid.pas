@@ -273,7 +273,7 @@ begin
   Assert.AreEqual(6, fDBGrid.Columns.Count);
   Assert.AreEqual('id', fDBGrid.Columns.Items[0].Field.FieldName);
   Assert.AreEqual('City name', fDBGrid.Columns.Items[1].Title.Caption);
-  Assert.AreEqual(False, fDBGrid.Columns.Items[2].Visible);
+  Assert.AreEqual(false, fDBGrid.Columns.Items[2].Visible);
   Assert.AreEqual(120, fDBGrid.Columns.Items[3].Width);
 end;
 
