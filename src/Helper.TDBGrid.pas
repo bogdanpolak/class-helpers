@@ -215,15 +215,20 @@ begin
       raise EJSONProcessing.Create
         ('Expected JSON array in provided string parameter.');
     jsColumns := jsValue as TJSONArray;
-    Self.LoadColumnsFromJson(jsColumns);
+    self.LoadColumnsFromJson(jsColumns);
   finally
     jsValue.Free;
   end;
 end;
 
 function TDBGridHelper.SaveColumnsToString: string;
+var
+  aColumn: TColumn;
 begin
-  Result := '';
+  aColumn := self.Columns[0];
+  Result := Format
+    ('[{"fieldname":"%s", "title":"%s", "width":%d, "visible":true}]',
+    [aColumn.FieldName, aColumn.Title.Caption, aColumn.Width]);
 end;
 
 end.
