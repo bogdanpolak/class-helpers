@@ -43,6 +43,7 @@ type
     procedure LoadColumns_ThreeColumnsAndOneInvible;
     procedure LoadColumns_TwoColumnsWidth;
     procedure LoadColumns_LoadFromJson;
+    procedure SaveColumns_OneColumn;
   end;
 
 implementation
@@ -287,6 +288,27 @@ begin
   Assert.AreEqual('City name', fDBGrid.Columns.Items[1].Title.Caption);
   Assert.AreEqual(false, fDBGrid.Columns.Items[2].Visible);
   Assert.AreEqual(120, fDBGrid.Columns.Items[3].Width);
+end;
+
+procedure TestTDBGridHelper.SaveColumns_OneColumn;
+var
+  sColumns: string;
+  col: TColumn;
+  ds: TDataSet;
+  sExpected: string;
+begin
+  ds := GivenDataSet_WithOneCity(fForm);
+  fDBGrid.DataSource.DataSet := ds;
+  fDBGrid.Columns.Clear;
+  col := fDBGrid.Columns.Add;
+  col.Field := ds.Fields[1];
+  col.Width := 100;
+
+  sColumns := fDBGrid.SaveColumnsToString;
+
+  sExpected := '[' +
+    '{"fieldname":"city", "title":"city", "width":100, "visible":true}]';
+  Assert.AreEqual(sExpected, sColumns);
 end;
 
 initialization

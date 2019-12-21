@@ -61,6 +61,7 @@ type
     ///   <b>visible</b> - column visibility (boolean value)
     /// </remarks>
     procedure LoadColumnsFromJsonString(const aJsonString: string);
+    function SaveColumnsToString: string;
   end;
 
 type
@@ -218,6 +219,11 @@ begin
   finally
     jsValue.Free;
   end;
+end;
+
+function TDBGridHelper.SaveColumnsToString: string;
+begin
+  Result := '';
 end;
 
 end.
