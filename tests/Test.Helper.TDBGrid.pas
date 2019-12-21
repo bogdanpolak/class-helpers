@@ -168,9 +168,21 @@ end;
 
 function TestTDBGridHelper.GivenDataSet_WithOneCity(aOwner: TComponent)
   : TDataSet;
+var
+  cds: TClientDataSet;
 begin
-  Result := GivenEmptyDataset(aOwner);
-  Result.AppendRecord([1, 'Edinburgh', 7, EncodeDate(2013, 06, 21), 1250]);
+  cds := TClientDataSet.Create(aOwner);
+  with cds do
+  begin
+    FieldDefs.Add('id', ftInteger);
+    FieldDefs.Add('city', ftWideString, 30);
+    FieldDefs.Add('rank', ftInteger);
+    FieldDefs.Add('visited', ftDateTime);
+    FieldDefs.Add('budget', ftCurrency);
+    CreateDataSet;
+  end;
+  cds.AppendRecord([1, 'Edinburgh', 7, EncodeDate(2013, 06, 21), 1250]);
+  Result := cds;
 end;
 
 procedure TestTDBGridHelper.LoadColumns_TwoColumns;
