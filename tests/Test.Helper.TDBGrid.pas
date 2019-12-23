@@ -299,6 +299,8 @@ begin
   col := fDBGrid.Columns.Add;
   if aFieldName <> '' then
     col.FieldName := aFieldName;
+  if aTitle <> '' then
+    col.Title.Caption := aTitle;
   if aWidth > 0 then
     col.Width := aWidth;
 end;
@@ -337,7 +339,7 @@ begin
 
   sExpectedColumns := '[' +
     '{"fieldname":"city", "title":"city", "width":100, "visible":true}' +
-    '{"fieldname":"visited", "title":"Last visit", "width":60, "visible":true}'
+    ',{"fieldname":"visited", "title":"Last visit", "width":60, "visible":true}'
     + ']';
   Assert.AreEqual(sExpectedColumns, sActualColumns);
 end;
