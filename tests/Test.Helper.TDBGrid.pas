@@ -26,6 +26,7 @@ type
     fDBGrid: TDBGrid;
     function GivenEmptyDataset(aOwner: TComponent): TDataSet;
     function GivenDataSet_WithOneCity(aOwner: TComponent): TDataSet;
+    procedure AddColumn(const aFieldName, aTitle: string; aWidth: integer);
   public
     [Setup]
     procedure Setup;
@@ -290,25 +291,41 @@ begin
   Assert.AreEqual(120, fDBGrid.Columns.Items[3].Width);
 end;
 
+// ------------------------------------------------------------------------
+// Utils - Save TDBGrid Columns
+// ------------------------------------------------------------------------
+
+
+procedure TestTDBGridHelper.AddColumn(const aFieldName: string; const aTitle: string; aWidth: integer);
+var
+  i: Integer;
+  col: TColumn;
+begin
+  col := fDBGrid.Columns.Add;
+  if aFieldName <> '' then
+    col.FieldName := aFieldName;
+  if aWidth > 0 then
+    col.Width := aWidth;
+end;
+
+// ------------------------------------------------------------------------
+// Tests - Save TDBGrid Columns
+// ------------------------------------------------------------------------
+
 procedure TestTDBGridHelper.SaveColumns_OneColumn;
 var
-  sColumns: string;
-  col: TColumn;
-  ds: TDataSet;
-  sExpected: string;
+  sExpectedColumns: string;
+  sActualColumns: string;
 begin
-  ds := GivenDataSet_WithOneCity(fForm);
-  fDBGrid.DataSource.DataSet := ds;
+  fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
   fDBGrid.Columns.Clear;
-  col := fDBGrid.Columns.Add;
-  col.Field := ds.Fields[1];
-  col.Width := 100;
+  AddColumn('city', '', 100);
 
-  sColumns := fDBGrid.SaveColumnsToString;
+  sActualColumns := fDBGrid.SaveColumnsToString;
 
-  sExpected := '[' +
+  sExpectedColumns := '[' +
     '{"fieldname":"city", "title":"city", "width":100, "visible":true}]';
-  Assert.AreEqual(sExpected, sColumns);
+  Assert.AreEqual(sExpectedColumns, sActualColumns);
 end;
 
 initialization
