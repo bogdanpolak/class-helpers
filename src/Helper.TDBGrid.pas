@@ -61,6 +61,7 @@ type
     ///   <b>visible</b> - column visibility (boolean value)
     /// </remarks>
     procedure LoadColumnsFromJsonString(const aJsonString: string);
+    function SaveColumnsToString: string;
   end;
 
 type
@@ -214,10 +215,28 @@ begin
       raise EJSONProcessing.Create
         ('Expected JSON array in provided string parameter.');
     jsColumns := jsValue as TJSONArray;
-    Self.LoadColumnsFromJson(jsColumns);
+    self.LoadColumnsFromJson(jsColumns);
   finally
     jsValue.Free;
   end;
+end;
+
+function TDBGridHelper.SaveColumnsToString: string;
+var
+  aColumn: TColumn;
+  i: integer;
+  sJson: string;
+begin
+  sJson := '';
+  for i := 0 to self.Columns.Count - 1 do
+  begin
+    aColumn := self.Columns[i];
+    if i>0 then
+      sJson := sJson + ',';
+    sJson := sJson + Format('{"fieldname":"%s", "title":"%s", "width":%d, "visible":true}',
+      [aColumn.FieldName, aColumn.Title.Caption, aColumn.Width]);
+  end;
+  Result := '[' +sJson+ ']';
 end;
 
 end.
