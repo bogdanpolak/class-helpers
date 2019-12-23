@@ -102,7 +102,7 @@ end;
 procedure TestTDBGridHelper.DeviceDPI;
 var
   aDataSet: TDataSet;
-  expectColumn2Width: Integer;
+  expectColumn2Width: integer;
 begin
   aDataSet := GivenEmptyDataset(fForm);
   aDataSet.AppendRecord([1, 'Edinburgh', EncodeDate(2013, 06, 21)]);
@@ -150,7 +150,7 @@ procedure TestTDBGridHelper.AutoSizeColumns_CurrencyColumn;
 var
   aDataSet: TDataSet;
   fBudgetField: TCurrencyField;
-  expectedWidth: Integer;
+  expectedWidth: integer;
 begin
   FormatSettings := TFormatSettings.Create('en-GB');
   aDataSet := GivenEmptyDataset(fForm);
@@ -295,10 +295,10 @@ end;
 // Utils - Save TDBGrid Columns
 // ------------------------------------------------------------------------
 
-
-procedure TestTDBGridHelper.AddColumn(const aFieldName: string; const aTitle: string; aWidth: integer);
+procedure TestTDBGridHelper.AddColumn(const aFieldName: string;
+  const aTitle: string; aWidth: integer);
 var
-  i: Integer;
+  i: integer;
   col: TColumn;
 begin
   col := fDBGrid.Columns.Add;
