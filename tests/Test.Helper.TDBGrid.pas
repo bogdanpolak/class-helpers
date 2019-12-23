@@ -151,7 +151,6 @@ procedure TestTDBGridHelper.AutoSizeColumns_CurrencyColumn;
 var
   aDataSet: TDataSet;
   fBudgetField: TCurrencyField;
-  expectedWidth: integer;
 begin
   FormatSettings := TFormatSettings.Create('en-GB');
   aDataSet := GivenEmptyDataset(fForm);
@@ -189,8 +188,6 @@ begin
 end;
 
 procedure TestTDBGridHelper.LoadColumns_TwoColumns;
-var
-  aDataSet: TDataSet;
 begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
 
@@ -204,8 +201,6 @@ begin
 end;
 
 procedure TestTDBGridHelper.LoadColumns_OneFieldInvalid;
-var
-  aDataSet: TDataSet;
 begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
 
@@ -299,7 +294,6 @@ end;
 procedure TestTDBGridHelper.AddColumn(const aFieldName: string;
   const aTitle: string; aWidth: integer);
 var
-  i: integer;
   col: TColumn;
 begin
   col := fDBGrid.Columns.Add;

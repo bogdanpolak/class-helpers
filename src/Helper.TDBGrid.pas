@@ -224,11 +224,19 @@ end;
 function TDBGridHelper.SaveColumnsToString: string;
 var
   aColumn: TColumn;
+  i: integer;
+  sJson: string;
 begin
-  aColumn := self.Columns[0];
-  Result := Format
-    ('[{"fieldname":"%s", "title":"%s", "width":%d, "visible":true}]',
-    [aColumn.FieldName, aColumn.Title.Caption, aColumn.Width]);
+  sJson := '';
+  for i := 0 to self.Columns.Count - 1 do
+  begin
+    aColumn := self.Columns[i];
+    if i>0 then
+      sJson := sJson + ',';
+    sJson := sJson + Format('{"fieldname":"%s", "title":"%s", "width":%d, "visible":true}',
+      [aColumn.FieldName, aColumn.Title.Caption, aColumn.Width]);
+  end;
+  Result := '[' +sJson+ ']';
 end;
 
 end.
