@@ -45,6 +45,7 @@ type
     procedure LoadColumns_TwoColumnsWidth;
     procedure LoadColumns_LoadFromJson;
     procedure SaveColumns_OneColumn;
+    procedure SaveColumns_TwoColumns;
   end;
 
 implementation
@@ -325,6 +326,25 @@ begin
 
   sExpectedColumns := '[' +
     '{"fieldname":"city", "title":"city", "width":100, "visible":true}]';
+  Assert.AreEqual(sExpectedColumns, sActualColumns);
+end;
+
+procedure TestTDBGridHelper.SaveColumns_TwoColumns;
+var
+  sExpectedColumns: string;
+  sActualColumns: string;
+begin
+  fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
+  fDBGrid.Columns.Clear;
+  AddColumn('city', '', 100);
+  AddColumn('visited', 'Last visit', 60);
+
+  sActualColumns := fDBGrid.SaveColumnsToString;
+
+  sExpectedColumns := '[' +
+    '{"fieldname":"city", "title":"city", "width":100, "visible":true}' +
+    '{"fieldname":"visited", "title":"Last visit", "width":60, "visible":true}'
+    + ']';
   Assert.AreEqual(sExpectedColumns, sActualColumns);
 end;
 
