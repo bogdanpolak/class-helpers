@@ -124,23 +124,45 @@ begin
   Result := Count - self.ClientWidth;
 end;
 
-function GetJsonObjectValue(jsObj: TJSONObject; const key: string): string;
+
+// ------------------------------------------------------------------------
+// TJSONObjectEx - Exteded methods to TJSONObject
+// ------------------------------------------------------------------------
+
+type
+  TJSONObjectProcessor = class
+  private
+    fJsonObject: TJSONObject;
+  public
+    constructor Create(aJsonObject: TJSONObject);
+    function GetValueString(const key: string): string;
+    function GetValueBoolen(const key: string; deafultValue: boolean): boolean;
+    function GetValueInteger(const key: string): Variant;
+    procedure NormalizeCase();
+  end;
+
+constructor TJSONObjectProcessor.Create(aJsonObject: TJSONObject);
+begin
+  fJsonObject := aJsonObject;
+end;
+
+function TJSONObjectProcessor.GetValueString(const key: string): string;
 var
   jv: TJSONValue;
 begin
-  jv := jsObj.Values[key];
+  jv := fJsonObject.Values[key];
   if (jv = nil) or (jv.Null) then
     Result := ''
   else
     Result := jv.Value;
 end;
 
-function GetJsonObjectValueBoolen(jsObj: TJSONObject; const key: string;
+function TJSONObjectProcessor.GetValueBoolen(const key: string;
   deafultValue: boolean): boolean;
 var
   jv: TJSONValue;
 begin
-  jv := jsObj.Values[key];
+  jv := fJsonObject.Values[key];
   if (jv <> nil) and not(jv is TJSONBool) then
     raise EJSONProcessing.Create
       (Format('Expected boolean value in JSON object for key:"%s"', [key]));
@@ -150,12 +172,11 @@ begin
     Result := (jv is TJSONTrue);
 end;
 
-function GetJsonObjectValueInteger(jsObj: TJSONObject;
-  const key: string): Variant;
+function TJSONObjectProcessor.GetValueInteger(const key: string): Variant;
 var
   jv: TJSONValue;
 begin
-  jv := jsObj.Values[key];
+  jv := fJsonObject.Values[key];
   if (jv <> nil) and not(jv is TJSONNumber) then
     raise EJSONProcessing.Create
       (Format('Expected number value in JSON object for key:"%s"', [key]));
@@ -165,12 +186,12 @@ begin
     Result := (jv as TJSONNumber).AsInt;
 end;
 
-procedure NormalizeCaseInJsonObject(aJsonObject: TJSONObject);
+procedure TJSONObjectProcessor.NormalizeCase();
 var
   aPair: TJSONPair;
   sLowerKey: string;
 begin
-  for aPair in aJsonObject do
+  for aPair in fJsonObject do
   begin
     sLowerKey := LowerCase(aPair.JsonString.Value);
     if sLowerKey <> aPair.JsonString.Value then
@@ -182,10 +203,12 @@ begin
   end;
 end;
 
+// ------------------------------------------------------------------------
+
 procedure TDBGridHelper.LoadColumnsFromJson(aStoredColumns: TJSONArray);
 var
   i: integer;
-  jsCol: TJSONObject;
+  jsObjProcessor: TJSONObjectProcessor;
   aFieldName: string;
   aColumnTitle: string;
   aColumn: TColumn;
@@ -198,12 +221,13 @@ begin
     exit;
   for i := 0 to aStoredColumns.Count - 1 do
   begin
-    jsCol := aStoredColumns.Items[i] as TJSONObject;
-    NormalizeCaseInJsonObject(jsCol);
-    aFieldName := GetJsonObjectValue(jsCol, 'fieldname');
-    aColumnTitle := GetJsonObjectValue(jsCol, 'title');
-    aVisible := GetJsonObjectValueBoolen(jsCol, 'visible', True);
-    aWidth := GetJsonObjectValueInteger(jsCol, 'width');
+    jsObjProcessor := TJSONObjectProcessor.Create
+      (aStoredColumns.Items[i] as TJSONObject);
+    jsObjProcessor.NormalizeCase();
+    aFieldName := jsObjProcessor.GetValueString('fieldname');
+    aColumnTitle := jsObjProcessor.GetValueString('title');
+    aVisible := jsObjProcessor.GetValueBoolen('visible', True);
+    aWidth := jsObjProcessor.GetValueInteger('width');
     // --
     aField := self.DataSource.DataSet.FindField(aFieldName);
     if (aField <> nil) or (aColumnTitle <> '') then
