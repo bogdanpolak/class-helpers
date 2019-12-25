@@ -44,6 +44,7 @@ type
     procedure LoadColumns_ThreeColumnsAndOneInvible;
     procedure LoadColumns_TwoColumnsWidth;
     procedure LoadColumns_LoadFromJson;
+    procedure LoadColumns_CaseBug;
     procedure SaveColumns_OneColumn;
     procedure SaveColumns_TwoColumns;
   end;
@@ -285,6 +286,23 @@ begin
   Assert.AreEqual('City name', fDBGrid.Columns.Items[1].Title.Caption);
   Assert.AreEqual(false, fDBGrid.Columns.Items[2].Visible);
   Assert.AreEqual(120, fDBGrid.Columns.Items[3].Width);
+end;
+
+procedure TestTDBGridHelper.LoadColumns_CaseBug;
+var
+  sColumns: String;
+begin
+  fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
+  sColumns := '[' //.
+    + '  {"fieldName":"id", "TITLE":"CityID", "Width":90}' //.
+    + ']';
+
+  fDBGrid.LoadColumnsFromJsonString(sColumns);
+
+  Assert.AreEqual(1, fDBGrid.Columns.Count);
+  Assert.AreEqual('id', fDBGrid.Columns.Items[0].Field.FieldName);
+  Assert.AreEqual('CityID', fDBGrid.Columns.Items[0].Title.Caption);
+  Assert.AreEqual(90, fDBGrid.Columns.Items[0].Width);
 end;
 
 // ------------------------------------------------------------------------
