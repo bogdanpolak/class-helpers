@@ -291,16 +291,13 @@ end;
 procedure TestTDBGridHelper.LoadColumns_CaseBug;
 var
   sColumns: String;
-  jsColumns: TJSONArray;
 begin
   fDBGrid.DataSource.DataSet := GivenDataSet_WithOneCity(fForm);
   sColumns := '[' //.
     + '  {"fieldName":"id", "TITLE":"CityID", "Width":90}' //.
     + ']';
-  jsColumns := TJSONObject.ParseJSONValue(sColumns) as TJSONArray;
 
-  fDBGrid.LoadColumnsFromJson(jsColumns);
-  jsColumns.Free;
+  fDBGrid.LoadColumnsFromJsonString(sColumns);
 
   Assert.AreEqual(1, fDBGrid.Columns.Count);
   Assert.AreEqual('id', fDBGrid.Columns.Items[0].Field.FieldName);
