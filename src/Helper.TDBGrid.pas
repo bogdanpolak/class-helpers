@@ -165,6 +165,23 @@ begin
     Result := (jv as TJSONNumber).AsInt;
 end;
 
+procedure NormalizeCaseInJsonObject(aJsonObject: TJSONObject);
+var
+  aPair: TJSONPair;
+  sLowerKey: string;
+begin
+  for aPair in aJsonObject do
+  begin
+    sLowerKey := LowerCase(aPair.JsonString.Value);
+    if sLowerKey <> aPair.JsonString.Value then
+    begin
+      if not aPair.JsonString.Owned then
+        aPair.JsonString.Free;
+      aPair.JsonString := TJSONString.Create(sLowerKey);
+    end;
+  end;
+end;
+
 procedure TDBGridHelper.LoadColumnsFromJson(aStoredColumns: TJSONArray);
 var
   i: integer;
@@ -182,6 +199,7 @@ begin
   for i := 0 to aStoredColumns.Count - 1 do
   begin
     jsCol := aStoredColumns.Items[i] as TJSONObject;
+    NormalizeCaseInJsonObject(jsCol);
     aFieldName := GetJsonObjectValue(jsCol, 'fieldname');
     aColumnTitle := GetJsonObjectValue(jsCol, 'title');
     aVisible := GetJsonObjectValueBoolen(jsCol, 'visible', True);
