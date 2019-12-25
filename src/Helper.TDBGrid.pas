@@ -231,12 +231,13 @@ begin
   for i := 0 to self.Columns.Count - 1 do
   begin
     aColumn := self.Columns[i];
-    if i>0 then
+    if i > 0 then
       sJson := sJson + ',';
-    sJson := sJson + Format('{"fieldname":"%s", "title":"%s", "width":%d, "visible":true}',
+    sJson := sJson +
+      Format('{"fieldname":"%s", "title":"%s", "width":%d, "visible":true}',
       [aColumn.FieldName, aColumn.Title.Caption, aColumn.Width]);
   end;
-  Result := '[' +sJson+ ']';
+  Result := '[' + sJson + ']';
 end;
 
 end.
