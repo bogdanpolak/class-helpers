@@ -7,6 +7,7 @@ uses
   System.Classes,
   System.SysUtils,
   System.JSON,
+  System.Generics.Collections,
   Data.DB,
   Datasnap.DBClient,
 
@@ -29,6 +30,7 @@ type
   published
     procedure GetMaxIntegerValue_546;
     procedure ForEachRowVisitedDates;
+    procedure LoadData_OneCity;
   end;
 
 implementation
@@ -106,6 +108,29 @@ begin
     end);
   // Assert
   Assert.AreEqual('2018-05 2015-09 2019-01 2013-06 ', s);
+end;
+
+type
+  TCity = class
+  public
+    cityId: Integer;
+    cityName: string;
+    rank: Integer;
+    visitDate: TDateTime;
+  end;
+
+procedure TestTDataSetHelper.LoadData_OneCity;
+var
+  cities: TObjectList<TCity>;
+begin
+  BuildDataSet1;
+  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
+  fDataset.First;
+
+  cities := fDataset.LoadData<TCity>();
+
+  Assert.AreEqual(1, cities.Count);
+  cities.Free;
 end;
 
 initialization

@@ -3,7 +3,9 @@
 interface
 
 uses
-  Data.DB, System.SysUtils;
+  System.SysUtils,
+  System.Generics.Collections,
+  Data.DB;
 
 type
   TDataSetHelper = class helper for TDataSet
@@ -14,6 +16,7 @@ type
     procedure ForEachRow(proc: TProc);
     function GetMaxIntegerValue(const fieldName: string): integer;
     function CreateDataSource: TDataSource;
+    function LoadData<T: class>: TObjectList<T>;
   end;
 
 implementation
@@ -65,6 +68,11 @@ end;
 procedure TDataSetHelper.ForEachRow(proc: TProc);
 begin
   WhileNotEof(proc);
+end;
+
+function TDataSetHelper.LoadData<T>: TObjectList<T>;
+begin
+  Result := TObjectList<T>.Create(True);
 end;
 
 end.
