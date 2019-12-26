@@ -4,6 +4,7 @@ interface
 
 uses
   System.SysUtils,
+  System.RTTI,
   System.Generics.Collections,
   Data.DB;
 
@@ -16,7 +17,7 @@ type
     procedure ForEachRow(proc: TProc);
     function GetMaxIntegerValue(const fieldName: string): integer;
     function CreateDataSource: TDataSource;
-    function LoadData<T: class>: TObjectList<T>;
+    function LoadData<T: class, constructor>: TObjectList<T>;
   end;
 
 implementation
@@ -71,8 +72,30 @@ begin
 end;
 
 function TDataSetHelper.LoadData<T>: TObjectList<T>;
+var
+  dataList: TObjectList<T>;
+  item: T;
+  RttiContext: TRttiContext;
+  itemType: TRttiType;
+  itemField: TRttiField;
 begin
-  Result := TObjectList<T>.Create(True);
+  dataList := TObjectList<T>.Create(True);
+  WhileNotEof(
+    procedure
+    var
+      i: integer;
+    begin
+      item := T.Create();
+      itemType := RttiContext.GetType(item.ClassType);
+      for i := 0 to FieldCount - 1 do
+      begin
+        itemField := itemType.GetField(Fields[i].fieldName);
+        if itemField <> nil then
+          itemField.SetValue(TObject(item), TValue.From(Fields[i].Value));
+      end;
+      dataList.Add(item);
+    end);
+  Result := dataList;
 end;
 
 end.

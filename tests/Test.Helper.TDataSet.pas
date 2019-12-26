@@ -113,10 +113,16 @@ end;
 type
   TCity = class
   public
+    id: Integer;
+    city: string;
+    rank: Integer;
+    visited: TDateTime;
+    (*
     cityId: Integer;
     cityName: string;
     rank: Integer;
     visitDate: TDateTime;
+    *)
   end;
 
 procedure TestTDataSetHelper.LoadData_OneCity;
@@ -130,6 +136,10 @@ begin
   cities := fDataset.LoadData<TCity>();
 
   Assert.AreEqual(1, cities.Count);
+  Assert.AreEqual(1, cities[0].id);
+  Assert.AreEqual('Edinburgh', cities[0].city);
+  Assert.AreEqual(5, cities[0].rank);
+  Assert.AreEqual(EncodeDate(2018, 05, 28), cities[0].visited);
   cities.Free;
 end;
 
