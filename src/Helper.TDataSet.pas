@@ -58,8 +58,8 @@ end;
 
 function TDataSetHelper.CreateDataSource: TDataSource;
 begin
-  Result := TDataSource.Create(Self);
-  Result.DataSet := Self;
+  Result := TDataSource.Create(self);
+  Result.DataSet := self;
 end;
 
 procedure TDataSetHelper.ForEachRow(proc: TProc);

@@ -102,10 +102,10 @@ begin
   fDataset.ForEachRow(
     procedure
     begin
-      s := s + FormatDateTime('yyyy-mm', visitedField.Value)+' '
+      s := s + FormatDateTime('yyyy-mm', visitedField.Value) + ' '
     end);
   // Assert
-  Assert.AreEqual ('2018-05 2015-09 2019-01 2013-06 ',s);
+  Assert.AreEqual('2018-05 2015-09 2019-01 2013-06 ', s);
 end;
 
 initialization
