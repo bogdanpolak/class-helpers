@@ -187,6 +187,7 @@ begin
   BuildDataSet1;
   fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
   fDataset.First;
+
   Assert.WillRaise(
     procedure
     begin

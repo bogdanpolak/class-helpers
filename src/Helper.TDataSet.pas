@@ -121,6 +121,10 @@ begin
             dataField := self.FindField(aDataFieldName);
             if dataField <> nil then
               itemField.SetValue(TObject(item), TValue.From(dataField.Value))
+            else
+              raise EInvalidMapping.Create
+                (Format('Invalid mapping defined for field "%s" in class %s',
+                [itemField.Name, itemType.Name]));
           end
         end;
       end;
