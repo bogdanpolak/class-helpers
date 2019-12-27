@@ -30,7 +30,7 @@ type
   published
     procedure GetMaxIntegerValue_546;
     procedure ForEachRowVisitedDates;
-    procedure LoadData_OneCity;
+    procedure LoadData_OneCity_NoAttributes;
   end;
 
 implementation
@@ -111,29 +111,23 @@ begin
 end;
 
 type
-  TCity = class
+  TCityForDataset = class
   public
     id: Integer;
     city: string;
     rank: Integer;
     visited: TDateTime;
-    (*
-    cityId: Integer;
-    cityName: string;
-    rank: Integer;
-    visitDate: TDateTime;
-    *)
   end;
 
-procedure TestTDataSetHelper.LoadData_OneCity;
+procedure TestTDataSetHelper.LoadData_OneCity_NoAttributes;
 var
-  cities: TObjectList<TCity>;
+  cities: TObjectList<TCityForDataset>;
 begin
   BuildDataSet1;
   fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
   fDataset.First;
 
-  cities := fDataset.LoadData<TCity>();
+  cities := fDataset.LoadData<TCityForDataset>();
 
   Assert.AreEqual(1, cities.Count);
   Assert.AreEqual(1, cities[0].id);
