@@ -32,6 +32,7 @@ type
     procedure ForEachRowVisitedDates;
     procedure LoadData_OneCity_NoAttributes;
     procedure LoadData_OneCity_Mapped;
+    procedure LoadData_OneCity_InvalidMapping;
   end;
 
 implementation
@@ -170,6 +171,31 @@ begin
   Assert.AreEqual(5, cities[0].rank);
   Assert.AreEqual(EncodeDate(2018, 05, 28), cities[0].visitDate);
   cities.Free;
+end;
+
+type
+  TInvalidCity = class
+  public
+    [MapedToField('cityName')]
+    cityName: string;
+  end;
+
+procedure TestTDataSetHelper.LoadData_OneCity_InvalidMapping;
+var
+  cities: TObjectList<TInvalidCity>;
+begin
+  BuildDataSet1;
+  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
+  fDataset.First;
+  Assert.WillRaise(
+    procedure
+    begin
+      try
+        cities := fDataset.LoadData<TInvalidCity>();
+      finally
+        cities.Free;
+      end;
+    end, EInvalidMapping);
 end;
 
 initialization

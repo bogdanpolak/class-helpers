@@ -20,6 +20,9 @@ type
     function LoadData<T: class, constructor>: TObjectList<T>;
   end;
 
+  EInvalidMapping = class(Exception)
+  end;
+
 implementation
 
 uses
