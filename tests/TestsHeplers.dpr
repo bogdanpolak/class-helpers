@@ -23,7 +23,8 @@ uses
   Test.Helper.TStringGrid in 'Test.Helper.TStringGrid.pas',
   Test.Helper.TDataSet in 'Test.Helper.TDataSet.pas',
   Test.Helper.TJSONObject in 'Test.Helper.TJSONObject.pas',
-  Test.Helper.TDBGrid in 'Test.Helper.TDBGrid.pas';
+  Test.Helper.TDBGrid in 'Test.Helper.TDBGrid.pas',
+  Attribute.MapedToField in '..\src\Attribute.MapedToField.pas';
 
 var
   runner : ITestRunner;

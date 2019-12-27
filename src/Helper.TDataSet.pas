@@ -22,6 +22,9 @@ type
 
 implementation
 
+uses
+  Attribute.MapedToField;
+
 function TDataSetHelper.GetMaxIntegerValue(const fieldName: string): integer;
 var
   MaxValue: integer;
