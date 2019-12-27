@@ -77,21 +77,22 @@ var
   item: T;
   RttiContext: TRttiContext;
   itemType: TRttiType;
-  itemField: TRttiField;
+  dataField: TField;
 begin
   dataList := TObjectList<T>.Create(True);
   WhileNotEof(
     procedure
     var
       i: integer;
+      itemField: TRttiField;
     begin
       item := T.Create();
       itemType := RttiContext.GetType(item.ClassType);
-      for i := 0 to FieldCount - 1 do
+      for itemField in itemType.GetFields do
       begin
-        itemField := itemType.GetField(Fields[i].fieldName);
-        if itemField <> nil then
-          itemField.SetValue(TObject(item), TValue.From(Fields[i].Value));
+        dataField := self.FindField(itemField.Name);
+        if dataField <> nil then
+          itemField.SetValue(TObject(item), TValue.From(dataField.Value))
       end;
       dataList.Add(item);
     end);

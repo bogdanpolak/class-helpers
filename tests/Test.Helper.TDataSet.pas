@@ -162,7 +162,7 @@ begin
   cities := fDataset.LoadData<TMyCity>();
 
   Assert.AreEqual(1, cities.Count);
-  Assert.AreEqual(1, cities[0].cityId);
+  Assert.AreEqual(1, cities[0].cityId,'(assert: CityId)');
   Assert.AreEqual('Edinburgh', cities[0].cityName);
   Assert.AreEqual(5, cities[0].rank);
   Assert.AreEqual(EncodeDate(2018, 05, 28), cities[0].visitDate);
