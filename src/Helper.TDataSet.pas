@@ -81,6 +81,8 @@ var
   RttiContext: TRttiContext;
   itemType: TRttiType;
   dataField: TField;
+  customAttr: TCustomAttribute;
+  aDataFieldName: string;
 begin
   dataList := TObjectList<T>.Create(True);
   WhileNotEof(
@@ -88,6 +90,7 @@ begin
     var
       i: integer;
       itemField: TRttiField;
+      ca: TCustomAttribute;
     begin
       item := T.Create();
       itemType := RttiContext.GetType(item.ClassType);
@@ -96,6 +99,27 @@ begin
         dataField := self.FindField(itemField.Name);
         if dataField <> nil then
           itemField.SetValue(TObject(item), TValue.From(dataField.Value))
+        else
+        begin
+          // --------------------------------------------------------
+          // Find Custom Attribute define for field in class
+          // --------------------------------------------------------
+          customAttr := nil;
+          for ca in itemField.GetAttributes do
+            if ca is MapedToFieldAttribute then
+            begin
+              customAttr := ca;
+              break;
+            end;
+          // --------------------------------------------------------
+          if customAttr <> nil then
+          begin
+            aDataFieldName := (customAttr as MapedToFieldAttribute).fieldName;
+            dataField := self.FindField(aDataFieldName);
+            if dataField <> nil then
+              itemField.SetValue(TObject(item), TValue.From(dataField.Value))
+          end
+        end;
       end;
       dataList.Add(item);
     end);
