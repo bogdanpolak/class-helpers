@@ -65,6 +65,15 @@ begin
 end;
 ```
 
+## Maintenance and helper repository
+
+As you create and use more and more class helpers, you'll start to notice some obstacles. For this reason, good practices should be adapted from the beginning to help avoid problems. One of them is maintenance technique. 
+
+1. Independent project
+   - Class helpers should be maintained as separate project, versioned and merged into finial projects like other external packages.
+1. Release cycle
+   - Helpers project should have individual releases with defined version numbers, release dates and its own branching model. New helpers version can be tested and integrated with final projects at the right time. This integration can be straightforward and quick, but sometimes could be more challenging.
+
 ## The Dark Side of class helpers
 
 Class helpers are look really nice on the first contact, but they have some dangerous side effects. In this section you able to better understand the weaknesses of this solution. If you try to define two class helpers expanding the same base class you will see that only one of them will be visible. More to that you are not able to expand class helper functionality with inheritance. Also you are not able to define additional memory (fields) in the class helper.
