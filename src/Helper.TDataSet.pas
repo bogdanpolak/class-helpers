@@ -11,7 +11,7 @@ uses
 type
   TDataSetHelper = class helper for TDataSet
   private const
-    Version = '1.4';
+    Version = '1.5';
   public
     procedure WhileNotEof(proc: TProc);
     procedure ForEachRow(proc: TProc);

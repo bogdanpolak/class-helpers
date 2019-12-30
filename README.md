@@ -1,7 +1,7 @@
 ﻿# Repository of VCL and RTL Class Helpers
 
 ![ Delphi Support ](https://img.shields.io/badge/Delphi%20Support-%2010%20..%2010.3%20Rio-blue.svg)
-![ version ](https://img.shields.io/badge/version-%201.4-yellow.svg)
+![ version ](https://img.shields.io/badge/version-%201.5-yellow.svg)
 
 ## Why use Class Helpers?
 
