@@ -81,7 +81,7 @@ This project is live example of such deployment techniques. We are using branchi
 ![](./doc/resources/branching-model.png)
 
 * Green and brown branches are feature branches, which are temporary one
-   - first one (brown) `is021-grid-column-restore` is for new feature: method `LoadColumnsFromJsonString` in TDBGrid class helper, which allows to restore column configuration (order, title caption, width and visibility) stored in JSON string. Feature definition is written in GitHub Issue #21
+   - first one (brown) `is021-grid-column-restore` is for new feature: method `LoadColumnsFromJsonString` in TDBGrid class helper, which allows to restore column configuration (order, title caption, width and visibility) stored in JSON string. Feature definition is written in [GitHub Issue #21](https://github.com/bogdanpolak/class-helpers/issues/21)
    - second one (green) `is014-doc-dark-side` is new documentation section in main `README.md` file. 
 * Violet branch is version (release) branch
    - Feature branches are merged into version when feature is ready to deliver. Developers shouldn't commit changes direct into version branch. In this example only final changes - before release are approved in violet branch
