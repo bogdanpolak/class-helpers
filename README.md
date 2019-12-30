@@ -67,7 +67,7 @@ end;
 
 ## Maintenance and helper repository
 
-As you create and use more and more class helpers, you'll start to notice some obstacles. For this reason, good practices should be adapted from the beginning to help avoid problems. One of them is maintenance technique. 
+As you create and use more and more class helpers, you'll start to notice some obstacles. For this reason, good practices should be adapted from the beginning to help avoid problems. One of the good practices is controlled maintenance of class helpers project.  
 
 1. Independent project
    - Class helpers should be maintained as separate project, versioned and merged into finial projects like other external packages.
@@ -83,9 +83,9 @@ This project is live example of such deployment techniques. We are using branchi
 * Green and brown branches are feature branches, which are temporary one
    - first one (brown) `is021-grid-column-restore` is for new feature: method `LoadColumnsFromJsonString` in TDBGrid class helper, which allows to restore column configuration (order, title caption, width and visibility) stored in JSON string. Feature definition is written in [GitHub Issue #21](https://github.com/bogdanpolak/class-helpers/issues/21)
    - second one (green) `is014-doc-dark-side` is new documentation section in main `README.md` file. 
-* Violet branch is version (release) branch
+* Violet branch is version (release) branch, which is long-life one 
    - Feature branches are merged into version when feature is ready to deliver. Developers shouldn't commit changes direct into version branch. In this example only final changes - before release are approved in violet branch
-* Blue branch is master branch
+* Blue branch is master branch, which is infinite one
    - No direct changes are allowed on this branch and this is production branch
 
 **Class helpers project Kanban board**
