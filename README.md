@@ -74,6 +74,16 @@ As you create and use more and more class helpers, you'll start to notice some o
 1. Release cycle
    - Helpers project should have individual releases with defined version numbers, release dates and its own branching model. New helpers version can be tested and integrated with final projects at the right time. This integration can be straightforward and quick, but sometimes could be more challenging.
 
+This project is live example of such deployment techniques. We are using branching model inspired by Vincent Driessen blog post: [A successful Git branching model](https://nvie.com/posts/a-successful-git-branching-model/) together with planing and delivery model inspired by Kanban method.
+
+**Class helpers project branching model**
+
+![](./doc/resources/branching-model.png)
+
+**Class helpers project Kanban board**
+
+![](./doc/resources/kanban-board.png)
+
 ## The Dark Side of class helpers
 
 Class helpers are look really nice on the first contact, but they have some dangerous side effects. In this section you able to better understand the weaknesses of this solution. If you try to define two class helpers expanding the same base class you will see that only one of them will be visible. More to that you are not able to expand class helper functionality with inheritance. Also you are not able to define additional memory (fields) in the class helper.
