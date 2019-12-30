@@ -36,6 +36,7 @@ type
     procedure GetFieldIsoDate_ForValidDate;
     procedure GetFieldOrEmpty_ForText;
     procedure GetFieldOrEmpty_ForNull;
+    procedure Bug028_InvalidDecimalValueInIsoDate;
   end;
 
 implementation
@@ -177,6 +178,19 @@ begin
   fJsonObject.AddPair('city', TJSONNull.Create);
   s := fJsonObject.GetFieldOrEmpty('city');
   Assert.IsEmpty(s);
+end;
+
+procedure TestTJSONObjectHelper.Bug028_InvalidDecimalValueInIsoDate;
+var
+  jso: TJSONObject;
+  actualDate: TDateTime;
+  expectedDate: Double;
+begin
+  jso := TJSONObject.Create(TJSONPair.Create('visited', '2018-11-25'));
+  actualDate := jso.GetFieldIsoDate('visited');
+  expectedDate := EncodeDate(2018, 11, 25);
+  Assert.AreEqual(expectedDate, actualDate);
+  jso.Free;
 end;
 
 initialization

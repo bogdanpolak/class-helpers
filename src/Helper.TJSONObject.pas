@@ -10,7 +10,7 @@ uses
 type
   TJSONObjectHelper = class helper for TJSONObject
   private const
-    Version = '1.4';
+    Version = '1.5';
   public
     /// <summary>
     ///   Checks is JSON object has field (key) provided through parameter and its value is not NULL
@@ -54,8 +54,20 @@ begin
 end;
 
 function TJSONObjectHelper.GetFieldIsoDate(const fieldName: string): TDateTime;
+var
+  aVal: string;
+  dt: TDateTime;
+  isValueWithTime: Boolean;
 begin
-  Result := System.DateUtils.ISO8601ToDate(Self.Values[fieldName].Value, False);
+  aVal := Self.Values[fieldName].Value;
+  // * ISO8601ToDate - returns invalid date time for strings containg only
+  //     ISO date (returns decimal values with time) (spoted in 10.3 version)
+  dt := System.DateUtils.ISO8601ToDate(aVal, False);
+  isValueWithTime := aVal.Contains('T');
+  if not(isValueWithTime) and (Frac(dt)>0) then
+    Result := Int(dt)
+  else
+    Result := dt
 end;
 
 function TJSONObjectHelper.GetFieldInt(const fieldName: string): integer;

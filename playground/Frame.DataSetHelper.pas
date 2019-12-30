@@ -16,16 +16,21 @@ uses
 type
   TFrameDataSetHelper = class(TFrame)
     TDataSetHelper: TGroupBox;
-    Button1: TButton;
+    btnGetMaxIntegerValue: TButton;
     tmrOnReady: TTimer;
     DBGrid1: TDBGrid;
     GroupBox1: TGroupBox;
-    Button2: TButton;
-    procedure Button1Click(Sender: TObject);
+    btnAutoSizeColumns: TButton;
+    btnLoadColumnsLayout: TButton;
+    btnResetDBGrid: TButton;
+    procedure btnGetMaxIntegerValueClick(Sender: TObject);
     procedure tmrOnReadyTimer(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
+    procedure btnAutoSizeColumnsClick(Sender: TObject);
+    procedure btnLoadColumnsLayoutClick(Sender: TObject);
+    procedure btnResetDBGridClick(Sender: TObject);
   private
     fDataSet: TDataSet;
+    procedure OnFrameReady;
   public
   end;
 
@@ -67,7 +72,8 @@ begin
     FieldByName('ID').Value := 2;
     FieldByName('Text1').Value := 'Gellert Grindelwald';
     FieldByName('Date').Value := EncodeDate(1938, 02, 21);
-    FieldByName('Text2').Value := 'Dark wizard, would be second only to Voldemort';
+    FieldByName('Text2').Value :=
+      'Dark wizard, would be second only to Voldemort';
     FieldByName('Saved').Value := 31500.00;
     Post;
   end;
@@ -77,7 +83,8 @@ begin
     FieldByName('ID').Value := 3;
     FieldByName('Text1').Value := 'Bellatrix Lestrange';
     FieldByName('Date').Value := EncodeDate(1980, 10, 07);
-    FieldByName('Text2').Value := 'Most faithful member of Voldemort inner circle, paranoid and fanatically devoted to Voldemort';
+    FieldByName('Text2').Value :=
+      'Most faithful member of Voldemort inner circle, paranoid and fanatically devoted to Voldemort';
     FieldByName('Saved').Value := 95000.00;
     Post;
   end;
@@ -85,24 +92,57 @@ begin
   Result := ds;
 end;
 
-procedure TFrameDataSetHelper.Button1Click(Sender: TObject);
-var
-  value: Integer;
+procedure TFrameDataSetHelper.OnFrameReady;
 begin
-  value := fDataSet.GetMaxIntegerValue('ID');
-  Button1.Caption := Format('Max value = %d',[value]);
-end;
-
-procedure TFrameDataSetHelper.Button2Click(Sender: TObject);
-begin
-  DBGrid1.AutoSizeColumns();
+  fDataSet := CreateDataSet(Self);
+  DBGrid1.DataSource := fDataSet.CreateDataSource;
 end;
 
 procedure TFrameDataSetHelper.tmrOnReadyTimer(Sender: TObject);
 begin
   tmrOnReady.Enabled := False;
+  OnFrameReady;
+end;
+
+procedure TFrameDataSetHelper.btnLoadColumnsLayoutClick(Sender: TObject);
+var
+  sColumns: String;
+begin
+  sColumns := '[' //.
+    + '  {"fieldname":"ID", "width":30, "visible":false} ' //.
+    + ', {"fieldname":"Text1", "title":"Character name", "width":120}' //.
+    + ', {"fieldname":"Date", "title":"Last activity", "width":80, "visible":true} '
+    + ', {"fieldname":"Saved", "title":"Current savings", "width":90} ' //.
+    + ', {"fieldname":"Text2", "title":"More information", "width":500} ' //.
+    + ']';
+  DBGrid1.LoadColumnsFromJsonString(sColumns);
+end;
+
+procedure TFrameDataSetHelper.btnResetDBGridClick(Sender: TObject);
+begin
+  fDataSet.Free;
+  DBGrid1.Free;
   fDataSet := CreateDataSet(Self);
-  DBGrid1.DataSource := fDataSet.CreateDataSource;
+  DBGrid1 := TDBGrid.Create(Self);
+  with DBGrid1 do begin
+    Align := alClient;
+    AlignWithMargins := True;
+    DataSource := fDataSet.CreateDataSource; // aDataSource;
+  end;
+  DBGrid1.Parent := Self;
+end;
+
+procedure TFrameDataSetHelper.btnGetMaxIntegerValueClick(Sender: TObject);
+var
+  Value: Integer;
+begin
+  Value := fDataSet.GetMaxIntegerValue('ID');
+  (Sender as TButton).Caption := Format('Max value = %d', [Value]);
+end;
+
+procedure TFrameDataSetHelper.btnAutoSizeColumnsClick(Sender: TObject);
+begin
+  DBGrid1.AutoSizeColumns();
 end;
 
 end.

@@ -1,7 +1,7 @@
 ﻿# Repository of VCL and RTL Class Helpers
 
 ![ Delphi Support ](https://img.shields.io/badge/Delphi%20Support-%2010%20..%2010.3%20Rio-blue.svg)
-![ version ](https://img.shields.io/badge/version-%201.4-yellow.svg)
+![ version ](https://img.shields.io/badge/version-%201.5-yellow.svg)
 
 ## Why use Class Helpers?
 
@@ -64,6 +64,35 @@ begin
   Assert.AreEqual(80, fGrid.ColWidths[4]);
 end;
 ```
+
+## Maintenance and helper repository
+
+As you create and use more and more class helpers, you'll start to notice some obstacles. For this reason, good practices should be adapted from the beginning to help avoid problems. One of the good practices is controlled maintenance of class helpers project.  
+
+1. Independent project
+   - Class helpers should be maintained as separate project, versioned and merged into finial projects like other external packages.
+1. Release cycle
+   - Helpers project should have individual releases with defined version numbers, release dates and its own branching model. New helpers version can be tested and integrated with final projects at the right time. This integration can be straightforward and quick, but sometimes could be more challenging.
+
+This project is live example of such deployment techniques. We are using branching model inspired by Vincent Driessen blog post: [A successful Git branching model](https://nvie.com/posts/a-successful-git-branching-model/) together with planing and delivery model inspired by Kanban method.
+
+**Class helpers project branching model**
+
+![](./doc/resources/branching-model.png)
+
+* Green and brown branches are feature branches, which are temporary one
+   - first one (brown) `is021-grid-column-restore` is for new feature: method `LoadColumnsFromJsonString` in TDBGrid class helper, which allows to restore column configuration (order, title caption, width and visibility) stored in JSON string. Feature definition is written in [GitHub Issue #21](https://github.com/bogdanpolak/class-helpers/issues/21)
+   - second one (green) `is014-doc-dark-side` is new documentation section in main `README.md` file. 
+* Violet branch is version (release) branch, which is long-life one 
+   - Feature branches are merged into version when feature is ready to deliver. Developers shouldn't commit changes direct into version branch. In this example only final changes - before release are approved in violet branch
+* Blue branch is master branch, which is infinite one
+   - No direct changes are allowed on this branch and this is production branch
+
+**Class helpers project Kanban board**
+
+![](./doc/resources/kanban-board.png)
+
+Kanban board and planning sessions are suggested techniques to achieve - incremental delivery. Class helpers project can't be delivered too often, because of integration cost (integration class helper repository with final Delphi projects). And from the other side delivery of the new version shouldn't take too long, because all projects should use advantages of new helpers (high reusability).
 
 ## The Dark Side of class helpers
 

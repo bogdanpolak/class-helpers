@@ -14,7 +14,7 @@ type
   public const
     SufixForAdditionalColumnWidth = '   ';
   private const
-    Version = '1.4';
+    Version = '1.5';
   public
     /// <summary>
     ///   Counts and sets the width of the grid columns in pixels
@@ -23,8 +23,45 @@ type
     ///   The number of rows for which widths are counted
     /// </param>
     function AutoSizeColumns(const CalcForNumberOfRows: integer = 25): integer;
+    /// <summary>
+    ///   Allows to set TDBGrid columns layout: column visibility, column
+    ///   width and display column title. Layout definition is provided
+    ///   through JSON array.
+    /// </summary>
+    /// <exception cref="EJSONProcessing">
+    ///   Exception <b>EJSONProcessing</b> is thrown when then passed JSON
+    ///   array has unexpected structure.
+    /// </exception>
+    /// <remarks>
+    ///   Parameter <b>aStoredColumns</b> is JSON array contains JSON
+    ///   objects and each of them can has following fields:
+    ///   <b>fieldname</b> - name of DataSet field displayed in this column.
+    ///   <b>title</b> - title of the column displayed in header.
+    ///   <b>width</b> - column width in pixels (numeric value).
+    ///   <b>visible</b> - column visibility (boolean value)
+    /// </remarks>
     procedure LoadColumnsFromJson(aStoredColumns: TJSONArray);
+    /// <summary>
+    ///   Allows to set TDBGrid columns layout: column visibility, column
+    ///   width and column title. Layout definition is provided through
+    ///   string parameter containg valid JSON array.
+    /// </summary>
+    /// <exception cref="EJSONProcessing">
+    ///   Exception <b>EJSONProcessing</b> is thrown when string parameter
+    ///   contains not valid JSON text or JSONArray stored there has
+    ///   unexpected structure.
+    /// </exception>
+    /// <remarks>
+    ///   Parameter <b>aJsonString</b> is well formatted JSON array stored
+    ///   in String. This JSON array has contain JSON objects with following
+    ///   fields:
+    ///   <b>fieldname</b> - name of DataSet field displayed in this column.
+    ///   <b>title</b> - title of the column displayed in header.
+    ///   <b>width</b> - column width in pixels (numeric value).
+    ///   <b>visible</b> - column visibility (boolean value)
+    /// </remarks>
     procedure LoadColumnsFromJsonString(const aJsonString: string);
+    function SaveColumnsToString: string;
   end;
 
 type
@@ -87,23 +124,45 @@ begin
   Result := Count - self.ClientWidth;
 end;
 
-function GetJsonObjectValue(jsObj: TJSONObject; const key: string): string;
+
+// ------------------------------------------------------------------------
+// TJSONObjectEx - Exteded methods to TJSONObject
+// ------------------------------------------------------------------------
+
+type
+  TJSONObjectProcessor = class
+  private
+    fJsonObject: TJSONObject;
+  public
+    constructor Create(aJsonObject: TJSONObject);
+    function GetValueString(const key: string): string;
+    function GetValueBoolen(const key: string; deafultValue: boolean): boolean;
+    function GetValueInteger(const key: string): Variant;
+    procedure NormalizeCase();
+  end;
+
+constructor TJSONObjectProcessor.Create(aJsonObject: TJSONObject);
+begin
+  fJsonObject := aJsonObject;
+end;
+
+function TJSONObjectProcessor.GetValueString(const key: string): string;
 var
   jv: TJSONValue;
 begin
-  jv := jsObj.Values[key];
+  jv := fJsonObject.Values[key];
   if (jv = nil) or (jv.Null) then
     Result := ''
   else
     Result := jv.Value;
 end;
 
-function GetJsonObjectValueBoolen(jsObj: TJSONObject; const key: string;
+function TJSONObjectProcessor.GetValueBoolen(const key: string;
   deafultValue: boolean): boolean;
 var
   jv: TJSONValue;
 begin
-  jv := jsObj.Values[key];
+  jv := fJsonObject.Values[key];
   if (jv <> nil) and not(jv is TJSONBool) then
     raise EJSONProcessing.Create
       (Format('Expected boolean value in JSON object for key:"%s"', [key]));
@@ -113,12 +172,11 @@ begin
     Result := (jv is TJSONTrue);
 end;
 
-function GetJsonObjectValueInteger(jsObj: TJSONObject;
-  const key: string): Variant;
+function TJSONObjectProcessor.GetValueInteger(const key: string): Variant;
 var
   jv: TJSONValue;
 begin
-  jv := jsObj.Values[key];
+  jv := fJsonObject.Values[key];
   if (jv <> nil) and not(jv is TJSONNumber) then
     raise EJSONProcessing.Create
       (Format('Expected number value in JSON object for key:"%s"', [key]));
@@ -128,10 +186,29 @@ begin
     Result := (jv as TJSONNumber).AsInt;
 end;
 
+procedure TJSONObjectProcessor.NormalizeCase();
+var
+  aPair: TJSONPair;
+  sLowerKey: string;
+begin
+  for aPair in fJsonObject do
+  begin
+    sLowerKey := LowerCase(aPair.JsonString.Value);
+    if sLowerKey <> aPair.JsonString.Value then
+    begin
+      if not aPair.JsonString.Owned then
+        aPair.JsonString.Free;
+      aPair.JsonString := TJSONString.Create(sLowerKey);
+    end;
+  end;
+end;
+
+// ------------------------------------------------------------------------
+
 procedure TDBGridHelper.LoadColumnsFromJson(aStoredColumns: TJSONArray);
 var
   i: integer;
-  jsCol: TJSONObject;
+  jsObjProcessor: TJSONObjectProcessor;
   aFieldName: string;
   aColumnTitle: string;
   aColumn: TColumn;
@@ -144,11 +221,13 @@ begin
     exit;
   for i := 0 to aStoredColumns.Count - 1 do
   begin
-    jsCol := aStoredColumns.Items[i] as TJSONObject;
-    aFieldName := GetJsonObjectValue(jsCol, 'fieldName');
-    aColumnTitle := GetJsonObjectValue(jsCol, 'title');
-    aVisible := GetJsonObjectValueBoolen(jsCol, 'visible', True);
-    aWidth := GetJsonObjectValueInteger(jsCol, 'width');
+    jsObjProcessor := TJSONObjectProcessor.Create
+      (aStoredColumns.Items[i] as TJSONObject);
+    jsObjProcessor.NormalizeCase();
+    aFieldName := jsObjProcessor.GetValueString('fieldname');
+    aColumnTitle := jsObjProcessor.GetValueString('title');
+    aVisible := jsObjProcessor.GetValueBoolen('visible', True);
+    aWidth := jsObjProcessor.GetValueInteger('width');
     // --
     aField := self.DataSource.DataSet.FindField(aFieldName);
     if (aField <> nil) or (aColumnTitle <> '') then
@@ -178,10 +257,29 @@ begin
       raise EJSONProcessing.Create
         ('Expected JSON array in provided string parameter.');
     jsColumns := jsValue as TJSONArray;
-    Self.LoadColumnsFromJson(jsColumns);
+    self.LoadColumnsFromJson(jsColumns);
   finally
     jsValue.Free;
   end;
+end;
+
+function TDBGridHelper.SaveColumnsToString: string;
+var
+  aColumn: TColumn;
+  i: integer;
+  sJson: string;
+begin
+  sJson := '';
+  for i := 0 to self.Columns.Count - 1 do
+  begin
+    aColumn := self.Columns[i];
+    if i > 0 then
+      sJson := sJson + ',';
+    sJson := sJson +
+      Format('{"fieldname":"%s", "title":"%s", "width":%d, "visible":true}',
+      [aColumn.FieldName, aColumn.Title.Caption, aColumn.Width]);
+  end;
+  Result := '[' + sJson + ']';
 end;
 
 end.

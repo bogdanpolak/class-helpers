@@ -7,6 +7,7 @@ uses
   System.Classes,
   System.SysUtils,
   System.JSON,
+  System.Generics.Collections,
   Data.DB,
   Datasnap.DBClient,
 
@@ -29,9 +30,15 @@ type
   published
     procedure GetMaxIntegerValue_546;
     procedure ForEachRowVisitedDates;
+    procedure LoadData_OneCity_NoAttributes;
+    procedure LoadData_OneCity_Mapped;
+    procedure LoadData_OneCity_InvalidMapping;
   end;
 
 implementation
+
+uses
+  Attribute.MapedToField;
 
 // -----------------------------------------------------------------------
 // Setup and TearDown section
@@ -102,10 +109,94 @@ begin
   fDataset.ForEachRow(
     procedure
     begin
-      s := s + FormatDateTime('yyyy-mm', visitedField.Value)+' '
+      s := s + FormatDateTime('yyyy-mm', visitedField.Value) + ' '
     end);
   // Assert
-  Assert.AreEqual ('2018-05 2015-09 2019-01 2013-06 ',s);
+  Assert.AreEqual('2018-05 2015-09 2019-01 2013-06 ', s);
+end;
+
+type
+  TCityForDataset = class
+  public
+    id: Integer;
+    city: string;
+    rank: Integer;
+    visited: TDateTime;
+  end;
+
+procedure TestTDataSetHelper.LoadData_OneCity_NoAttributes;
+var
+  cities: TObjectList<TCityForDataset>;
+begin
+  BuildDataSet1;
+  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
+  fDataset.First;
+
+  cities := fDataset.LoadData<TCityForDataset>();
+
+  Assert.AreEqual(1, cities.Count);
+  Assert.AreEqual(1, cities[0].id);
+  Assert.AreEqual('Edinburgh', cities[0].city);
+  Assert.AreEqual(5, cities[0].rank);
+  Assert.AreEqual(EncodeDate(2018, 05, 28), cities[0].visited);
+  cities.Free;
+end;
+
+type
+  TMyCity = class
+  public
+    [MapedToField('id')]
+    cityId: Integer;
+    [MapedToField('city')]
+    cityName: string;
+    [MapedToField('rank')]
+    rank: Integer;
+    [MapedToField('visited')]
+    visitDate: TDateTime;
+  end;
+
+procedure TestTDataSetHelper.LoadData_OneCity_Mapped;
+var
+  cities: TObjectList<TMyCity>;
+begin
+  BuildDataSet1;
+  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
+  fDataset.First;
+
+  cities := fDataset.LoadData<TMyCity>();
+
+  Assert.AreEqual(1, cities.Count);
+  Assert.AreEqual(1, cities[0].cityId, '(assert: CityId)');
+  Assert.AreEqual('Edinburgh', cities[0].cityName);
+  Assert.AreEqual(5, cities[0].rank);
+  Assert.AreEqual(EncodeDate(2018, 05, 28), cities[0].visitDate);
+  cities.Free;
+end;
+
+type
+  TInvalidCity = class
+  public
+    [MapedToField('cityName')]
+    cityName: string;
+  end;
+
+procedure TestTDataSetHelper.LoadData_OneCity_InvalidMapping;
+var
+  cities: TObjectList<TInvalidCity>;
+begin
+  BuildDataSet1;
+  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
+  fDataset.First;
+
+  Assert.WillRaise(
+    procedure
+    begin
+      try
+        cities := fDataset.LoadData<TInvalidCity>();
+      finally
+        cities.Free;
+      end;
+    end, EInvalidMapping);
 end;
 
 initialization
