@@ -14,7 +14,7 @@ uses
 type
 
   [TestFixture]
-  TDate2019_10_24_T_21_15_59 = class(TObject)
+  TestDateTimeHelper = class(TObject)
   private
     fDate: TDateTime;
     fExpected: TDateTime;
@@ -87,14 +87,14 @@ end;
 // Setup and TearDown section
 // -----------------------------------------------------------------------
 
-procedure TDate2019_10_24_T_21_15_59.Setup;
+procedure TestDateTimeHelper.Setup;
 begin
   fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
   FormatSettings.DateSeparator := '-';
   FormatSettings.ShortDateFormat := 'yyyy/mm/dd';
 end;
 
-procedure TDate2019_10_24_T_21_15_59.TearDown;
+procedure TestDateTimeHelper.TearDown;
 begin
 end;
 
@@ -103,115 +103,115 @@ end;
 // -----------------------------------------------------------------------
 {$REGION 'Test section 1'}
 
-procedure TDate2019_10_24_T_21_15_59.Test_AsYear;
+procedure TestDateTimeHelper.Test_AsYear;
 begin
   Assert.AreEqual(2019, fDate.AsYear);
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_AsMonth;
+procedure TestDateTimeHelper.Test_AsMonth;
 begin
   Assert.AreEqual(10, fDate.AsMonth);
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_AsDay;
+procedure TestDateTimeHelper.Test_AsDay;
 begin
   Assert.AreEqual(24, fDate.AsDay);
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_DatePart;
+procedure TestDateTimeHelper.Test_DatePart;
 begin
   Assert.AreEqual(double(43762), fDate.DatePart);
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_AsHour;
+procedure TestDateTimeHelper.Test_AsHour;
 begin
   Assert.AreEqual(21, fDate.AsHour);
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_AsMinute;
+procedure TestDateTimeHelper.Test_AsMinute;
 begin
   Assert.AreEqual(15, fDate.AsMinute);
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_AsSeconds;
+procedure TestDateTimeHelper.Test_AsSeconds;
 begin
   Assert.AreEqual(59, fDate.AsSecond);
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_TimePart;
+procedure TestDateTimeHelper.Test_TimePart;
 begin
   fExpected := 21 * (1 / 24) + 15 * (1 / 24 / 60) + 59 * (1 / 24 / 60 / 60);
   Assert.AreEqual(fExpected, fDate.TimePart, 0.00000001);
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_ToString_Empty;
+procedure TestDateTimeHelper.Test_ToString_Empty;
 begin
   Assert.AreEqual('2019-10-24', fDate.ToString());
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_ToString_yymmdd;
+procedure TestDateTimeHelper.Test_ToString_yymmdd;
 begin
 
   Assert.AreEqual('24 ' + FormatSettings.ShortMonthNames[10] + ' 2019',
     fDate.ToString('dd mmm yyyy'));
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_AsFloat;
+procedure TestDateTimeHelper.Test_AsFloat;
 begin
   Assert.AreEqual(double(43762.886099537), fDate.AsFloat, 0.00000001);
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_DayOfWeek;
+procedure TestDateTimeHelper.Test_DayOfWeek;
 begin
   Assert.AreEqual(5, fDate.DayOfWeek);
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_DayOfWeekName;
+procedure TestDateTimeHelper.Test_DayOfWeekName;
 begin
   Assert.AreEqual(FormatSettings.LongDayNames[5], fDate.DayOfWeekName);
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_DayOfWeekShortName;
+procedure TestDateTimeHelper.Test_DayOfWeekShortName;
 begin
   Assert.AreEqual(FormatSettings.ShortDayNames[5], fDate.DayOfWeekShortName);
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_DaysInMonth;
+procedure TestDateTimeHelper.Test_DaysInMonth;
 begin
   Assert.AreEqual(31, fDate.DaysInMonth);
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_IncMonth_5;
+procedure TestDateTimeHelper.Test_IncMonth_5;
 begin
   Assert.AreDateEqual(2020, 3, 24, fDate.IncMonth(5));
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_IncMonth_Minus1;
+procedure TestDateTimeHelper.Test_IncMonth_Minus1;
 begin
   Assert.AreDateEqual(2019, 9, 24, fDate.IncMonth(-1));
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_FirstDayInMonth;
+procedure TestDateTimeHelper.Test_FirstDayInMonth;
 begin
   Assert.AreDateEqual(2019, 10, 1, fDate.FirstDayInMonth);
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_LastDayInMonth;
+procedure TestDateTimeHelper.Test_LastDayInMonth;
 begin
   Assert.AreDateEqual(2019, 10, 31, fDate.LastDayInMonth);
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_DayOfWeekFirstDayInMonth;
+procedure TestDateTimeHelper.Test_DayOfWeekFirstDayInMonth;
 begin
   Assert.AreEqual(2, fDate.DayOfWeekFirstDayInMonth);
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_DayOfWeekLastDayInMonth;
+procedure TestDateTimeHelper.Test_DayOfWeekLastDayInMonth;
 begin
   Assert.AreEqual(4, fDate.DayOfWeekLastDayInMonth);
 end;
 
-procedure TDate2019_10_24_T_21_15_59.Test_NumberOfWeeksInMonth;
+procedure TestDateTimeHelper.Test_NumberOfWeeksInMonth;
 begin
   Assert.AreEqual(5, fDate.NumberOfWeeksInMonth);
 end;
@@ -237,6 +237,6 @@ end;
 
 initialization
 
-TDUnitX.RegisterTestFixture(TDate2019_10_24_T_21_15_59);
+TDUnitX.RegisterTestFixture(TestDateTimeHelper);
 
 end.
