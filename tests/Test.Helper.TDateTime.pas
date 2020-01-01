@@ -35,8 +35,9 @@ type
     procedure AsSeconds_8h59m13s;
     procedure TimePart_31Dec2019_23h59m59s;
     procedure ToString_31Dec2019_UK;
-    procedure Test_ToString_yymmdd;
-    procedure Test_AsFloat;
+    procedure ToString_14October2019_USA;
+    procedure ToString_Format_yymmdd;
+    procedure AsFloat_01Jan1999_01h01m01s;
     procedure Test_DayOfWeek;
     procedure Test_DayOfWeekName;
     procedure Test_DayOfWeekShortName;
@@ -197,16 +198,39 @@ begin
   Assert.AreEqual('31.12.2019', actualDateString);
 end;
 
-procedure TestDateTimeHelper.Test_ToString_yymmdd;
+procedure TestDateTimeHelper.ToString_14October2019_USA;
+var
+  actualDateString: string;
 begin
-
-  Assert.AreEqual('24 ' + FormatSettings.ShortMonthNames[10] + ' 2019',
-    fDate.ToString('dd mmm yyyy'));
+  FormatSettings := TFormatSettings.Create('en-us');
+  fDate := EncodeDate(2019, 10, 14);
+  actualDateString := fDate.ToString();
+  Assert.AreEqual('10/14/2019', actualDateString);
 end;
 
-procedure TestDateTimeHelper.Test_AsFloat;
+procedure TestDateTimeHelper.ToString_Format_yymmdd;
+var
+  actualDateString: string;
+  expectedDateString: string;
 begin
-  Assert.AreEqual(double(43762.886099537), fDate.AsFloat, 0.00000001);
+  fDate := EncodeDate(2019, 10, 24);
+  actualDateString := fDate.ToString('dd mmm yyyy');
+  expectedDateString := '24 ' + FormatSettings.ShortMonthNames[10] + ' 2019';
+  Assert.AreEqual(expectedDateString, actualDateString);
+end;
+
+procedure TestDateTimeHelper.AsFloat_01Jan1999_01h01m01s;
+var
+  expectedValue: double;
+  actualValue: double;
+begin
+  fDate := EncodeDate(1999, 01, 01) + EncodeTime(01, 01, 01, 00);
+  actualValue := fDate.AsFloat;
+  expectedValue := 36161 // date part
+    + 01 * (1 / 24) // hours
+    + 01 * (1 / 24 / 60) // minutes
+    + 01 * (1 / 24 / 60 / 60); // seconds
+  Assert.AreEqual(expectedValue, actualValue, 0.00000001);
 end;
 
 procedure TestDateTimeHelper.Test_DayOfWeek;
