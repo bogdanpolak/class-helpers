@@ -17,8 +17,6 @@ type
   TestDateTimeHelper = class(TObject)
   private
     fDate: TDateTime;
-    fExpected: TDateTime;
-    fOriginalSettings: TFormatSettings;
   public
     [Setup]
     procedure Setup;
@@ -92,18 +90,15 @@ end;
 
 procedure TestDateTimeHelper.Setup;
 begin
-  fOriginalSettings := FormatSettings;
 end;
 
 procedure TestDateTimeHelper.TearDown;
 begin
-  FormatSettings := fOriginalSettings;
 end;
 
 // -----------------------------------------------------------------------
 // Tests section 1
 // -----------------------------------------------------------------------
-{$REGION 'Test section 1'}
 
 procedure TestDateTimeHelper.AsYear_2019;
 var
@@ -190,22 +185,34 @@ end;
 
 procedure TestDateTimeHelper.ToString_31Dec2019_UK;
 var
+  originalSettings: TFormatSettings;
   actualDateString: string;
 begin
-  FormatSettings := TFormatSettings.Create('uk-en');
-  fDate := EncodeDate(2019, 12, 31);
-  actualDateString := fDate.ToString();
-  Assert.AreEqual('31.12.2019', actualDateString);
+  originalSettings := FormatSettings;
+  try
+    FormatSettings := TFormatSettings.Create('uk-en');
+    fDate := EncodeDate(2019, 12, 31);
+    actualDateString := fDate.ToString();
+    Assert.AreEqual('31.12.2019', actualDateString);
+  finally
+    FormatSettings := originalSettings;
+  end;
 end;
 
 procedure TestDateTimeHelper.ToString_14October2019_USA;
 var
+  originalSettings: TFormatSettings;
   actualDateString: string;
 begin
-  FormatSettings := TFormatSettings.Create('en-us');
-  fDate := EncodeDate(2019, 10, 14);
-  actualDateString := fDate.ToString();
-  Assert.AreEqual('10/14/2019', actualDateString);
+  originalSettings := FormatSettings;
+  try
+    FormatSettings := TFormatSettings.Create('en-us');
+    fDate := EncodeDate(2019, 10, 14);
+    actualDateString := fDate.ToString();
+    Assert.AreEqual('10/14/2019', actualDateString);
+  finally
+    FormatSettings := originalSettings;
+  end;
 end;
 
 procedure TestDateTimeHelper.ToString_Format_yymmdd;
@@ -288,7 +295,6 @@ begin
   Assert.AreEqual(5, fDate.NumberOfWeeksInMonth);
 end;
 
-{$ENDREGION}
 // -----------------------------------------------------------------------
 // Tests cases: TDate_Cases
 // -----------------------------------------------------------------------
