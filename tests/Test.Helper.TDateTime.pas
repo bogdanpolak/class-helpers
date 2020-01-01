@@ -1,4 +1,5 @@
 ﻿unit Test.Helper.TDateTime;
+// ♥ 2019 (c) https://github.com/bogdanpolak
 
 interface
 
@@ -36,9 +37,9 @@ type
     procedure ToString_14October2019_USA;
     procedure ToString_Format_yymmdd;
     procedure AsFloat_01Jan1999_01h01m01s;
-    procedure Test_DayOfWeek;
-    procedure Test_DayOfWeekName;
-    procedure Test_DayOfWeekShortName;
+    procedure DayOfWeek_24Oct2017;
+    procedure DayOfWeekName_24Oct2017_Ru;
+    procedure DayOfWeekShortName_24Oct2017_Ru;
     procedure Test_DaysInMonth;
     procedure Test_IncMonth_5;
     procedure Test_IncMonth_Minus1;
@@ -240,58 +241,93 @@ begin
   Assert.AreEqual(expectedValue, actualValue, 0.00000001);
 end;
 
-procedure TestDateTimeHelper.Test_DayOfWeek;
+procedure TestDateTimeHelper.DayOfWeek_24Oct2017;
+var
+  actualDayOfWeek: word;
 begin
-  Assert.AreEqual(5, fDate.DayOfWeek);
+  fDate := EncodeDate(2017, 10, 24);
+  actualDayOfWeek := fDate.DayOfWeek;
+  Assert.AreEqual(3, actualDayOfWeek);
 end;
 
-procedure TestDateTimeHelper.Test_DayOfWeekName;
+procedure TestDateTimeHelper.DayOfWeekName_24Oct2017_Ru;
+var
+  originalSettings: TFormatSettings;
+  actualDayOfWeekString: string;
 begin
-  Assert.AreEqual(FormatSettings.LongDayNames[5], fDate.DayOfWeekName);
+  originalSettings := FormatSettings;
+  try
+    FormatSettings := TFormatSettings.Create('ru-ru');
+    fDate := EncodeDate(2017, 10, 24);
+    actualDayOfWeekString := fDate.DayOfWeekName;
+    // вторник (ru) = Tuesday (eng)
+    Assert.AreEqual('вторник', actualDayOfWeekString);
+  finally
+    FormatSettings := originalSettings;
+  end;
 end;
 
-procedure TestDateTimeHelper.Test_DayOfWeekShortName;
+procedure TestDateTimeHelper.DayOfWeekShortName_24Oct2017_Ru;
+var
+  originalSettings: TFormatSettings;
+  actualDayOfWeekString: string;
 begin
-  Assert.AreEqual(FormatSettings.ShortDayNames[5], fDate.DayOfWeekShortName);
+  originalSettings := FormatSettings;
+  try
+    FormatSettings := TFormatSettings.Create('ru-ru');
+    fDate := EncodeDate(2017, 10, 24);
+    actualDayOfWeekString := fDate.DayOfWeekShortName;
+    Assert.AreEqual('Вт', actualDayOfWeekString);
+  finally
+    FormatSettings := originalSettings;
+  end;
 end;
 
 procedure TestDateTimeHelper.Test_DaysInMonth;
 begin
+  fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
   Assert.AreEqual(31, fDate.DaysInMonth);
 end;
 
 procedure TestDateTimeHelper.Test_IncMonth_5;
 begin
+  fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
   Assert.AreDateEqual(2020, 3, 24, fDate.IncMonth(5));
 end;
 
 procedure TestDateTimeHelper.Test_IncMonth_Minus1;
 begin
+  fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
   Assert.AreDateEqual(2019, 9, 24, fDate.IncMonth(-1));
 end;
 
 procedure TestDateTimeHelper.Test_FirstDayInMonth;
 begin
+  fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
   Assert.AreDateEqual(2019, 10, 1, fDate.FirstDayInMonth);
 end;
 
 procedure TestDateTimeHelper.Test_LastDayInMonth;
 begin
+  fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
   Assert.AreDateEqual(2019, 10, 31, fDate.LastDayInMonth);
 end;
 
 procedure TestDateTimeHelper.Test_DayOfWeekFirstDayInMonth;
 begin
+  fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
   Assert.AreEqual(2, fDate.DayOfWeekFirstDayInMonth);
 end;
 
 procedure TestDateTimeHelper.Test_DayOfWeekLastDayInMonth;
 begin
+  fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
   Assert.AreEqual(4, fDate.DayOfWeekLastDayInMonth);
 end;
 
 procedure TestDateTimeHelper.Test_NumberOfWeeksInMonth;
 begin
+  fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
   Assert.AreEqual(5, fDate.NumberOfWeeksInMonth);
 end;
 
