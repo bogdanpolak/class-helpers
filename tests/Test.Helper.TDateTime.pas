@@ -18,6 +18,7 @@ type
   private
     fDate: TDateTime;
     fExpected: TDateTime;
+    fOriginalSettings: TFormatSettings;
   public
     [Setup]
     procedure Setup;
@@ -30,10 +31,10 @@ type
     procedure DatePart_27May2019;
     procedure AsHour_23h19m15sec;
     procedure AsHour_13June2019_13h00m;
-    procedure Test_AsMinute;
-    procedure Test_AsSeconds;
-    procedure Test_TimePart;
-    procedure Test_ToString_Empty;
+    procedure AsMinute_7h25m59s;
+    procedure AsSeconds_8h59m13s;
+    procedure TimePart_31Dec2019_23h59m59s;
+    procedure ToString_31Dec2019_UK;
     procedure Test_ToString_yymmdd;
     procedure Test_AsFloat;
     procedure Test_DayOfWeek;
@@ -90,13 +91,12 @@ end;
 
 procedure TestDateTimeHelper.Setup;
 begin
-  fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
-  FormatSettings.DateSeparator := '-';
-  FormatSettings.ShortDateFormat := 'yyyy/mm/dd';
+  fOriginalSettings := FormatSettings;
 end;
 
 procedure TestDateTimeHelper.TearDown;
 begin
+  FormatSettings := fOriginalSettings;
 end;
 
 // -----------------------------------------------------------------------
@@ -158,25 +158,43 @@ begin
   Assert.AreEqual(13, actualHour);
 end;
 
-procedure TestDateTimeHelper.Test_AsMinute;
+procedure TestDateTimeHelper.AsMinute_7h25m59s;
+var
+  actualMinute: word;
 begin
-  Assert.AreEqual(15, fDate.AsMinute);
+  fDate := EncodeTime(07, 25, 59, 00);
+  actualMinute := fDate.AsMinute;
+  Assert.AreEqual(25, actualMinute);
 end;
 
-procedure TestDateTimeHelper.Test_AsSeconds;
+procedure TestDateTimeHelper.AsSeconds_8h59m13s;
+var
+  actualSecond: word;
 begin
-  Assert.AreEqual(59, fDate.AsSecond);
+  fDate := EncodeTime(08, 59, 13, 00);
+  actualSecond := fDate.AsSecond;
+  Assert.AreEqual(13, actualSecond);
 end;
 
-procedure TestDateTimeHelper.Test_TimePart;
+procedure TestDateTimeHelper.TimePart_31Dec2019_23h59m59s;
+var
+  actualTime: TDateTime;
+  expectedTime: TDateTime;
 begin
-  fExpected := 21 * (1 / 24) + 15 * (1 / 24 / 60) + 59 * (1 / 24 / 60 / 60);
-  Assert.AreEqual(fExpected, fDate.TimePart, 0.00000001);
+  fDate := EncodeDate(2019, 12, 31) + EncodeTime(23, 59, 59, 00);
+  actualTime := fDate.TimePart;
+  expectedTime := 23 * (1 / 24) + 59 * (1 / 24 / 60) + 59 * (1 / 24 / 60 / 60);
+  Assert.AreEqual(expectedTime, actualTime, 0.00000001);
 end;
 
-procedure TestDateTimeHelper.Test_ToString_Empty;
+procedure TestDateTimeHelper.ToString_31Dec2019_UK;
+var
+  actualDateString: string;
 begin
-  Assert.AreEqual('2019-10-24', fDate.ToString());
+  FormatSettings := TFormatSettings.Create('uk-en');
+  fDate := EncodeDate(2019, 12, 31);
+  actualDateString := fDate.ToString();
+  Assert.AreEqual('31.12.2019', actualDateString);
 end;
 
 procedure TestDateTimeHelper.Test_ToString_yymmdd;
