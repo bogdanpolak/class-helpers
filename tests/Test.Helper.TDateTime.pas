@@ -23,9 +23,9 @@ type
     [TearDown]
     procedure TearDown;
   published
-    procedure AsYear_2019;
-    procedure AsMonth_September;
-    procedure AsDay_27;
+    procedure AsYear_04June1989;
+    procedure AsMonth_20Apr1971;
+    procedure AsDay_12Sep1683;
     procedure DatePart_27May2019;
     procedure AsHour_23h19m15sec;
     procedure AsHour_13June2019_13h00m;
@@ -100,31 +100,31 @@ end;
 // Tests section 1
 // -----------------------------------------------------------------------
 
-procedure TestDateTimeHelper.AsYear_2019;
+procedure TestDateTimeHelper.AsYear_04June1989;
 var
   actualYear: word;
 begin
-  fDate := EncodeDate(2019, 10, 24);
+  fDate := EncodeDate(1989, 06, 04);
   actualYear := fDate.AsYear;
-  Assert.AreEqual(2019, actualYear);
+  Assert.AreEqual(1989, actualYear);
 end;
 
-procedure TestDateTimeHelper.AsMonth_September;
+procedure TestDateTimeHelper.AsMonth_20Apr1971;
 var
   actualMonth: word;
 begin
-  fDate := EncodeDate(2019, 09, 01);
+  fDate := EncodeDate(1971, 04, 21);
   actualMonth := fDate.AsMonth;
-  Assert.AreEqual(9, actualMonth);
+  Assert.AreEqual(4, actualMonth);
 end;
 
-procedure TestDateTimeHelper.AsDay_27;
+procedure TestDateTimeHelper.AsDay_12Sep1683;
 var
   actualDay: word;
 begin
-  fDate := EncodeDate(2019, 01, 27);
+  fDate := EncodeDate(1683, 09, 12);
   actualDay := fDate.AsDay;
-  Assert.AreEqual(27, actualDay);
+  Assert.AreEqual(12, actualDay);
 end;
 
 procedure TestDateTimeHelper.DatePart_27May2019;
