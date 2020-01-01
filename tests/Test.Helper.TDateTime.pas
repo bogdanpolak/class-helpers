@@ -106,7 +106,7 @@ end;
 
 procedure TestDateTimeHelper.AsYear_2019;
 var
-  actualYear: Word;
+  actualYear: word;
 begin
   fDate := EncodeDate(2019, 10, 24);
   actualYear := fDate.AsYear;
@@ -115,7 +115,7 @@ end;
 
 procedure TestDateTimeHelper.AsMonth_September;
 var
-  actualMonth: Word;
+  actualMonth: word;
 begin
   fDate := EncodeDate(2019, 09, 01);
   actualMonth := fDate.AsMonth;
@@ -124,7 +124,7 @@ end;
 
 procedure TestDateTimeHelper.AsDay_27;
 var
-  actualDay: Word;
+  actualDay: word;
 begin
   fDate := EncodeDate(2019, 01, 27);
   actualDay := fDate.AsDay;
@@ -142,7 +142,7 @@ end;
 
 procedure TestDateTimeHelper.AsHour_23h19m15sec;
 var
-  actualHour: Word;
+  actualHour: word;
 begin
   fDate := EncodeTime(23, 25, 15, 0);
   actualHour := fDate.AsHour;
@@ -151,7 +151,7 @@ end;
 
 procedure TestDateTimeHelper.AsHour_13June2019_13h00m;
 var
-  actualHour: Word;
+  actualHour: word;
 begin
   fDate := EncodeDate(2019, 05, 27) + EncodeTime(13, 00, 00, 00);
   actualHour := fDate.AsHour;
