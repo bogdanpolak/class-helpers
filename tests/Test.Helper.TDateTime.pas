@@ -24,11 +24,12 @@ type
     [TearDown]
     procedure TearDown;
   published
-    procedure Test_AsYear;
-    procedure Test_AsDay;
-    procedure Test_AsMonth;
-    procedure Test_DatePart;
-    procedure Test_AsHour;
+    procedure AsYear_2019;
+    procedure AsMonth_September;
+    procedure AsDay_27;
+    procedure DatePart_27May2019;
+    procedure AsHour_23h19m15sec;
+    procedure AsHour_13June2019_13h00m;
     procedure Test_AsMinute;
     procedure Test_AsSeconds;
     procedure Test_TimePart;
@@ -103,29 +104,58 @@ end;
 // -----------------------------------------------------------------------
 {$REGION 'Test section 1'}
 
-procedure TestDateTimeHelper.Test_AsYear;
+procedure TestDateTimeHelper.AsYear_2019;
+var
+  actualYear: Word;
 begin
-  Assert.AreEqual(2019, fDate.AsYear);
+  fDate := EncodeDate(2019, 10, 24);
+  actualYear := fDate.AsYear;
+  Assert.AreEqual(2019, actualYear);
 end;
 
-procedure TestDateTimeHelper.Test_AsMonth;
+procedure TestDateTimeHelper.AsMonth_September;
+var
+  actualMonth: Word;
 begin
-  Assert.AreEqual(10, fDate.AsMonth);
+  fDate := EncodeDate(2019, 09, 01);
+  actualMonth := fDate.AsMonth;
+  Assert.AreEqual(9, actualMonth);
 end;
 
-procedure TestDateTimeHelper.Test_AsDay;
+procedure TestDateTimeHelper.AsDay_27;
+var
+  actualDay: Word;
 begin
-  Assert.AreEqual(24, fDate.AsDay);
+  fDate := EncodeDate(2019, 01, 27);
+  actualDay := fDate.AsDay;
+  Assert.AreEqual(27, actualDay);
 end;
 
-procedure TestDateTimeHelper.Test_DatePart;
+procedure TestDateTimeHelper.DatePart_27May2019;
+var
+  actualDate: TDateTime;
 begin
-  Assert.AreEqual(double(43762), fDate.DatePart);
+  fDate := EncodeDate(2019, 05, 27) + EncodeTime(11, 25, 15, 0);
+  actualDate := fDate.DatePart;
+  Assert.AreEqual(TDateTime(43612), actualDate);
 end;
 
-procedure TestDateTimeHelper.Test_AsHour;
+procedure TestDateTimeHelper.AsHour_23h19m15sec;
+var
+  actualHour: Word;
 begin
-  Assert.AreEqual(21, fDate.AsHour);
+  fDate := EncodeTime(23, 25, 15, 0);
+  actualHour := fDate.AsHour;
+  Assert.AreEqual(23, actualHour);
+end;
+
+procedure TestDateTimeHelper.AsHour_13June2019_13h00m;
+var
+  actualHour: Word;
+begin
+  fDate := EncodeDate(2019, 05, 27) + EncodeTime(13, 00, 00, 00);
+  actualHour := fDate.AsHour;
+  Assert.AreEqual(13, actualHour);
 end;
 
 procedure TestDateTimeHelper.Test_AsMinute;
