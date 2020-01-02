@@ -40,14 +40,14 @@ type
     procedure DayOfWeek_24Oct2017;
     procedure DayOfWeekName_24Oct2017_Ru;
     procedure DayOfWeekShortName_24Oct2017_Ru;
-    procedure Test_DaysInMonth;
-    procedure Test_IncMonth_5;
-    procedure Test_IncMonth_Minus1;
-    procedure Test_FirstDayInMonth;
-    procedure Test_LastDayInMonth;
-    procedure Test_DayOfWeekFirstDayInMonth;
-    procedure Test_DayOfWeekLastDayInMonth;
-    procedure Test_NumberOfWeeksInMonth;
+    procedure DaysInMonth_13Dec1981;
+    procedure Inc5Months_08July1997;
+    procedure Dec1Month_01Aug1944;
+    procedure FirstDayInMonth_24Oct2019;
+    procedure LastDayInMonth_24Oct2019;
+    procedure DayOfWeek_FirstDayInMonth_24Oct2019;
+    procedure DayOfWeek_LastDayInMonth_24Oct2019;
+    procedure NumberOfWeeksInMonth_24Oct2019;
   end;
 
   [TestFixture]
@@ -283,52 +283,84 @@ begin
   end;
 end;
 
-procedure TestDateTimeHelper.Test_DaysInMonth;
+procedure TestDateTimeHelper.DaysInMonth_13Dec1981;
+var
+  actualDaysInMonth: Word;
 begin
-  fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
-  Assert.AreEqual(31, fDate.DaysInMonth);
+  fDate := EncodeDate(1981, 12, 13);
+  actualDaysInMonth := fDate.DaysInMonth;
+  Assert.AreEqual(31, actualDaysInMonth);
 end;
 
-procedure TestDateTimeHelper.Test_IncMonth_5;
+procedure TestDateTimeHelper.Inc5Months_08July1997;
+var
+  actualDate: TDateTime;
+  expectedDate: TDateTime;
 begin
-  fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
-  Assert.AreDateEqual(2020, 3, 24, fDate.IncMonth(5));
+  fDate := EncodeDate(1997, 07, 08);
+  actualDate := fDate.IncMonth(5);
+  expectedDate := EncodeDate(1997, 12, 08);
+  Assert.AreEqual(expectedDate, actualDate);
 end;
 
-procedure TestDateTimeHelper.Test_IncMonth_Minus1;
+procedure TestDateTimeHelper.Dec1Month_01Aug1944;
+var
+  actualDate: TDateTime;
+  expectedDate: TDateTime;
 begin
-  fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
-  Assert.AreDateEqual(2019, 9, 24, fDate.IncMonth(-1));
+  fDate := EncodeDate(1944, 08, 01);
+  actualDate := fDate.IncMonth(-1);
+  expectedDate := EncodeDate(1944, 07, 01);
+  Assert.AreEqual(expectedDate, actualDate);
 end;
 
-procedure TestDateTimeHelper.Test_FirstDayInMonth;
+procedure TestDateTimeHelper.FirstDayInMonth_24Oct2019;
+var
+  actualDate: TDateTime;
+  expectedDate: TDateTime;
 begin
-  fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
-  Assert.AreDateEqual(2019, 10, 1, fDate.FirstDayInMonth);
+  fDate := EncodeDate(2019, 10, 24);
+  actualDate := fDate.FirstDayInMonth;
+  expectedDate := EncodeDate(2019, 10, 01);
+  Assert.AreEqual(expectedDate, actualDate);
 end;
 
-procedure TestDateTimeHelper.Test_LastDayInMonth;
+procedure TestDateTimeHelper.LastDayInMonth_24Oct2019;
+var
+  actualDate: TDateTime;
+  expectedDate: TDateTime;
 begin
-  fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
-  Assert.AreDateEqual(2019, 10, 31, fDate.LastDayInMonth);
+  fDate := EncodeDate(2019, 10, 24);
+  actualDate := fDate.LastDayInMonth;
+  expectedDate := EncodeDate(2019, 10, 31);
+  Assert.AreEqual(expectedDate, actualDate);
 end;
 
-procedure TestDateTimeHelper.Test_DayOfWeekFirstDayInMonth;
+procedure TestDateTimeHelper.DayOfWeek_FirstDayInMonth_24Oct2019;
+var
+  actualDayOfWeek_FirstDayInMonth: Word;
 begin
-  fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
-  Assert.AreEqual(2, fDate.DayOfWeekFirstDayInMonth);
+  fDate := EncodeDate(2019, 10, 24);
+  actualDayOfWeek_FirstDayInMonth := fDate.DayOfWeekFirstDayInMonth;
+  Assert.AreEqual(2, actualDayOfWeek_FirstDayInMonth);
 end;
 
-procedure TestDateTimeHelper.Test_DayOfWeekLastDayInMonth;
+procedure TestDateTimeHelper.DayOfWeek_LastDayInMonth_24Oct2019;
+var
+  actualDayOfWeek_LastDayInMonth: Word;
 begin
-  fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
-  Assert.AreEqual(4, fDate.DayOfWeekLastDayInMonth);
+  fDate := EncodeDate(2019, 10, 24);
+  actualDayOfWeek_LastDayInMonth := fDate.DayOfWeekLastDayInMonth;
+  Assert.AreEqual(4, actualDayOfWeek_LastDayInMonth);
 end;
 
-procedure TestDateTimeHelper.Test_NumberOfWeeksInMonth;
+procedure TestDateTimeHelper.NumberOfWeeksInMonth_24Oct2019;
+var
+  actualNumberOfWeeksInMonth: Word;
 begin
-  fDate := EncodeDate(2019, 10, 24) + EncodeTime(21, 15, 59, 0);
-  Assert.AreEqual(5, fDate.NumberOfWeeksInMonth);
+  fDate := EncodeDate(2019, 10, 24);
+  actualNumberOfWeeksInMonth := fDate.NumberOfWeeksInMonth;
+  Assert.AreEqual(5, actualNumberOfWeeksInMonth);
 end;
 
 // -----------------------------------------------------------------------
