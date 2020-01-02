@@ -80,7 +80,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------
-// Tests section 1
+// Test: TDateTime helper
 // -----------------------------------------------------------------------
 
 procedure TestDateTimeHelper.AsYear_04June1989;
@@ -267,7 +267,7 @@ end;
 
 procedure TestDateTimeHelper.DaysInMonth_13Dec1981;
 var
-  actualDaysInMonth: Word;
+  actualDaysInMonth: word;
 begin
   fDate := EncodeDate(1981, 12, 13);
   actualDaysInMonth := fDate.DaysInMonth;
@@ -320,7 +320,7 @@ end;
 
 procedure TestDateTimeHelper.DayOfWeek_FirstDayInMonth_24Oct2019;
 var
-  actualDayOfWeek_FirstDayInMonth: Word;
+  actualDayOfWeek_FirstDayInMonth: word;
 begin
   fDate := EncodeDate(2019, 10, 24);
   actualDayOfWeek_FirstDayInMonth := fDate.DayOfWeekFirstDayInMonth;
@@ -329,7 +329,7 @@ end;
 
 procedure TestDateTimeHelper.DayOfWeek_LastDayInMonth_24Oct2019;
 var
-  actualDayOfWeek_LastDayInMonth: Word;
+  actualDayOfWeek_LastDayInMonth: word;
 begin
   fDate := EncodeDate(2019, 10, 24);
   actualDayOfWeek_LastDayInMonth := fDate.DayOfWeekLastDayInMonth;
@@ -338,7 +338,7 @@ end;
 
 procedure TestDateTimeHelper.NumberOfWeeksInMonth_24Oct2019;
 var
-  actualNumberOfWeeksInMonth: Word;
+  actualNumberOfWeeksInMonth: word;
 begin
   fDate := EncodeDate(2019, 10, 24);
   actualNumberOfWeeksInMonth := fDate.NumberOfWeeksInMonth;
@@ -346,7 +346,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------
-// Tests cases: TDate_Cases
+// Test: NumberOfWeeks
 // -----------------------------------------------------------------------
 
 procedure TDate_Cases.Test_NumberOfWeeks(expectedNumberOfWeeks: integer;
