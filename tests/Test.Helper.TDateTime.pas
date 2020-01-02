@@ -46,18 +46,18 @@ type
   end;
 
   [TestFixture]
-  TDate_Cases = class(TObject)
-  public
-    [TestCase('Month: 02-2010', '4,2010-02-01')]
-    [TestCase('Month: 04-2012', '6,2012-04-01')]
-    [TestCase('Month: 02-2019', '5,2019-02-28')]
-    [TestCase('Month: 10-2019', '5,2019-10-02')]
-    [TestCase('Month: 11-2019', '5,2019-11-30')]
-    [TestCase('Month: 12-2019', '6,2019-12-31')]
-    [TestCase('Month: 01-2020', '5,2020-01-01')]
-    [TestCase('Month: 02-2020', '5,2020-02-29')]
-    procedure Test_NumberOfWeeks(expectedNumberOfWeeks: integer;
-      actualMohthYear: string);
+  TestNumberOfWeeks = class(TObject)
+  public // ...   testComment    year  month  expectedNumberOfWeeks
+    [TestCase('Month: 02-2010', '2010,  02,      4')]
+    [TestCase('Month: 04-2012', '2012,  04,      6')]
+    [TestCase('Month: 02-2019', '2019,  02,      5')]
+    [TestCase('Month: 10-2019', '2019,  10,      5')]
+    [TestCase('Month: 11-2019', '2019,  11,      5')]
+    [TestCase('Month: 12-2019', '2019,  12,      6')]
+    [TestCase('Month: 01-2020', '2020,  01,      5')]
+    [TestCase('Month: 02-2020', '2020,  02,      5')]
+    procedure Test_NumberOfWeeks(actualYear: integer; actualMohth: integer;
+      expectedNumberOfWeeks: word);
   end;
 
 implementation
@@ -332,17 +332,15 @@ end;
 // Test: NumberOfWeeks
 // -----------------------------------------------------------------------
 
-procedure TDate_Cases.Test_NumberOfWeeks(expectedNumberOfWeeks: integer;
-  actualMohthYear: string);
+procedure TestNumberOfWeeks.Test_NumberOfWeeks(actualYear: integer;
+  actualMohth: integer; expectedNumberOfWeeks: word);
 var
-  yy, mm, dd: word;
   actualDate: TDateTime;
+  actualNumberOfWeeks: word;
 begin
-  yy := actualMohthYear.Substring(0, 4).ToInteger();
-  mm := actualMohthYear.Substring(5, 2).ToInteger();
-  dd := actualMohthYear.Substring(8, 2).ToInteger();
-  actualDate := EncodeDate(yy, mm, dd);
-  Assert.AreEqual(word(expectedNumberOfWeeks), actualDate.NumberOfWeeksInMonth);
+  actualDate := EncodeDate(actualYear, actualMohth, 01);
+  actualNumberOfWeeks := actualDate.NumberOfWeeksInMonth;
+  Assert.AreEqual(expectedNumberOfWeeks, actualNumberOfWeeks);
 end;
 
 initialization
