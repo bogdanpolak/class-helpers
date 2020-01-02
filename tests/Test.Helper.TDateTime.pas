@@ -18,11 +18,6 @@ type
   TestDateTimeHelper = class(TObject)
   private
     fDate: TDateTime;
-  public
-    [Setup]
-    procedure Setup;
-    [TearDown]
-    procedure TearDown;
   published
     procedure AsYear_04June1989;
     procedure AsMonth_20Apr1971;
@@ -66,18 +61,6 @@ type
   end;
 
 implementation
-
-// -----------------------------------------------------------------------
-// Setup and TearDown section
-// -----------------------------------------------------------------------
-
-procedure TestDateTimeHelper.Setup;
-begin
-end;
-
-procedure TestDateTimeHelper.TearDown;
-begin
-end;
 
 // -----------------------------------------------------------------------
 // Test: TDateTime helper
