@@ -67,24 +67,6 @@ type
 
 implementation
 
-type
-  TAssertClassHelper = class helper for Assert
-    class procedure AreDateEqual(expectedYY, expectedMM, expectedDD: word;
-      actualDate: TDateTime);
-  end;
-
-class procedure TAssertClassHelper.AreDateEqual(expectedYY, expectedMM,
-  expectedDD: word; actualDate: TDateTime);
-var
-  s1: string;
-  s2: string;
-begin
-  s1 := EncodeDate(expectedYY, expectedMM, expectedDD).ToString;
-  s2 := actualDate.ToString();
-  AreEqual(s1, s2);
-end;
-
-
 // -----------------------------------------------------------------------
 // Setup and TearDown section
 // -----------------------------------------------------------------------
