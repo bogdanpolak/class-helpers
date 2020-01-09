@@ -64,6 +64,7 @@ begin
     OnClick := aOnClick;
     Parent := aParent;
     Align := alTop;
+    Height := 32;
     AlignWithMargins := True;
   end;
 end;
