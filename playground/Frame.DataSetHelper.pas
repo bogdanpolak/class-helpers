@@ -7,6 +7,8 @@ uses
   System.Variants,
   System.Classes,
   System.DateUtils,
+  System.StrUtils,
+  System.Math,
   System.Generics.Collections,
   Data.DB,
   Datasnap.DBClient,
@@ -153,7 +155,7 @@ begin
     end;
 end;
 
-function CountYearsAgo(aCharacter: TCharacter): string;
+function CountYearsAgo(aCharacter: TCharacter): word;
 var
   years: Integer;
   dt: TDateTime;
@@ -165,21 +167,23 @@ begin
     inc(years);
     dt := IncMonth(Int(Now), -years - 1);
   end;
-  Result := years.ToString + ' years ago';
+  Result := Max(0, years);
 end;
 
 procedure TFrameDataSetHelper.btnLoadDatasetClick(Sender: TObject);
 var
   aCharacters: TObjectList<TCharacter>;
   hero: TCharacter;
+  aInfo: string;
+  aYearsAgo: word;
 begin
   aCharacters := fDataSet.LoadData<TCharacter>();
   try
     hero := FindOldestCharacter(aCharacters);
-    if hero = nil then
-      btnLoadDataset.Caption := 'No data was loaded'
-    else
-      btnLoadDataset.Caption := hero.FullName + ' born ' + CountYearsAgo(hero);
+    aYearsAgo := CountYearsAgo(hero);
+    aInfo := IfThen(hero <> nil, Format('Wizzard %s was born %d ago',
+      [hero.FullName, aYearsAgo]), 'No data was loaded ...');
+    ShowMessage(aInfo);
   finally
     aCharacters.Free;
   end;

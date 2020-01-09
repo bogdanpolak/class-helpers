@@ -28,7 +28,7 @@ object FrameDataSetHelper: TFrameDataSetHelper
       AlignWithMargins = True
       Left = 159
       Top = 18
-      Width = 210
+      Width = 130
       Height = 31
       Align = alLeft
       Caption = 'Load DataSet'
