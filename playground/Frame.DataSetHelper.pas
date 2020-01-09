@@ -138,33 +138,32 @@ type
     CurrentSavings: currency;
   end;
 
-
-function FindOldestCharacter (aCharacters: TObjectList<TCharacter>): TCharacter;
+function FindOldestCharacter(aCharacters: TObjectList<TCharacter>): TCharacter;
 var
   ch: TCharacter;
   minDate: TDateTime;
 begin
-  minDate := EncodeDate(9999,12,31);
+  minDate := EncodeDate(9999, 12, 31);
   Result := nil;
   for ch in aCharacters do
-    if ch.Birthday<minDate then
+    if ch.Birthday < minDate then
     begin
       Result := ch;
       minDate := ch.Birthday
     end;
 end;
 
-function CountYearsAgo (aCharacter:TCharacter): string;
+function CountYearsAgo(aCharacter: TCharacter): string;
 var
-  years: integer;
+  years: Integer;
   dt: TDateTime;
 begin
   years := Round(Int((Now - aCharacter.Birthday) / 365));
-  dt := IncYear(Int(Now), -years-1);
+  dt := IncYear(Int(Now), -years - 1);
   while dt > aCharacter.Birthday do
   begin
     inc(years);
-    dt := IncMonth(Int(Now), -years-1);
+    dt := IncMonth(Int(Now), -years - 1);
   end;
   Result := years.ToString + ' years ago';
 end;
@@ -174,13 +173,13 @@ var
   aCharacters: TObjectList<TCharacter>;
   hero: TCharacter;
 begin
-  aCharacters := fDataset.LoadData<TCharacter>();
+  aCharacters := fDataSet.LoadData<TCharacter>();
   try
     hero := FindOldestCharacter(aCharacters);
     if hero = nil then
       btnLoadDataset.Caption := 'No data was loaded'
     else
-      btnLoadDataset.Caption := hero.FullName + ' born ' + CountYearsAgo (hero);
+      btnLoadDataset.Caption := hero.FullName + ' born ' + CountYearsAgo(hero);
   finally
     aCharacters.Free;
   end;
@@ -192,7 +191,8 @@ begin
   DBGrid1.Free;
   fDataSet := CreateDataSet(Self);
   DBGrid1 := TDBGrid.Create(Self);
-  with DBGrid1 do begin
+  with DBGrid1 do
+  begin
     Align := alClient;
     AlignWithMargins := True;
     DataSource := fDataSet.CreateDataSource; // aDataSource;

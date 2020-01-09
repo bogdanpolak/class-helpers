@@ -49,8 +49,8 @@ const
   PlaygroudItems = 2;
   PlaygroudDefs: array [0 .. PlaygroudItems - 1] of TPlaygroundItem = //.
     ( //.
-    (caption: 'Helper - TStringGrid'; frameType: TFrameStringGridHelper), //.
-    (caption: 'Helper - TDataSet && TDBGrid'; frameType: TFrameDataSetHelper) //.
+    (caption: 'Helper - TStringGrid'; frameType: TFrameStringGridHelper),
+    (caption: 'Helper - TDataSet && TDBGrid'; frameType: TFrameDataSetHelper)
     );
 
 function BuildButton(const aCaption: string; const aParent: TWinControl;
