@@ -11,7 +11,8 @@ uses
   Helper.TJSONObject in '..\src\Helper.TJSONObject.pas',
   Helper.TStringGrid in '..\src\Helper.TStringGrid.pas',
   Helper.TWinControl in '..\src\Helper.TWinControl.pas',
-  Frame.DataSetHelper in 'Frame.DataSetHelper.pas' {FrameDataSetHelper: TFrame};
+  Frame.DataSetHelper in 'Frame.DataSetHelper.pas' {FrameDataSetHelper: TFrame},
+  Attribute.MapedToField in '..\src\Attribute.MapedToField.pas';
 
 {$R *.res}
 

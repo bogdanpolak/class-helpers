@@ -51,7 +51,7 @@ end;
 
 procedure TFrameStringGridHelper.Button3Click(Sender: TObject);
 const
-  JsonStructureAndData =   //→
+  JsonStructureAndData = //→
     '{"structure": [' //→
     + '  {"column": "id", "caption": "ID.", "width": 30},' //→
     + '  {"column": "fullname", "caption": "Full Name", "width": 140},' //→
