@@ -61,6 +61,13 @@ type
     ///   <b>visible</b> - column visibility (boolean value)
     /// </remarks>
     procedure LoadColumnsFromJsonString(const aJsonString: string);
+    /// <summary>
+    ///   Saves TDBGrid columns layout into string formatted in JSON.
+    ///   Result is JSON array includes JSON objects (each one for one the 
+    ///   TBGrid column). This object contains: column field name, title, 
+    ///   width and visibility. JSON data format is compatible with method
+    ///   loading DBGrid columns.
+    /// </summary>
     function SaveColumnsToString: string;
   end;
 
