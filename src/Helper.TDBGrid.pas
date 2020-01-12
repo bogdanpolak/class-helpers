@@ -44,7 +44,7 @@ type
     /// <summary>
     ///   Allows to set TDBGrid columns layout: column visibility, column
     ///   width and column title. Layout definition is provided through
-    ///   string parameter containg valid JSON array.
+    ///   string parameter which contains valid JSON array.
     /// </summary>
     /// <exception cref="EJSONProcessing">
     ///   Exception <b>EJSONProcessing</b> is thrown when string parameter
