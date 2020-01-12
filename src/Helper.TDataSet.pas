@@ -1,4 +1,4 @@
-unit Helper.TDataSet;
+﻿unit Helper.TDataSet;
 
 interface
 
@@ -13,10 +13,31 @@ type
   private const
     Version = '1.5';
   public
+    /// <summary>
+    ///   TBD: WhileNotEof
+    /// </summary>
     procedure WhileNotEof(proc: TProc);
+    /// <summary>
+    ///   TBD: ForEachRow (clone WhileNotEof)
+    /// </summary>
     procedure ForEachRow(proc: TProc);
+    /// <summary>
+    ///   TBD: GetMaxIntegerValue
+    /// </summary>
     function GetMaxIntegerValue(const fieldName: string): integer;
+    /// <summary>
+    ///   TBD: CreateDataSource
+    /// </summary>
     function CreateDataSource: TDataSource;
+    /// <summary>
+    ///   TBD: LoadData
+    /// </summary>
+    /// <exception cref="EInvalidMapping">
+    ///   Exception <b>EInvalidMapping</b> TBD
+    /// </exception>
+    /// <remarks>
+    ///   Attribute.MapedToField - dependency TBD 
+    /// </remarks>
     function LoadData<T: class, constructor>: TObjectList<T>;
   end;
 
