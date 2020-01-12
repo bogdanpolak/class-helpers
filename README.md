@@ -65,6 +65,18 @@ begin
 end;
 ```
 
+## Good practices
+
+TBD ...
+
+Points:
+1. Do not declare two different class helpers extending the same class
+1. Try do keep consistent and unified collection of class helpers
+1. Do not declare class helpers for business / project classes
+1. Prefer to declare a new class over the using more helpers
+1. Create class helper repository
+1. Keep the same delivery cycle for class helpers like for the application code
+
 ## Maintenance and helper repository
 
 As you create and use more and more class helpers, you'll start to notice some obstacles. For this reason, good practices should be adapted from the beginning to help avoid problems. One of the good practices is controlled maintenance of class helpers project.  
