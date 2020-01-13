@@ -76,7 +76,6 @@ Points TBD:
 
 1. Do not declare class helpers for business / project classes
 1. Prefer to declare a new class over the using more helpers
-1. Create class helper repository
 1. Keep the same delivery cycle for class helpers like for the application code
 
 ## Maintenance and helper repository
