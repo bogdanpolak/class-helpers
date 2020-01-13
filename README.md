@@ -83,10 +83,9 @@ Points TBD:
  One of the recommended practices when using class helpers is to plan good  project maintenance, including version control and release management. Proven steps including two important point: 
 
 1. **Independent project** - class helpers should be maintained as a separate project, versioned and merged into finial projects like other external packages.
-1. Release cycle
-   - Helpers project should have individual releases with defined version numbers, release dates and its own branching model. New helpers version can be tested and integrated with final projects at the right time. This integration can be straightforward and quick, but sometimes could be more challenging.
+1. **Helpers release cycle** - class helpers project should have releases with defined version numbers and dates. Which makes it necessary to build an independent branching model in the repository. New helpers release can be tested before deploy and then integrated with final projects at the right time. Such integration can be simple or a little more difficult depending on the number of breakthrough changes.
 
-This project is live example of such deployment techniques. We are using branching model inspired by Vincent Driessen blog post: [A successful Git branching model](https://nvie.com/posts/a-successful-git-branching-model/) together with planing and delivery model inspired by Kanban method.
+This GitHub project is live example of such deployment techniques. We are using branching model inspired by Vincent Driessen blog post: [A successful Git branching model](https://nvie.com/posts/a-successful-git-branching-model/) together with planing and delivery model inspired by Kanban method.
 
 **Class helpers project branching model**
 
