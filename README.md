@@ -75,8 +75,16 @@ Class helpers looks really promising in the begging and actually there are great
 
 Points TBD:
 
-1. Prefer to declare a new class over the using more helpers
+1. See bellow comments:
 1. Keep the same delivery cycle for class helpers like for the application code
+
+------
+Move from Dark Side section:
+1. Expanded class
+   - Q: **Which VCL / FMX or RTL classes should be chosen as a base for helpers?**
+   - The class helper should be defined as high in the component hierarchy as possible. If it's possible define helper for class `TButton` not for `TControl` or `TComponent`.
+   - Developer could be not able to compile code (receiving compiler error: *Undeclared identifier*), when it was copied from other unit and that unit is using a class helper. In that scenario it's easy to fix this error by adding class helper if it's defined for the actually used class. Otherwise if this code is using helper for more general class it will be more difficult to find proper class helper to include.
+------
 
 ## Maintenance and helper repository
 
