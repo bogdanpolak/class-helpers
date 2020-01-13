@@ -14,11 +14,13 @@ type
     Version = '1.5';
   public
     /// <summary>
-    ///   TBD: WhileNotEof
+    ///   Iterates through the dataset and it's calling anonymous methods 
+    ///   (proc) for each row. Disables all UI notification and preserving 
+    ///   current dataset position.
     /// </summary>
     procedure WhileNotEof(proc: TProc);
     /// <summary>
-    ///   TBD: ForEachRow (clone WhileNotEof)
+    ///   Iterates through the dataset, clone "WhileNotEof" method.
     /// </summary>
     procedure ForEachRow(proc: TProc);
     /// <summary>
