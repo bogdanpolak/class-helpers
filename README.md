@@ -5,17 +5,13 @@
 
 ## Why use Class Helpers?
 
-### 1. Historically used as private fields lock-picks
+### 1. Safe cleaning technique
 
-**This in not longer available in recent Delphi versions.** From the very beginning (2006) till Berlin / 10.1 version there was quite popular bug in class helpers, which allows to access private class fields and methods. Many developers identified this interesting language extension with such hack. The misuse of class helpers has led to this powerful cleaning solution being still underestimated. 
+The huge amount of VCL (FMX) code can be cleared using helper classes, which are actually a refactoring technique for complex projects with low risk. Using this method, you can start upgrading your old project even without securing it with unit tests. Moreover the correctness of newly created helpers can be easily verified using unit tests. This approach allow to teach developers how to write unit tests or expand code using TDD technique (write tests first and then implement functionality) in a fun and non-invasive way.
 
-### 2. Safe cleaning technique
+Class helpers could be also dangerous if they are used improperly. For this reason it is required to apply a little more disciplined process and more strict project organization, this suggestions are covered in the following sections. 
 
-Huge amount of VCL code can be cleaned with class helpers, which are really safe refactoring technique. This refactoring is co much safe that can be done even without proper unit test coverage. In this context it is surprising that it allows to teach writing unit tests in a fun and non-invasive way. Class helpers have to be autonomous and thanks of that they are very easy code for teaching unit tests and TDD.
-
-This refactoring approach requires a little more discipline and project organization and it will be covered bellow. Class helpers could be dangerous if they are used improperly. For example one point from helpers "dark side" list is that in the project can be only one helper expanding class. This list is a little longer, but well managed helpers repository and defined release cycle allow to solve most of them.
-
-Cleaning techniques include the following benefits:
+Class helpers benefits:
 
 - **Extract global functions** - global functions and utility methods wrote straight in forms (modules) can be extracted and reuse, also they can grouped together in separated containers based on subject class, finally they can be covered with unit tests
 - **Reduce size of events** - size of code in events (forms, frames and data modules) can be significantly decreased, which helps to improve code readability, especially when valuable business code is  mixed together with visualization or with component processing
@@ -26,11 +22,15 @@ Sample code - Subject first: first line is classic call and second is written us
 
 ```pas
 // classic call:
-StoreLibrary (reAvaliable, 1, mysqlDataSet, true);
+StoreDataset (rsChanged, 1, mysqlDataSet, true);
 
 // improved class:
-mysqlDataSet.StoreAndUpdateLibrary(reAvaliable, 1);
+mysqlDataSet.StoreRows_ThenUpdateData_StopAfterFirstError(rsChanged);
 ```
+
+### 2. Private fields/methods lock-pick (now not available)
+
+From the very beginning (Delphi 2006) till Delphi Berlin / 10.1 version there was quite popular class helper bug, which allows to access private fields and private methods using helpers. Because of this bug many developers identified this interesting language extension with such hack. The misuse of class helpers has caused that value of this super powerful solution is underestimated. 
 
 ## Helpers
 
