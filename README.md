@@ -69,10 +69,10 @@ end;
 
 Class helpers looks really promising in the begging and actually there are great solution, but as you create and use more and more of them, you'll start to notice some obstacles. For this reason, good practices should be adapted from the beginning to help avoid potential problems.
 
-TBD ...
+1. **One helper for one class (in whole project).** It's possible to declare two class helpers with different methods extending the same class. Although they cannot be used together in one unit (only one of them will be visible), but such code can be compiled. You can potentially use two different helpers in separate units, but you shouldn't do that because it can be dangerous and generate difficult to fix bugs.
 
-Points:
-1. Do not declare two different class helpers extending the same class
+Points TBD:
+
 1. Try do keep consistent and unified collection of class helpers
 1. Do not declare class helpers for business / project classes
 1. Prefer to declare a new class over the using more helpers
