@@ -67,6 +67,8 @@ end;
 
 ## Good practices
 
+Class helpers looks really promising in the begging and actually there are great solution, but as you create and use more and more of them, you'll start to notice some obstacles. For this reason, good practices should be adapted from the beginning to help avoid potential problems.
+
 TBD ...
 
 Points:
@@ -79,10 +81,9 @@ Points:
 
 ## Maintenance and helper repository
 
-As you create and use more and more class helpers, you'll start to notice some obstacles. For this reason, good practices should be adapted from the beginning to help avoid problems. One of the good practices is controlled maintenance of class helpers project.  
+ One of the recommended practices when using class helpers is to plan good  project maintenance, including version control and release management. Proven steps including two important point: 
 
-1. Independent project
-   - Class helpers should be maintained as separate project, versioned and merged into finial projects like other external packages.
+1. **Independent project** - class helpers should be maintained as a separate project, versioned and merged into finial projects like other external packages.
 1. Release cycle
    - Helpers project should have individual releases with defined version numbers, release dates and its own branching model. New helpers version can be tested and integrated with final projects at the right time. This integration can be straightforward and quick, but sometimes could be more challenging.
 
