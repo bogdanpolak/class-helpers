@@ -29,7 +29,8 @@ type
     /// </summary>
     function GetMaxIntegerValue(const fieldName: string): integer;
     /// <summary>
-    ///   TBD: CreateDataSource
+    ///   Creates new TDataSource component assigned to this dataset.
+    ///   The owner of TDataSource is this dataset.
     /// </summary>
     function CreateDataSource: TDataSource;
     /// <summary>
