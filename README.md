@@ -72,19 +72,11 @@ Class helpers looks really promising in the begging and actually there are great
 1. **One helper for one class (in whole project).** It's possible to declare two class helpers with different methods extending the same class. Although they cannot be used together in one unit (only one of them will be visible), but such code can be compiled. You can potentially use two different helpers in separate units, but you shouldn't do that because it can be dangerous and generate difficult to fix bugs.
 1. **Unified collection of helpers.** Try do keep consistent and unified collection of class helpers. The best solution is created separate repository (more details in the following section). At first, helpers may be part of the main business project, but it is better to isolate them, especially when you plan to reuse them in many projects. Helpers should be treated as independent components that have been tested and implemented in the final project.
 1. **Use only when necessary.** Do not declare class helpers for your classes, which can be easily extend using classic OOP methods, such as inheritance, polymorphism and composition. Helpers are really useful for extending the functionality of RTL, VCL or FMX classes. They can also be successfully used to extend third-party components. The added functionality should be domain independent and easy to reuse in various projects.
+1. **Define as close as possible.** The class helper should be defined as close to the used class as possible. The VCL framework has very expanded inheritance tree and in some cases developer can define expanding method for more general class (like TWinControl) or for more specialized one (like TGroupBox). From usage perspective, it is much better to expand specialized classes then general: it could be more difficult to figure out which helper unit has to be included (added to uses section) after coping existing code into a new unit. When helper is defined for the same class which is actually used this is not a problem.
 
 Points TBD:
 
-1. See bellow comments:
 1. Keep the same delivery cycle for class helpers like for the application code
-
-------
-Move from Dark Side section:
-1. Expanded class
-   - Q: **Which VCL / FMX or RTL classes should be chosen as a base for helpers?**
-   - The class helper should be defined as high in the component hierarchy as possible. If it's possible define helper for class `TButton` not for `TControl` or `TComponent`.
-   - Developer could be not able to compile code (receiving compiler error: *Undeclared identifier*), when it was copied from other unit and that unit is using a class helper. In that scenario it's easy to fix this error by adding class helper if it's defined for the actually used class. Otherwise if this code is using helper for more general class it will be more difficult to find proper class helper to include.
-------
 
 ## Maintenance and helper repository
 
