@@ -115,10 +115,10 @@ You can protect your project against the effects of these weaknesses. Before def
    - Q: **Is not possible to introduce expected functionality within a new class?** 
    - Definition of a new class is better approach, easier to understand and more popular, all dependencies should be inject to this class and whole composition should be easy to decouple into independent units.
    - A class helper could be a temporary solution during code refactoring (when developer is not sure about the responsibilities of the new class).
-1. Expanded class
-   - Q: **Which VCL / FMX or RTL classes should be chosen as a base for helpers?**
-   - The class helper should be defined as high in the component hierarchy as possible. If it's possible define helper for class `TButton` not for `TControl` or `TComponent`.
-   - Developer could be not able to compile code (receiving compiler error: *Undeclared identifier*), when it was copied from other unit and that unit is using a class helper. In that scenario it's easy to fix this error by adding class helper if it's defined for the actually used class. Otherwise if this code is using helper for more general class it will be more difficult to find proper class helper to include.
+1. Where to define class helper
+   - Q: **Which VCL / FMX or RTL classes should be chosen as a base for helper?**
+   - The class helper should be defined as high in the component hierarchy as possible. After copy existing code into a new unit developer could be not able to compile it (receiving compiler error: *Undeclared identifier* for some method of a class). In that case the developer should be aware that he needs to add unit with class helper definition expanding this class to the uses section. It's is easy to fix this compiler error if helper is defined for actually used class. Otherwise developer has to check one by one more general (in inheritance chain) classes.
+   - If this is possible define helper for specialized classes (`TButton`) not for more general (`TControl`, `TComponent`, etc.).
 1. Extra cost - time
    - Q: **Are you able to spend extra time on maintaining helpers?**
    - Usually class helper are added as the supporting code together with more general tasks. This is OK, but after closing this task you need to spend some extra time on extracting this helper and adding it into helper repository
