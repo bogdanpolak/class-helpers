@@ -24,7 +24,8 @@ type
     /// </summary>
     procedure ForEachRow(proc: TProc);
     /// <summary>
-    ///   TBD: GetMaxIntegerValue
+    ///   Iterates through the dataset and calculates maximum value of 
+    ///   the integer data field (TIntegerField) in all data rows.
     /// </summary>
     function GetMaxIntegerValue(const fieldName: string): integer;
     /// <summary>
