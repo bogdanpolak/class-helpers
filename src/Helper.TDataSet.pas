@@ -1,4 +1,4 @@
-unit Helper.TDataSet;
+﻿unit Helper.TDataSet;
 
 interface
 
@@ -45,7 +45,7 @@ type
     ///   Exception <b>EInvalidMapping</b> TBD
     /// </exception>
     /// <remarks>
-    ///   Attribute.MapedToField - dependency TBD 
+    ///   Attribute.MappedToField - dependency TBD 
     /// </remarks>
     function LoadData<T: class, constructor>: TObjectList<T>;
   end;
