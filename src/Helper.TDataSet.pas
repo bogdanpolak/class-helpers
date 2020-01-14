@@ -61,7 +61,7 @@ type
 implementation
 
 uses
-  Attribute.MapedToField;
+  Attribute.MappedToField;
 
 function TDataSetHelper.GetMaxIntegerValue(const fieldName: string): integer;
 var

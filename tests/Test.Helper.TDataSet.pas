@@ -38,7 +38,7 @@ type
 implementation
 
 uses
-  Attribute.MapedToField;
+  Attribute.MappedToField;
 
 // -----------------------------------------------------------------------
 // Setup and TearDown section
