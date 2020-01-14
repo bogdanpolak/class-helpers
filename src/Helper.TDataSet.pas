@@ -13,10 +13,45 @@ type
   private const
     Version = '1.5';
   public
+    /// <summary>
+    ///   Iterates through the dataset and it's calling anonymous methods 
+    ///   (proc) for each row. Disables all UI notification and preserving 
+    ///   current dataset position.
+    /// </summary>
     procedure WhileNotEof(proc: TProc);
+    /// <summary>
+    ///   Iterates through the dataset, clone "WhileNotEof" method.
+    /// </summary>
     procedure ForEachRow(proc: TProc);
+    /// <summary>
+    ///   Iterates through the dataset and calculates maximum value of 
+    ///   the integer data field (TIntegerField) in all data rows.
+    /// </summary>
     function GetMaxIntegerValue(const fieldName: string): integer;
+    /// <summary>
+    ///   Creates new TDataSource component assigned to this dataset.
+    ///   The owner of TDataSource is this dataset.
+    /// </summary>
     function CreateDataSource: TDataSource;
+    /// <summary>
+    ///   Iterates through base dataset and for each row creates new object
+    ///   using generic class T provided through a generic parameter.
+    ///   The attributes (fields) in the newly created object are filled with 
+    ///   values from the data set. Default mapping is: dataset field name
+    ///   have to equal to object attribute name. Different mapping can be
+    ///   applied with Custom attribute "MappedToField".
+    /// </summary>
+    /// <exception cref="EInvalidMapping">
+    ///   Exception <b>EInvalidMapping</b> is thrown when you provide invalid
+    ///   mapping through MappedToField attribute, when filed name is not
+    ///   found in dataset.
+    /// </exception>
+    /// <remarks>
+    ///   To define custom mapping developer has to include unit 
+    ///   Attribute.MappedToField.pas in which attribute "MappedToField" is
+    ///   defined. Sample mapping added above class attribute can look like:
+    ///   `[MapedToField('city')]`. For more mapping examples check sample code.
+    /// </remarks>
     function LoadData<T: class, constructor>: TObjectList<T>;
   end;
 
@@ -49,7 +84,6 @@ var
   Bookmark: TBookmark;
 begin
   Bookmark := self.GetBookmark;
-  // stworzenie zakładki
   self.DisableControls;
   try
     self.First;
