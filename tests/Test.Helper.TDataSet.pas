@@ -145,13 +145,13 @@ end;
 type
   TMyCity = class
   public
-    [MapedToField('id')]
+    [MappedToField('id')]
     cityId: Integer;
-    [MapedToField('city')]
+    [MappedToField('city')]
     cityName: string;
-    [MapedToField('rank')]
+    [MappedToField('rank')]
     rank: Integer;
-    [MapedToField('visited')]
+    [MappedToField('visited')]
     visitDate: TDateTime;
   end;
 
@@ -176,7 +176,7 @@ end;
 type
   TInvalidCity = class
   public
-    [MapedToField('cityName')]
+    [MappedToField('cityName')]
     cityName: string;
   end;
 
