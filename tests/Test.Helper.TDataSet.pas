@@ -119,8 +119,8 @@ type
   TCityForDataset = class
   public
     id: Integer;
-    city: string;
-    rank: Integer;
+    City: string;
+    Rank: Integer;
     visited: TDateTime;
   end;
 
@@ -136,8 +136,8 @@ begin
 
   Assert.AreEqual(1, cities.Count);
   Assert.AreEqual(1, cities[0].id);
-  Assert.AreEqual('Edinburgh', cities[0].city);
-  Assert.AreEqual(5, cities[0].rank);
+  Assert.AreEqual('Edinburgh', cities[0].City);
+  Assert.AreEqual(5, cities[0].Rank);
   Assert.AreEqual(EncodeDate(2018, 05, 28), cities[0].visited);
   cities.Free;
 end;
