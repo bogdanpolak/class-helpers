@@ -1,4 +1,4 @@
-﻿unit Helper.TDataSet;
+unit Helper.TDataSet;
 
 interface
 
@@ -36,8 +36,10 @@ type
     /// <summary>
     ///   Iterates through base dataset and for each row creates new object
     ///   using generic class T provided through a generic parameter.
-    ///   The fields in the newly created object are filled with values from 
-    ///   the data set.
+    ///   The attributes (fields) in the newly created object are filled with 
+    ///   values from the data set. Default mapping is: dataset field name
+    ///   have to equal to object attribute name. Different mapping can be
+    ///   applied with Custom attribute "MappedToField"
     /// </summary>
     /// <exception cref="EInvalidMapping">
     ///   Exception <b>EInvalidMapping</b> TBD
