@@ -143,7 +143,7 @@ begin
           // --------------------------------------------------------
           customAttr := nil;
           for ca in itemField.GetAttributes do
-            if ca is MapedToFieldAttribute then
+            if ca is MappedToFieldAttribute then
             begin
               customAttr := ca;
               break;
@@ -151,7 +151,7 @@ begin
           // --------------------------------------------------------
           if customAttr <> nil then
           begin
-            aDataFieldName := (customAttr as MapedToFieldAttribute).fieldName;
+            aDataFieldName := (customAttr as MappedToFieldAttribute).fieldName;
             dataField := self.FindField(aDataFieldName);
             if dataField <> nil then
               itemField.SetValue(TObject(item), TValue.From(dataField.Value))
