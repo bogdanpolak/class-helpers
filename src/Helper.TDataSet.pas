@@ -36,7 +36,7 @@ type
     /// <summary>
     ///   Iterates through base dataset and for each row creates new object
     ///   using generic class T provided through a generic parameter.
-    ///   The attributes (fields) in the newly created object are filled with 
+    ///   The attributes/fields in the newly created object are filled with
     ///   values from the data set. Default mapping is: dataset field name
     ///   have to equal to object attribute name. Different mapping can be
     ///   applied with Custom attribute "MappedToField".
@@ -49,7 +49,7 @@ type
     /// <remarks>
     ///   To define custom mapping developer has to include unit 
     ///   Attribute.MappedToField.pas in which attribute "MappedToField" is
-    ///   defined. Sample mapping added above class attribute can look like:
+    ///   defined. Sample mapping added above class field can look like:
     ///   `[MapedToField('city')]`. For more mapping examples check sample code.
     /// </remarks>
     function LoadData<T: class, constructor>: TObjectList<T>;
