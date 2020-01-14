@@ -39,10 +39,12 @@ type
     ///   The attributes (fields) in the newly created object are filled with 
     ///   values from the data set. Default mapping is: dataset field name
     ///   have to equal to object attribute name. Different mapping can be
-    ///   applied with Custom attribute "MappedToField"
+    ///   applied with Custom attribute "MappedToField".
     /// </summary>
     /// <exception cref="EInvalidMapping">
-    ///   Exception <b>EInvalidMapping</b> TBD
+    ///   Exception <b>EInvalidMapping</b> is thrown when you provide invalid
+    ///   mapping through MappedToField attribute, when filed name is not
+    ///   found in dataset.
     /// </exception>
     /// <remarks>
     ///   Attribute.MappedToField - dependency TBD 
