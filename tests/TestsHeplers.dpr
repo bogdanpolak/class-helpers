@@ -24,7 +24,7 @@ uses
   Test.Helper.TDataSet in 'Test.Helper.TDataSet.pas',
   Test.Helper.TJSONObject in 'Test.Helper.TJSONObject.pas',
   Test.Helper.TDBGrid in 'Test.Helper.TDBGrid.pas',
-  Attribute.MapedToField in '..\src\Attribute.MapedToField.pas';
+  Attribute.MappedToField in '..\src\Attribute.MappedToField.pas';
 
 var
   runner : ITestRunner;

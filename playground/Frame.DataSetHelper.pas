@@ -47,7 +47,7 @@ implementation
 uses
   Helper.TDataSet,
   Helper.TDBGrid,
-  Attribute.MapedToField;
+  Attribute.MappedToField;
 
 function CreateDataSet(AOwner: TComponent): TDataSet;
 var
@@ -128,15 +128,15 @@ end;
 type
   TCharacter = class
   public
-    [MapedToField('ID')]
+    [MappedToField('ID')]
     Id: Integer;
-    [MapedToField('Text1')]
+    [MappedToField('Text1')]
     FullName: string;
-    [MapedToField('Date')]
+    [MappedToField('Date')]
     Birthday: TDateTime;
-    [MapedToField('Text2')]
+    [MappedToField('Text2')]
     Description: string;
-    [MapedToField('Saved')]
+    [MappedToField('Saved')]
     CurrentSavings: currency;
   end;
 
