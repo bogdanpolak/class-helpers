@@ -14,7 +14,7 @@ type
   public const
     SufixForAdditionalColumnWidth = '   ';
   private const
-    Version = '1.5';
+    Version = '1.6';
   public
     /// <summary>
     ///   Counts and sets the width of the grid columns in pixels

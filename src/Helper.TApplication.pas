@@ -8,7 +8,7 @@ uses
 type
   TApplicationHelper = class helper for TApplication
   private const
-    Version = '1.5';
+    Version = '1.6';
   public
     { TODO: Please add XML Documentation here }
     function InDeveloperMode: boolean;
