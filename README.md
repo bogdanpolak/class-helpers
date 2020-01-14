@@ -1,4 +1,4 @@
-# Repository of VCL and RTL Class Helpers
+﻿# Repository of VCL and RTL Class Helpers
 
 ![ Delphi Support ](https://img.shields.io/badge/Delphi%20Support-%2010%20..%2010.3%20Rio-blue.svg)
 ![ version ](https://img.shields.io/badge/version-%201.5-yellow.svg)
@@ -32,7 +32,7 @@ mysqlDataSet.StoreRows_ThenUpdateData_StopAfterFirstError(rsChanged);
 
 From the very beginning (Delphi 2006) till Delphi Berlin / 10.1 version there was quite popular class helper bug, which allows to access private fields and private methods using helpers. Because of this bug many developers identified this interesting language extension with such hack. The misuse of class helpers has caused that value of this super powerful solution is underestimated. 
 
-## Helpers
+## Helpers in this repo
 
 | Helper name | Expanded class | Information |
 | --- | --- | --- |
