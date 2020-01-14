@@ -1,4 +1,4 @@
-﻿# Repository of VCL and RTL Class Helpers
+# Repository of VCL and RTL Class Helpers
 
 ![ Delphi Support ](https://img.shields.io/badge/Delphi%20Support-%2010%20..%2010.3%20Rio-blue.svg)
 ![ version ](https://img.shields.io/badge/version-%201.5-yellow.svg)
@@ -7,9 +7,9 @@
 
 ### 1. Safe cleaning technique
 
-The huge amount of VCL (FMX) code can be cleared using helper classes, which are actually a refactoring technique for complex projects with low risk. Using this method, you can start upgrading your old project even without securing it with unit tests. Moreover the correctness of newly created helpers can be easily verified using unit tests. This approach allow to teach developers how to write unit tests or expand code using TDD technique (write tests first and then implement functionality) in a fun and non-invasive way.
+The huge amount of VCL (FMX) code can be cleared using class helpers, which are actually an easy refactoring technique with low risk for complex projects. Using this method, teams can start upgrading their legacy projects even without unit tests safety net. Moreover the verification of newly created helpers can be easily done with unit tests. This approach allow to teach developers how to write unit tests in a correct way (learn in practice F.I.R.S.T principles or other). Teams can also easily applay TDD development process (write tests first and then implement functionality) in a fun and non-invasive way.
 
-Class helpers could be also dangerous if they are used improperly. For this reason it is required to apply a little more disciplined process and more strict project organization, this suggestions are covered in the following sections. 
+Sometimes class helpers could be also dangerous if they are used improperly. For this reason it is required to apply a little more disciplined development and delivery process, suggestions connected with that area are covered in the following sections. 
 
 Class helpers benefits:
 
