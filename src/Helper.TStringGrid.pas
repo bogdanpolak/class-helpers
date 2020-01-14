@@ -13,7 +13,7 @@ uses
 type
   TStringGridHelper = class helper for TStringGrid
   private const
-    Version = '1.5';
+    Version = '1.6';
   private
     procedure DefineColumnsWithJson(jsStructure: TJSONArray;
       ColumnNames: TStringList);

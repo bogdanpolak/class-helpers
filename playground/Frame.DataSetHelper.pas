@@ -6,6 +6,10 @@ uses
   System.SysUtils,
   System.Variants,
   System.Classes,
+  System.DateUtils,
+  System.StrUtils,
+  System.Math,
+  System.Generics.Collections,
   Data.DB,
   Datasnap.DBClient,
   MidasLib,
@@ -23,11 +27,13 @@ type
     btnAutoSizeColumns: TButton;
     btnLoadColumnsLayout: TButton;
     btnResetDBGrid: TButton;
+    btnLoadDataset: TButton;
     procedure btnGetMaxIntegerValueClick(Sender: TObject);
     procedure tmrOnReadyTimer(Sender: TObject);
     procedure btnAutoSizeColumnsClick(Sender: TObject);
     procedure btnLoadColumnsLayoutClick(Sender: TObject);
     procedure btnResetDBGridClick(Sender: TObject);
+    procedure btnLoadDatasetClick(Sender: TObject);
   private
     fDataSet: TDataSet;
     procedure OnFrameReady;
@@ -40,7 +46,8 @@ implementation
 
 uses
   Helper.TDataSet,
-  Helper.TDBGrid;
+  Helper.TDBGrid,
+  Attribute.MappedToField;
 
 function CreateDataSet(AOwner: TComponent): TDataSet;
 var
@@ -118,13 +125,78 @@ begin
   DBGrid1.LoadColumnsFromJsonString(sColumns);
 end;
 
+type
+  TCharacter = class
+  public
+    [MappedToField('ID')]
+    Id: Integer;
+    [MappedToField('Text1')]
+    FullName: string;
+    [MappedToField('Date')]
+    Birthday: TDateTime;
+    [MappedToField('Text2')]
+    Description: string;
+    [MappedToField('Saved')]
+    CurrentSavings: currency;
+  end;
+
+function FindOldestCharacter(aCharacters: TObjectList<TCharacter>): TCharacter;
+var
+  ch: TCharacter;
+  minDate: TDateTime;
+begin
+  minDate := EncodeDate(9999, 12, 31);
+  Result := nil;
+  for ch in aCharacters do
+    if ch.Birthday < minDate then
+    begin
+      Result := ch;
+      minDate := ch.Birthday
+    end;
+end;
+
+function CountYearsAgo(aCharacter: TCharacter): word;
+var
+  years: Integer;
+  dt: TDateTime;
+begin
+  years := Round(Int((Now - aCharacter.Birthday) / 365));
+  dt := IncYear(Int(Now), -years - 1);
+  while dt > aCharacter.Birthday do
+  begin
+    inc(years);
+    dt := IncMonth(Int(Now), -years - 1);
+  end;
+  Result := Max(0, years);
+end;
+
+procedure TFrameDataSetHelper.btnLoadDatasetClick(Sender: TObject);
+var
+  aCharacters: TObjectList<TCharacter>;
+  hero: TCharacter;
+  aInfo: string;
+  aYearsAgo: word;
+begin
+  aCharacters := fDataSet.LoadData<TCharacter>();
+  try
+    hero := FindOldestCharacter(aCharacters);
+    aYearsAgo := CountYearsAgo(hero);
+    aInfo := IfThen(hero <> nil, Format('Wizzard %s was born %d ago',
+      [hero.FullName, aYearsAgo]), 'No data was loaded ...');
+    ShowMessage(aInfo);
+  finally
+    aCharacters.Free;
+  end;
+end;
+
 procedure TFrameDataSetHelper.btnResetDBGridClick(Sender: TObject);
 begin
   fDataSet.Free;
   DBGrid1.Free;
   fDataSet := CreateDataSet(Self);
   DBGrid1 := TDBGrid.Create(Self);
-  with DBGrid1 do begin
+  with DBGrid1 do
+  begin
     Align := alClient;
     AlignWithMargins := True;
     DataSource := fDataSet.CreateDataSource; // aDataSource;

@@ -14,7 +14,7 @@ type
   public const
     SufixForAdditionalColumnWidth = '   ';
   private const
-    Version = '1.5';
+    Version = '1.6';
   public
     /// <summary>
     ///   Counts and sets the width of the grid columns in pixels
@@ -44,7 +44,7 @@ type
     /// <summary>
     ///   Allows to set TDBGrid columns layout: column visibility, column
     ///   width and column title. Layout definition is provided through
-    ///   string parameter containg valid JSON array.
+    ///   string parameter which contains valid JSON array.
     /// </summary>
     /// <exception cref="EJSONProcessing">
     ///   Exception <b>EJSONProcessing</b> is thrown when string parameter
@@ -61,6 +61,13 @@ type
     ///   <b>visible</b> - column visibility (boolean value)
     /// </remarks>
     procedure LoadColumnsFromJsonString(const aJsonString: string);
+    /// <summary>
+    ///   Saves TDBGrid columns layout into string formatted in JSON.
+    ///   Result is JSON array includes JSON objects (each one for one the 
+    ///   TBGrid column). This object contains: column field name, title, 
+    ///   width and visibility. JSON data format is compatible with method
+    ///   loading DBGrid columns.
+    /// </summary>
     function SaveColumnsToString: string;
   end;
 

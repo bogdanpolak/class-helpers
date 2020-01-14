@@ -1,9 +1,9 @@
-unit Attribute.MapedToField;
+unit Attribute.MappedToField;
 
 interface
 
 type
-  MapedToFieldAttribute = class(TCustomAttribute)
+  MappedToFieldAttribute = class(TCustomAttribute)
   private
     fFieldName: string;
   public
@@ -13,7 +13,7 @@ type
 
 implementation
 
-constructor MapedToFieldAttribute.Create(const aFiedldName: string);
+constructor MappedToFieldAttribute.Create(const aFiedldName: string);
 begin
   fFieldName := aFiedldName;
 end;

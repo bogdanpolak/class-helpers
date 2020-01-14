@@ -13,7 +13,6 @@ object FrameDataSetHelper: TFrameDataSetHelper
     Align = alTop
     Caption = 'TDataSet'
     TabOrder = 0
-    ExplicitWidth = 513
     object btnGetMaxIntegerValue: TButton
       AlignWithMargins = True
       Left = 5
@@ -24,6 +23,17 @@ object FrameDataSetHelper: TFrameDataSetHelper
       Caption = 'GetMaxIntegerValue'
       TabOrder = 0
       OnClick = btnGetMaxIntegerValueClick
+    end
+    object btnLoadDataset: TButton
+      AlignWithMargins = True
+      Left = 159
+      Top = 18
+      Width = 130
+      Height = 31
+      Align = alLeft
+      Caption = 'Load DataSet'
+      TabOrder = 1
+      OnClick = btnLoadDatasetClick
     end
   end
   object DBGrid1: TDBGrid
@@ -48,7 +58,6 @@ object FrameDataSetHelper: TFrameDataSetHelper
     Align = alTop
     Caption = 'TDBGrid'
     TabOrder = 2
-    ExplicitWidth = 519
     object btnAutoSizeColumns: TButton
       AlignWithMargins = True
       Left = 5

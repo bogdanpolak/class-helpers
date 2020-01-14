@@ -1,21 +1,17 @@
 ﻿# Repository of VCL and RTL Class Helpers
 
 ![ Delphi Support ](https://img.shields.io/badge/Delphi%20Support-%2010%20..%2010.3%20Rio-blue.svg)
-![ version ](https://img.shields.io/badge/version-%201.5-yellow.svg)
+![ version ](https://img.shields.io/badge/version-%201.6-yellow.svg)
 
 ## Why use Class Helpers?
 
-### 1. Historically used as private fields lock-picks
+### 1. Safe cleaning technique
 
-**This in not longer available in recent Delphi versions.** From the very beginning (2006) till Berlin / 10.1 version there was quite popular bug in class helpers, which allows to access private class fields and methods. Many developers identified this interesting language extension with such hack. The misuse of class helpers has led to this powerful cleaning solution being still underestimated. 
+The huge amount of VCL (FMX) code can be cleared using class helpers, which are actually an easy refactoring technique with low risk for complex projects. Using this method, teams can start upgrading their legacy projects even without unit tests safety net. Moreover the verification of newly created helpers can be easily done with unit tests. This approach allow to teach developers how to write unit tests in a correct way (learn in practice F.I.R.S.T principles or other). Teams can also easily applay TDD development process (write tests first and then implement functionality) in a fun and non-invasive way.
 
-### 2. Safe cleaning technique
+Sometimes class helpers could be also dangerous if they are used improperly. For this reason it is required to apply a little more disciplined development and delivery process, suggestions connected with that area are covered in the following sections. 
 
-Huge amount of VCL code can be cleaned with class helpers, which are really safe refactoring technique. This refactoring is co much safe that can be done even without proper unit test coverage. In this context it is surprising that it allows to teach writing unit tests in a fun and non-invasive way. Class helpers have to be autonomous and thanks of that they are very easy code for teaching unit tests and TDD.
-
-This refactoring approach requires a little more discipline and project organization and it will be covered bellow. Class helpers could be dangerous if they are used improperly. For example one point from helpers "dark side" list is that in the project can be only one helper expanding class. This list is a little longer, but well managed helpers repository and defined release cycle allow to solve most of them.
-
-Cleaning techniques include the following benefits:
+Class helpers benefits:
 
 - **Extract global functions** - global functions and utility methods wrote straight in forms (modules) can be extracted and reuse, also they can grouped together in separated containers based on subject class, finally they can be covered with unit tests
 - **Reduce size of events** - size of code in events (forms, frames and data modules) can be significantly decreased, which helps to improve code readability, especially when valuable business code is  mixed together with visualization or with component processing
@@ -26,13 +22,17 @@ Sample code - Subject first: first line is classic call and second is written us
 
 ```pas
 // classic call:
-StoreLibrary (reAvaliable, 1, mysqlDataSet, true);
+StoreDataset (rsChanged, 1, mysqlDataSet, true);
 
 // improved class:
-mysqlDataSet.StoreAndUpdateLibrary(reAvaliable, 1);
+mysqlDataSet.StoreRows_ThenUpdateData_StopAfterFirstError(rsChanged);
 ```
 
-## Helpers
+### 2. Private fields/methods lock-pick (now not available)
+
+From the very beginning (Delphi 2006) till Delphi Berlin / 10.1 version there was quite popular class helper bug, which allows to access private fields and private methods using helpers. Because of this bug many developers identified this interesting language extension with such hack. The misuse of class helpers has caused that value of this super powerful solution is underestimated. 
+
+## Helpers in this repo
 
 | Helper name | Expanded class | Information |
 | --- | --- | --- |
@@ -65,16 +65,24 @@ begin
 end;
 ```
 
-## Maintenance and helper repository
+## Good practices
 
-As you create and use more and more class helpers, you'll start to notice some obstacles. For this reason, good practices should be adapted from the beginning to help avoid problems. One of the good practices is controlled maintenance of class helpers project.  
+Class helpers looks really promising in the begging and actually there are great solution, but as you create and use more and more of them, you'll start to notice some obstacles. For this reason, good practices should be adapted from the beginning to help avoid potential problems.
 
-1. Independent project
-   - Class helpers should be maintained as separate project, versioned and merged into finial projects like other external packages.
-1. Release cycle
-   - Helpers project should have individual releases with defined version numbers, release dates and its own branching model. New helpers version can be tested and integrated with final projects at the right time. This integration can be straightforward and quick, but sometimes could be more challenging.
+1. **One helper for one class (in whole project).** It's possible to declare two class helpers with different methods extending the same class. Although they cannot be used together in one unit (only one of them will be visible), but such code can be compiled. You can potentially use two different helpers in separate units, but you shouldn't do that because it can be dangerous and generate difficult to fix bugs.
+1. **Unified collection of helpers.** Try do keep consistent and unified collection of class helpers. The best solution is created separate repository (more details in the following section). At first, helpers may be part of the main business project, but it is better to isolate them, especially when you plan to reuse them in many projects. Helpers should be treated as independent components that have been tested and implemented in the final project.
+1. **Use only when necessary.** Do not declare class helpers for your classes, which can be easily extend using classic OOP methods, such as inheritance, polymorphism and composition. Helpers are really useful for extending the functionality of RTL, VCL or FMX classes. They can also be successfully used to extend third-party components. The added functionality should be domain independent and easy to reuse in various projects.
+1. **Define as close as possible.** The class helper should be defined as close to the used class as possible. The VCL framework has very expanded inheritance tree and in some cases developer can define expanding method for more general class (like TWinControl) or for more specialized one (like TGroupBox). From usage perspective, it is much better to expand specialized classes then general: it could be more difficult to figure out which helper unit has to be included (added to uses section) after coping existing code into a new unit. When helper is defined for the same class which is actually used this is not a problem.
+1. **Define release cycle.** A project with helpers should be treated as an independent product. As a consumer the developer should be aware of helpers version which he is using now and about possible available updates. More information you can find in Maintenance section.
 
-This project is live example of such deployment techniques. We are using branching model inspired by Vincent Driessen blog post: [A successful Git branching model](https://nvie.com/posts/a-successful-git-branching-model/) together with planing and delivery model inspired by Kanban method.
+## Helpers maintenance
+
+ One of the recommended practices when using class helpers is to plan good  project maintenance, including version control and release management. Proven steps including two important point: 
+
+1. **Independent project** - class helpers should be maintained as a separate project, versioned and merged into finial projects like other external packages.
+1. **Helpers release cycle** - class helpers project should have releases with defined version numbers and dates. Which makes it necessary to build an independent branching model in the repository. New helpers release can be tested before deploy and then integrated with final projects at the right time. Such integration can be simple or a little more difficult depending on the number of breakthrough changes.
+
+This GitHub project is live example of such deployment techniques. We are using branching model inspired by Vincent Driessen blog post: [A successful Git branching model](https://nvie.com/posts/a-successful-git-branching-model/) together with planing and delivery model inspired by Kanban method.
 
 **Class helpers project branching model**
 
@@ -104,10 +112,10 @@ You can protect your project against the effects of these weaknesses. Before def
    - Q: **Is not possible to introduce expected functionality within a new class?** 
    - Definition of a new class is better approach, easier to understand and more popular, all dependencies should be inject to this class and whole composition should be easy to decouple into independent units.
    - A class helper could be a temporary solution during code refactoring (when developer is not sure about the responsibilities of the new class).
-1. Expanded class
-   - Q: **Which VCL / FMX or RTL classes should be chosen as a base for helpers?**
-   - The class helper should be defined as high in the component hierarchy as possible. If it's possible define helper for class `TButton` not for `TControl` or `TComponent`.
-   - Developer could be not able to compile code (receiving compiler error: *Undeclared identifier*), when it was copied from other unit and that unit is using a class helper. In that scenario it's easy to fix this error by adding class helper if it's defined for the actually used class. Otherwise if this code is using helper for more general class it will be more difficult to find proper class helper to include.
+1. Where to define class helper
+   - Q: **Which VCL / FMX or RTL classes should be chosen as a base for helper?**
+   - The class helper should be defined as high in the component hierarchy as possible. After copy existing code into a new unit developer could be not able to compile it (receiving compiler error: *Undeclared identifier* for some method of a class). In that case the developer should be aware that he needs to add unit with class helper definition expanding this class to the uses section. It's is easy to fix this compiler error if helper is defined for actually used class. Otherwise developer has to check one by one more general (in inheritance chain) classes.
+   - If this is possible define helper for specialized classes (`TButton`) not for more general (`TControl`, `TComponent`, etc.).
 1. Extra cost - time
    - Q: **Are you able to spend extra time on maintaining helpers?**
    - Usually class helper are added as the supporting code together with more general tasks. This is OK, but after closing this task you need to spend some extra time on extracting this helper and adding it into helper repository
