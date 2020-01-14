@@ -34,7 +34,10 @@ type
     /// </summary>
     function CreateDataSource: TDataSource;
     /// <summary>
-    ///   TBD: LoadData
+    ///   Iterates through base dataset and for each row creates new object
+    ///   using generic class T provided through a generic parameter.
+    ///   The fields in the newly created object are filled with values from 
+    ///   the data set.
     /// </summary>
     /// <exception cref="EInvalidMapping">
     ///   Exception <b>EInvalidMapping</b> TBD
