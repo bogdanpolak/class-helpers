@@ -47,7 +47,10 @@ type
     ///   found in dataset.
     /// </exception>
     /// <remarks>
-    ///   Attribute.MappedToField - dependency TBD 
+    ///   To define custom mapping developer has to include unit 
+    ///   Attribute.MappedToField.pas in which attribute "MappedToField" is
+    ///   defined. Sample mapping added above class attribute can look like:
+    ///   `[MapedToField('city')]`. For more mapping examples check sample code.
     /// </remarks>
     function LoadData<T: class, constructor>: TObjectList<T>;
   end;
