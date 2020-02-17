@@ -71,7 +71,7 @@ end;
 
 procedure TBytesHelper.SaveToStream(const aStream: TStream);
 begin
-
+  aStream.Write(Self[0], Length(Self));
 end;
 
 end.

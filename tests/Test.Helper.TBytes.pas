@@ -132,7 +132,7 @@ begin
   fBytes := [201, 202, 203];
   ms := GivenMemoryStream([]);
   fBytes.SaveToStream(ms);
-  Assert.AreEqual(3, integer(ms.Size));
+  Assert.AreEqual(3, Integer(ms.Size));
 end;
 
 initialization
