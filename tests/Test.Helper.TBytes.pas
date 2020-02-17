@@ -35,7 +35,6 @@ type
 
 implementation
 
-
 // -----------------------------------------------------------------------
 // Uitls
 // -----------------------------------------------------------------------
@@ -43,7 +42,7 @@ implementation
 function GivenMemoryStream(const aBytes: TBytes): TMemoryStream;
 begin
   Result := TMemoryStream.Create;
-  Result.Write(aBytes[0],Length(aBytes));
+  Result.Write(aBytes[0], Length(aBytes));
   Result.Position := 0;
 end;
 
@@ -120,8 +119,9 @@ var
 begin
   ms := GivenMemoryStream([101, 102, 103, 104, 105, 106, 107]);
   fBytes.LoadFromStream(ms);
-  Assert.AreEqual(7, fBytes.Size);
   ms.Free;
+  Assert.AreEqual(7, fBytes.Size);
+  Assert.AreEqual(107, Integer(fBytes[6]));
 end;
 
 initialization
