@@ -44,7 +44,16 @@ type
     ///   month (even if first and last are started partly only)
     /// </summary>
     function NumberOfWeeksInMonth: word;
+    /// <summary>
+    ///   Returns numbers of current date and time in ISO format. If there
+    ///  is only date part defined then it return only date as ISO
+    /// </summary>
     function AsStringDateISO: string;
+    /// <summary>
+    ///   Set current date and time from ISO format string. Supported are
+    ///   date onlny, date with time, date with time with time zone.
+    ///   Sample ISO date: 2020-02-10T17:35:24.521+0200
+    /// </summary>
     procedure SetDateISO (const aDateISO: string);
   end;
 
