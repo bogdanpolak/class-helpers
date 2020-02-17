@@ -31,6 +31,7 @@ type
     // -----
     procedure InitialiseFromBase64String_SampleText;
     procedure LoadFromStream;
+    procedure SaveToStream;
   end;
 
 implementation
@@ -122,6 +123,16 @@ begin
   ms.Free;
   Assert.AreEqual(7, fBytes.Size);
   Assert.AreEqual(107, Integer(fBytes[6]));
+end;
+
+procedure TestTBytesHelper.SaveToStream;
+var
+  ms: TMemoryStream;
+begin
+  fBytes := [201, 202, 203];
+  ms := GivenMemoryStream([]);
+  fBytes.SaveToStream(ms);
+  Assert.AreEqual(3, integer(ms.Size));
 end;
 
 initialization
