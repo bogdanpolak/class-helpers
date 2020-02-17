@@ -80,13 +80,14 @@ end;
 
 procedure TestTBytesHelper.InitialiseFromBase64String_SampleText;
 var
-  expectedText: string;
+  actual: String;
 begin
-  expectedText := 'Sample text';
-  fBytes:=nil;
+  fBytes := nil;
   fBytes.InitialiseFromBase64String('U2FtcGxlIHRleHQ=');
-  Assert.AreEqual(Length(expectedText) , fBytes.Size);
-  Assert.AreEqual('a' , Char(fBytes[0]));
+  actual := Char(fBytes[0]) + Char(fBytes[1]) + Char(fBytes[2]) + Char(fBytes[3]
+    ) + Char(fBytes[4]) + Char(fBytes[5]) + Char(fBytes[6]) + Char(fBytes[7]) +
+    Char(fBytes[8]) + Char(fBytes[9]) + Char(fBytes[10]);
+  Assert.AreEqual('Sample text', actual);
 end;
 
 initialization
