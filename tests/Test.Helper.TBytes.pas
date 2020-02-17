@@ -30,9 +30,22 @@ type
     procedure PropertySize;
     // -----
     procedure InitialiseFromBase64String_SampleText;
+    procedure LoadFromStream;
   end;
 
 implementation
+
+
+// -----------------------------------------------------------------------
+// Uitls
+// -----------------------------------------------------------------------
+
+function GivenMemoryStream(const aBytes: TBytes): TMemoryStream;
+begin
+  Result := TMemoryStream.Create;
+  Result.Write(aBytes[0],Length(aBytes));
+  Result.Position := 0;
+end;
 
 // -----------------------------------------------------------------------
 // SetUp / TearDown
@@ -99,6 +112,16 @@ begin
     ) + Char(fBytes[4]) + Char(fBytes[5]) + Char(fBytes[6]) + Char(fBytes[7]) +
     Char(fBytes[8]) + Char(fBytes[9]) + Char(fBytes[10]);
   Assert.AreEqual('Sample text', actual);
+end;
+
+procedure TestTBytesHelper.LoadFromStream;
+var
+  ms: TMemoryStream;
+begin
+  ms := GivenMemoryStream([101, 102, 103, 104, 105, 106, 107]);
+  fBytes.LoadFromStream(ms);
+  Assert.AreEqual(7, fBytes.Size);
+  ms.Free;
 end;
 
 initialization
