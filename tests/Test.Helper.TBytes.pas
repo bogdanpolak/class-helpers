@@ -27,8 +27,6 @@ type
     procedure InitialiseFromBase64String_SampleText;
   end;
 
-
-
 implementation
 
 // -----------------------------------------------------------------------
@@ -41,7 +39,7 @@ var
 begin
   fBytes := [1, 2, 3, 4, 5];
   actual := fBytes.GetSize;
-  Assert.AreEqual(5 ,actual);
+  Assert.AreEqual(5, actual);
 end;
 
 procedure TestTBytesHelper.GetSize_WithEmpty;
@@ -50,23 +48,22 @@ var
 begin
   fBytes := [];
   actual := fBytes.GetSize;
-  Assert.AreEqual(0 ,actual);
+  Assert.AreEqual(0, actual);
 end;
 
 procedure TestTBytesHelper.SetSize_OnEmptyArray;
 begin
   fBytes := [];
   fBytes.SetSize(5);
-  Assert.AreEqual(5 ,Length(fBytes));
+  Assert.AreEqual(5, Length(fBytes));
 end;
 
 procedure TestTBytesHelper.SetSize_On4ItemsArray;
 begin
   fBytes := [1, 2, 3, 4];
   fBytes.SetSize(10);
-  Assert.AreEqual(10 ,Length(fBytes));
+  Assert.AreEqual(10, Length(fBytes));
 end;
-
 
 procedure TestTBytesHelper.PropertySize;
 begin
@@ -74,7 +71,7 @@ begin
   Assert.AreEqual(3, fBytes.Size);
   // resize array
   fBytes.Size := 8;
-  Assert.AreEqual(8 , Length(fBytes));
+  Assert.AreEqual(8, Length(fBytes));
 end;
 
 // -----------------------------------------------------------------------
