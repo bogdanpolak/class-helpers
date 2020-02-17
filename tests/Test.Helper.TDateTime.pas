@@ -43,6 +43,8 @@ type
     procedure DayOfWeek_FirstDayInMonth_24Oct2019;
     procedure DayOfWeek_LastDayInMonth_24Oct2019;
     procedure NumberOfWeeksInMonth_24Oct2019;
+    procedure AsStringDateISO;
+    procedure SetDateISO;
   end;
 
   [TestFixture]
@@ -326,6 +328,16 @@ begin
   fDate := EncodeDate(2019, 10, 24);
   actualNumberOfWeeksInMonth := fDate.NumberOfWeeksInMonth;
   Assert.AreEqual(5, actualNumberOfWeeksInMonth);
+end;
+
+procedure TestDateTimeHelper.AsStringDateISO;
+begin
+
+end;
+
+procedure TestDateTimeHelper.SetDateISO;
+begin
+
 end;
 
 // -----------------------------------------------------------------------

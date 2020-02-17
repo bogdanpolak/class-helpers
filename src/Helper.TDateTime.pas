@@ -44,6 +44,8 @@ type
     ///   month (even if first and last are started partly only)
     /// </summary>
     function NumberOfWeeksInMonth: word;
+    function AsStringDateISO: string;
+    procedure SetDateISO (const aDateISO: string);
   end;
 
 implementation
@@ -155,6 +157,15 @@ function TDateTimeHelper.NumberOfWeeksInMonth: word;
 begin
   Result := System.Math.Ceil((LastDayInMonth - FirstDayInMonth -
     (7 - DayOfWeekFirstDayInMonth) - DayOfWeekLastDayInMonth + 1) / 7) + 1;
+end;
+
+function TDateTimeHelper.AsStringDateISO: string;
+begin
+  Result:= '';
+end;
+
+procedure TDateTimeHelper.SetDateISO (const aDateISO: string);
+begin
 end;
 
 end.
