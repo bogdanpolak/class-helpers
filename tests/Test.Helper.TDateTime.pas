@@ -43,8 +43,9 @@ type
     procedure DayOfWeek_FirstDayInMonth_24Oct2019;
     procedure DayOfWeek_LastDayInMonth_24Oct2019;
     procedure NumberOfWeeksInMonth_24Oct2019;
-    procedure AsStringDateISO;
-    procedure SetDateISO;
+    procedure AsStringDateISO_DateOnly;
+    procedure AsStringDateISO_DateAndTime;
+    procedure SetDateISO_DateOnly;
   end;
 
   [TestFixture]
@@ -330,14 +331,31 @@ begin
   Assert.AreEqual(5, actualNumberOfWeeksInMonth);
 end;
 
-procedure TestDateTimeHelper.AsStringDateISO;
+procedure TestDateTimeHelper.AsStringDateISO_DateOnly;
+var
+  actual: string;
 begin
-
+  fDate := EncodeDate(2019, 10, 24);
+  actual := fDate.AsStringDateISO;
+  Assert.AreEqual('2019-10-24', actual);
 end;
 
-procedure TestDateTimeHelper.SetDateISO;
+procedure TestDateTimeHelper.AsStringDateISO_DateAndTime;
+var
+  actual: string;
 begin
+  fDate := EncodeDate(2019, 10, 24) + EncodeTime(18,45,12,0);
+  actual := fDate.AsStringDateISO;
+  Assert.AreEqual('2019-10-24T18:45:12.000Z', actual);
+end;
 
+procedure TestDateTimeHelper.SetDateISO_DateOnly;
+var
+  expected: TDateTime;
+begin
+  expected := EncodeDate(2020,02,17);
+  fDate.SetDateISO('2020-02-17');
+  Assert.AreEqual(expected,fDate,0.000000001);
 end;
 
 // -----------------------------------------------------------------------
