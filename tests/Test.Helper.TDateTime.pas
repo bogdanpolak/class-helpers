@@ -46,6 +46,7 @@ type
     procedure AsStringDateISO_DateOnly;
     procedure AsStringDateISO_DateAndTime;
     procedure SetDateISO_DateOnly;
+    procedure SetDateISO_DateAndTime;
   end;
 
   [TestFixture]
@@ -355,6 +356,15 @@ var
 begin
   expected := EncodeDate(2020,02,17);
   fDate.SetDateISO('2020-02-17');
+  Assert.AreEqual(expected,fDate,0.000000001);
+end;
+
+procedure TestDateTimeHelper.SetDateISO_DateAndTime;
+var
+  expected: TDateTime;
+begin
+  expected := EncodeDate(2020,02,17) + EncodeTime(19,15,02,0);
+  fDate.SetDateISO('2020-02-17T19:15:02');
   Assert.AreEqual(expected,fDate,0.000000001);
 end;
 
