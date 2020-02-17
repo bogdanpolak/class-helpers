@@ -24,6 +24,7 @@ type
     procedure SetSize_OnEmptyArray;
     procedure SetSize_On4ItemsArray;
     procedure PropertySize;
+    procedure InitialiseFromBase64String_SampleText;
   end;
 
 
@@ -74,6 +75,21 @@ begin
   // resize array
   fBytes.Size := 8;
   Assert.AreEqual(8 , Length(fBytes));
+end;
+
+// -----------------------------------------------------------------------
+// Tests TBytes - Load, Save, Initialise
+// -----------------------------------------------------------------------
+
+procedure TestTBytesHelper.InitialiseFromBase64String_SampleText;
+var
+  expectedText: string;
+begin
+  expectedText := 'Sample text';
+  fBytes:=nil;
+  fBytes.InitialiseFromBase64String('U2FtcGxlIHRleHQ=');
+  Assert.AreEqual(Length(expectedText) , fBytes.Size);
+  Assert.AreEqual('a' , Char(fBytes[0]));
 end;
 
 initialization
