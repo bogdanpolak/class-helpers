@@ -161,11 +161,15 @@ end;
 
 function TDateTimeHelper.AsStringDateISO: string;
 begin
-  Result:= '';
+  if Frac(Self)=0 then
+    Result := FormatDateTime('yyyy-mm-dd',Self)
+  else
+    Result:= DateToISO8601(Self,true);
 end;
 
 procedure TDateTimeHelper.SetDateISO (const aDateISO: string);
 begin
+  Self := ISO8601ToDate(aDateISO);
 end;
 
 end.
