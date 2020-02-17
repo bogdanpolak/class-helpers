@@ -59,7 +59,9 @@ end;
 
 procedure TBytesHelper.LoadFromStream(const aStream: TStream);
 begin
-
+  aStream.Position := 0;
+  SetLength(Self, aStream.Size);
+  aStream.Read(Self[0], aStream.Size);
 end;
 
 procedure TBytesHelper.SaveToFile(const aFileName: string);
