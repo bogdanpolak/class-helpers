@@ -18,16 +18,30 @@ type
   TestTBytesHelper = class(TObject)
   private
     fBytes: TBytes;
+  public
+    [Setup]
+    procedure Setup;
   published
+    // -----
     procedure GetSize_With5Items;
     procedure GetSize_WithEmpty;
     procedure SetSize_OnEmptyArray;
     procedure SetSize_On4ItemsArray;
     procedure PropertySize;
+    // -----
     procedure InitialiseFromBase64String_SampleText;
   end;
 
 implementation
+
+// -----------------------------------------------------------------------
+// SetUp / TearDown
+// -----------------------------------------------------------------------
+
+procedure TestTBytesHelper.Setup;
+begin
+  fBytes := [];
+end;
 
 // -----------------------------------------------------------------------
 // Tests TBytes - Size
@@ -46,14 +60,12 @@ procedure TestTBytesHelper.GetSize_WithEmpty;
 var
   actual: Integer;
 begin
-  fBytes := [];
   actual := fBytes.GetSize;
   Assert.AreEqual(0, actual);
 end;
 
 procedure TestTBytesHelper.SetSize_OnEmptyArray;
 begin
-  fBytes := [];
   fBytes.SetSize(5);
   Assert.AreEqual(5, Length(fBytes));
 end;
@@ -82,7 +94,6 @@ procedure TestTBytesHelper.InitialiseFromBase64String_SampleText;
 var
   actual: String;
 begin
-  fBytes := nil;
   fBytes.InitialiseFromBase64String('U2FtcGxlIHRleHQ=');
   actual := Char(fBytes[0]) + Char(fBytes[1]) + Char(fBytes[2]) + Char(fBytes[3]
     ) + Char(fBytes[4]) + Char(fBytes[5]) + Char(fBytes[6]) + Char(fBytes[7]) +
