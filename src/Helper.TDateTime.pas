@@ -44,6 +44,17 @@ type
     ///   month (even if first and last are started partly only)
     /// </summary>
     function NumberOfWeeksInMonth: word;
+    /// <summary>
+    ///   Returns numbers of current date and time in ISO format. If there
+    ///  is only date part defined then it return only date as ISO
+    /// </summary>
+    function AsStringDateISO: string;
+    /// <summary>
+    ///   Set current date and time from ISO format string. Supported are
+    ///   date onlny, date with time, date with time with time zone.
+    ///   Sample ISO date: 2020-02-10T17:35:24.521+0200
+    /// </summary>
+    procedure SetDateISO (const aDateISO: string);
   end;
 
 implementation
@@ -155,6 +166,19 @@ function TDateTimeHelper.NumberOfWeeksInMonth: word;
 begin
   Result := System.Math.Ceil((LastDayInMonth - FirstDayInMonth -
     (7 - DayOfWeekFirstDayInMonth) - DayOfWeekLastDayInMonth + 1) / 7) + 1;
+end;
+
+function TDateTimeHelper.AsStringDateISO: string;
+begin
+  if Frac(Self)=0 then
+    Result := FormatDateTime('yyyy-mm-dd',Self)
+  else
+    Result:= DateToISO8601(Self,true);
+end;
+
+procedure TDateTimeHelper.SetDateISO (const aDateISO: string);
+begin
+  Self := ISO8601ToDate(aDateISO);
 end;
 
 end.
