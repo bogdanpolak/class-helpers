@@ -14,8 +14,8 @@ type
     Version = '1.6';
   public
     /// <summary>
-    ///   Iterates through the dataset and it's calling anonymous methods 
-    ///   (proc) for each row. Disables all UI notification and preserving 
+    ///   Iterates through the dataset and it's calling anonymous methods
+    ///   (proc) for each row. Disables all UI notification and preserving
     ///   current dataset position.
     /// </summary>
     procedure WhileNotEof(proc: TProc);
@@ -24,7 +24,7 @@ type
     /// </summary>
     procedure ForEachRow(proc: TProc);
     /// <summary>
-    ///   Iterates through the dataset and calculates maximum value of 
+    ///   Iterates through the dataset and calculates maximum value of
     ///   the integer data field (TIntegerField) in all data rows.
     /// </summary>
     function GetMaxIntegerValue(const fieldName: string): integer;
@@ -47,12 +47,24 @@ type
     ///   found in dataset.
     /// </exception>
     /// <remarks>
-    ///   To define custom mapping developer has to include unit 
+    ///   To define custom mapping developer has to include unit
     ///   Attribute.MappedToField.pas in which attribute "MappedToField" is
     ///   defined. Sample mapping added above class field can look like:
     ///   `[MapedToField('city')]`. For more mapping examples check sample code.
     /// </remarks>
     function LoadData<T: class, constructor>: TObjectList<T>;
+    /// <summary>
+    ///   Allows to append multiple row into dataset. Each master item in
+    ///   the array is appended as a new row, and each detail item value
+    ///   from this array is assigned to following dataset fields - ordered
+    ///   by index. To skip a value assignment for one field put Null variant
+    ///   value in the array
+    /// </summary>
+    /// <exception cref="EDatabaseError">
+    ///   Exception <b>EDatabaseError</b> has detailed information about
+    ///   row number and field index which was not able to assigned
+    /// </exception>
+    procedure AppendRows(aRecordArray: TArray < TArray < Variant >> );
   end;
 
   EInvalidMapping = class(Exception)
@@ -165,6 +177,41 @@ begin
       dataList.Add(item);
     end);
   Result := dataList;
+end;
+
+procedure TDataSetHelper.AppendRows(aRecordArray: TArray < TArray <
+  Variant >> );
+var
+  idxRow: integer;
+  idxField: integer;
+  aField: TField;
+begin
+  for idxRow := 0 to High(aRecordArray) do
+  begin
+    self.Append;
+    for idxField := 0 to High(aRecordArray[idxRow]) do
+    begin
+      try
+        self.Fields[idxField].Value := aRecordArray[idxRow][idxField];
+      except
+        on E: EDatabaseError do
+        begin
+          E.Message := E.Message + Format(' (Row nr:%d, Index of field:%d)',
+            [idxRow + 1, idxField]);
+          raise;
+        end
+      end;
+    end;
+    try
+      self.Post;
+    except
+      on E: EDatabaseError do
+      begin
+        E.Message := E.Message + Format(' (Row nr:%d)', [idxRow + 1]);
+        raise;
+      end
+    end;
+  end;
 end;
 
 end.
