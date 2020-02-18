@@ -53,8 +53,16 @@ begin
 end;
 
 procedure TBytesHelper.LoadFromFile(const aFileName: string);
+var
+  aFileStream: TFileStream;
 begin
-
+  aFileStream := TFileStream.Create(aFileName, fmOpenRead);
+  try
+    SetLength(Self, aFileStream.Size);
+    aFileStream.Read(Self[0], aFileStream.Size);
+  finally
+    aFileStream.Free;
+  end;
 end;
 
 procedure TBytesHelper.LoadFromStream(const aStream: TStream);
@@ -65,8 +73,15 @@ begin
 end;
 
 procedure TBytesHelper.SaveToFile(const aFileName: string);
+var
+  aFileStream: TFileStream;
 begin
-
+  aFileStream := TFileStream.Create(aFileName, fmCreate);
+  try
+    aFileStream.Write(Self[0], Length(Self));
+  finally
+    aFileStream.Free;
+  end;
 end;
 
 procedure TBytesHelper.SaveToStream(const aStream: TStream);
