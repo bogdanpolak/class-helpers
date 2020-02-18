@@ -36,7 +36,8 @@ type
 implementation
 
 uses
-  System.NetEncoding;
+  System.NetEncoding,
+  System.Math;
 
 // -----------------------------------------------------------------------
 // Size
@@ -104,24 +105,43 @@ end;
 
 function TBytesHelper.GetSectorAsHex(aIndex: Integer = 0;
   aLength: Integer = 100): string;
+var
+  len: Integer;
+  i: Integer;
 begin
-
+  len := Min(aLength, Length(Self));
+  for i := 0 to len - 1 do
+    if Result = '' then
+      Result := IntToHex(Self[aIndex + i])
+    else
+      Result := Result + ' ' + IntToHex(Self[aIndex + i]);
 end;
 
 function TBytesHelper.GetSectorAsString(aIndex: Integer = 0;
   aLength: Integer = 100): string;
+var
+  len: Integer;
+  i: Integer;
 begin
-
+  len := Min(aLength, Length(Self));
+  for i := 0 to len - 1 do
+    if Result = '' then
+      Result := chr(Self[aIndex + i])
+    else
+      Result := Result + chr(Self[aIndex + i]);
 end;
 
 function TBytesHelper.GetLongWord(aIndex: Integer = 0): LongWord;
 begin
-
+  Result := LongWord(Self[aIndex]) or (LongWord(Self[aIndex + 1]) shl 8) or
+    (LongWord(Self[aIndex + 2]) shl 16) or (LongWord(Self[aIndex + 3]) shl 24);
 end;
 
 function TBytesHelper.GetReverseLongWord(aIndex: Integer = 0): LongWord;
 begin
-
+  Result := (LongWord(Self[aIndex]) shl 24) or
+    (LongWord(Self[aIndex + 1]) shl 16) or (LongWord(Self[aIndex + 2]) shl 8) or
+    LongWord(Self[aIndex + 3]);
 end;
 
 function TBytesHelper.GetSectorCRC32(aIndex: Integer; aLength: Integer)
