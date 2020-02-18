@@ -196,16 +196,16 @@ begin
 end;
 
 // -----------------------------------------------------------------------
-// Tests TBytes - Load, Save, Initialise
+// Tests TBytes - Data getters
 // -----------------------------------------------------------------------
 
 procedure TestTBytesHelper.GetSectorAsHex;
 var
   actual: string;
 begin
-  fBytes := GivenPNGImageAsBytes;
-  actual := fBytes.GetSectorAsHex(0, 8);
-  Assert.AreEqual('89 50 4E 47 0D 0A 1A 0A', actual);
+  fBytes := [0, 0, 15, 16, $a0, $a1, $ff, 0, 0, 0];
+  actual := fBytes.GetSectorAsHex(2, 6);
+  Assert.AreEqual('0F 10 A0 A1 FF 00', actual);
 end;
 
 procedure TestTBytesHelper.GetSectorAsString;
@@ -221,18 +221,18 @@ procedure TestTBytesHelper.GetLongWord;
 var
   actual: Cardinal;
 begin
-  fBytes := [99, 0, 0, 0, 2, 99];
+  fBytes := [255, 2, 0, 0, 0, 255];
   actual := fBytes.GetLongWord(1);
   Assert.AreEqual(2, actual);
 end;
 
 procedure TestTBytesHelper.GetReverseLongWord;
 var
-  aChunkLength: Cardinal;
+  actual: Cardinal;
 begin
-  fBytes := GivenPNGImageAsBytes;
-  aChunkLength := fBytes.GetReverseLongWord(8);
-  Assert.AreEqual(13, aChunkLength);
+  fBytes := [255, 0, 0, 0, 3, 255];
+  actual := fBytes.GetReverseLongWord(1);
+  Assert.AreEqual(3, actual);
 end;
 
 initialization
