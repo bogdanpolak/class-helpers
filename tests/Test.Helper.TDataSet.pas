@@ -21,7 +21,7 @@ type
   TestTDataSetHelper = class(TObject)
   private
     fDataset: TClientDataSet;
-    procedure BuildDataSet1;
+    procedure BuildDataSet_VisitedCities;
   public
     [Setup]
     procedure Setup;
@@ -58,7 +58,7 @@ end;
 // Utilities
 // -----------------------------------------------------------------------
 
-procedure TestTDataSetHelper.BuildDataSet1;
+procedure TestTDataSetHelper.BuildDataSet_VisitedCities;
 begin
   with fDataset do
   begin
@@ -79,7 +79,7 @@ var
   aMaxValue: Integer;
 begin
   // Arrange
-  BuildDataSet1;
+  BuildDataSet_VisitedCities;
   fDataset.AppendRecord([1, 'Edynburgh', 5]);
   fDataset.AppendRecord([2, 'Glassgow', 4]);
   fDataset.AppendRecord([3, 'Cracow', 6]);
@@ -96,7 +96,7 @@ var
   s: string;
 begin
   // Arrange
-  BuildDataSet1;
+  BuildDataSet_VisitedCities;
   // .   GivenDataSetWithFourVisitedCities
   fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
   fDataset.AppendRecord([2, 'Glassgow', 4, EncodeDate(2015, 09, 13)]);
@@ -128,7 +128,7 @@ procedure TestTDataSetHelper.LoadData_OneCity_NoAttributes;
 var
   cities: TObjectList<TCityForDataset>;
 begin
-  BuildDataSet1;
+  BuildDataSet_VisitedCities;
   fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
   fDataset.First;
 
@@ -150,7 +150,7 @@ type
     [MappedToField('city')]
     cityName: string;
     [MappedToField('rank')]
-    rank: Integer;
+    Rank: Integer;
     [MappedToField('visited')]
     visitDate: TDateTime;
   end;
@@ -159,7 +159,7 @@ procedure TestTDataSetHelper.LoadData_OneCity_Mapped;
 var
   cities: TObjectList<TMyCity>;
 begin
-  BuildDataSet1;
+  BuildDataSet_VisitedCities;
   fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
   fDataset.First;
 
@@ -168,7 +168,7 @@ begin
   Assert.AreEqual(1, cities.Count);
   Assert.AreEqual(1, cities[0].cityId, '(assert: CityId)');
   Assert.AreEqual('Edinburgh', cities[0].cityName);
-  Assert.AreEqual(5, cities[0].rank);
+  Assert.AreEqual(5, cities[0].Rank);
   Assert.AreEqual(EncodeDate(2018, 05, 28), cities[0].visitDate);
   cities.Free;
 end;
@@ -184,7 +184,7 @@ procedure TestTDataSetHelper.LoadData_OneCity_InvalidMapping;
 var
   cities: TObjectList<TInvalidCity>;
 begin
-  BuildDataSet1;
+  BuildDataSet_VisitedCities;
   fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
   fDataset.First;
 
