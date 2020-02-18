@@ -203,7 +203,7 @@ procedure TestTBytesHelper.GetSectorAsHex;
 var
   actual: string;
 begin
-  fBytes := [0, 0, 15, 16, $a0, $a1, $ff, 0, 0, 0];
+  fBytes := [0, 0, 15, 16, $A0, $A1, $FF, 0, 0, 0];
   actual := fBytes.GetSectorAsHex(2, 6);
   Assert.AreEqual('0F 10 A0 A1 FF 00', actual);
 end;
