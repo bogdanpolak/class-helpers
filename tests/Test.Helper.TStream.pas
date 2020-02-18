@@ -25,6 +25,7 @@ type
     procedure TearDown;
   published
     procedure SaveToTempFile_FileExists;
+    procedure SaveToTempFile_SizeAndContent;
   end;
 
 implementation
@@ -66,6 +67,22 @@ begin
    aFileName := fStream.SaveToTempFile;
 
    Assert.IsTrue(FileExists(aFileName),'File '+aFileName+' not created');
+   DeleteFile(aFileName);
+end;
+
+procedure TestTStreamHelper.SaveToTempFile_SizeAndContent;
+var
+  aFileName: string;
+  actual: TBytes;
+begin
+   GivenBytesStream(fStream, [ 101, 102, 103, 104, 105, 106]);
+
+   aFileName := fStream.SaveToTempFile;
+   actual := TFile.ReadAllBytes(aFileName);
+
+   Assert.AreEqual(6, Length(actual));
+   Assert.AreEqual(byte(101), actual[0]);
+   Assert.AreEqual(byte(106), actual[5]);
    DeleteFile(aFileName);
 end;
 
