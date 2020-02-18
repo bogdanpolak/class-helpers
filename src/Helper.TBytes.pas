@@ -30,6 +30,8 @@ type
       aLength: Integer = 100): string;
     function GetLongWord(aIndex: Integer = 0): LongWord;
     function GetReverseLongWord(aIndex: Integer = 0): LongWord;
+    // ---------------------
+    // Calc Checksums
     function GetSectorCRC32(aIndex: Integer; aLength: Integer): LongWord;
   end;
 
@@ -143,6 +145,10 @@ begin
     (LongWord(Self[aIndex + 1]) shl 16) or (LongWord(Self[aIndex + 2]) shl 8) or
     LongWord(Self[aIndex + 3]);
 end;
+
+// -----------------------------------------------------------------------
+// Calc Checksums
+// -----------------------------------------------------------------------
 
 function TBytesHelper.GetSectorCRC32(aIndex: Integer; aLength: Integer)
   : LongWord;
