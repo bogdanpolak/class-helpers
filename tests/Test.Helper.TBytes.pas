@@ -40,6 +40,8 @@ type
     procedure GetSectorAsHex;
     procedure GetLongWord;
     procedure GetReverseLongWord;
+    // -----
+    procedure GetSectorCRC32;
   end;
 
 implementation
@@ -234,6 +236,23 @@ begin
   actual := fBytes.GetReverseLongWord(1);
   Assert.AreEqual(3, actual);
 end;
+
+// -----------------------------------------------------------------------
+// Tests TBytes - Calc Checksums
+// -----------------------------------------------------------------------
+
+procedure TestTBytesHelper.GetSectorCRC32;
+var
+  actual: Cardinal;
+  expectedCRC32: Cardinal;
+begin
+  // 123456789
+  fBytes := [0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57, 0, 0];
+  expectedCRC32 := $CBF43926;
+  actual := fBytes.GetSectorCRC32(2,9);
+  Assert.AreEqual(expectedCRC32, actual);
+end;
+
 
 initialization
 
