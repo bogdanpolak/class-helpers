@@ -24,13 +24,10 @@ type
     [TearDown]
     procedure TearDown;
   published
-    procedure Test;
+    procedure SaveToTempFile_FileExists;
   end;
 
 implementation
-
-uses
-  Attribute.MappedToField;
 
 // -----------------------------------------------------------------------
 // Setup and TearDown section
@@ -60,7 +57,7 @@ end;
 // Tests
 // -----------------------------------------------------------------------
 
-procedure TestTStreamHelper.Test;
+procedure TestTStreamHelper.SaveToTempFile_FileExists;
 var
   aFileName: string;
 begin
