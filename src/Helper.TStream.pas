@@ -7,6 +7,8 @@ uses
   System.SysUtils;
 
 type
+  EStreamException = class(Exception);
+
   TStreamHelper = class helper for TStream
   private const
     Version = '1.6';
@@ -24,14 +26,28 @@ type
 
 implementation
 
-procedure TStreamHelper.SaveToFile(aFileName: string);
-begin
+uses
+  System.IOUtils;
 
+procedure TStreamHelper.SaveToFile(aFileName: string);
+var
+  fs: TFileStream;
+begin
+  if Self.Size = 0 then
+    raise EStreamException.Create('Not able to save empty stream');
+  Self.Position := 0;
+  fs := TFileStream.Create(aFileName, fmCreate);
+  try
+    fs.CopyFrom(Self,Self.Size);
+  finally
+    fs.Free;
+  end;
 end;
 
 function TStreamHelper.SaveToTempFile: string;
 begin
-
+  Result := TPath.GetTempFileName;
+  SaveToFile(Result);
 end;
 
 function TStreamHelper.AsString: string;
