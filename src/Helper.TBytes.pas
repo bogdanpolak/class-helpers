@@ -8,6 +8,8 @@ uses
 
 type
   TBytesHelper = record helper for TBytes
+  private const
+    Version = '1.6';
   private
   public
     // ---------------------
