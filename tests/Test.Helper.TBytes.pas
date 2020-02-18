@@ -35,6 +35,11 @@ type
     procedure SaveToStream;
     procedure SaveToFile_And_LoadFromFile;
     procedure SaveToStream_TwoBlocks;
+    // -----
+    procedure GetSectorAsString;
+    procedure GetSectorAsHex;
+    procedure GetLongWord;
+    procedure GetReverseLongWord;
   end;
 
 implementation
@@ -48,6 +53,22 @@ begin
   Result := TMemoryStream.Create;
   Result.Write(aBytes[0], Length(aBytes));
   Result.Position := 0;
+end;
+
+function GivenPNGImageAsBytes: TBytes;
+begin
+  Result.InitialiseFromBase64String
+    ('iVBORw0KGgoAAAANSUhEUgAAAFsAAAAaCAMAAADv7NBiAAAAe1BMVEXw8PD/' +
+    '///Z2dnwz4c3NofP8PAAAAAoKSmHz/Dw8Ks2AgA1h8+r8PDPz4cANodgEmBd' +
+    'qfIABDarYADwq2DPhzeHNgAAYKvw8M+rz4dgCzZgBwA2DmAADGA5ZLPP8Ktg' +
+    'YKtlTzk2BjZks9ir8Ks4ZWU4N2VnZkWPZQBgNgB6DF3BAAABJUlEQVRIx+2T' +
+    '25LCIAyGU7BZ2m67ldq6B9fVPen7P6EhNGMd8EoZxxlzw58QPgIB2EA6ezrK' +
+    'B5tMKZWOnWUjW13fjmy4tj3Yt2XrErECWKAb9CwHiU5dUaHJbJT9ZqD4gkWT' +
+    'Q/FeSVLB0YvZL8+exSm1sDm67Kl4OtDcsNIlKf23x+8eW/DebIfY8myMbXHg' +
+    'jZn4yqNEpZ5ucIr2c7tvTTc3XbP2XtlC1+TxunkpDgHbRZnIN8+rncAVZZAm' +
+    'qniUdJbNzJ/TO5F7ccu2hlcLQHTtvZD9P2F/cobvZStJ2kf1h8NTo52i6Ql7' +
+    'Ld6YF627d73iN+gbhCvKW45Ri5VF/CUCKb6dWs4gHvNt2MvwIV3+dzYxNlgq' +
+    '9X7+fAq2SmHCzhJYWvYBmzQSEHa+IRoAAAAASUVORK5CYII=');
 end;
 
 // -----------------------------------------------------------------------
@@ -165,13 +186,53 @@ begin
   fBytes := [];
 
   // test 1:
-  Assert.AreEqual(5, integer(ms.Position));
+  Assert.AreEqual(5, Integer(ms.Position));
 
   // test 2: Load and data
   fBytes.LoadFromStream(ms);
   Assert.AreEqual(5, Integer(fBytes.Size));
   Assert.AreEqual(101, Integer(fBytes[0]));
   Assert.AreEqual(203, Integer(fBytes[4]));
+end;
+
+// -----------------------------------------------------------------------
+// Tests TBytes - Load, Save, Initialise
+// -----------------------------------------------------------------------
+
+procedure TestTBytesHelper.GetSectorAsHex;
+var
+  actual: string;
+begin
+  fBytes := GivenPNGImageAsBytes;
+  actual := fBytes.GetSectorAsHex(0, 8);
+  Assert.AreEqual('89 50 4E 47 0D 0A 1A 0A', actual);
+end;
+
+procedure TestTBytesHelper.GetSectorAsString;
+var
+  actual: string;
+begin
+  fBytes := GivenPNGImageAsBytes;
+  actual := fBytes.GetSectorAsString(1, 3);
+  Assert.AreEqual('PNG', actual);
+end;
+
+procedure TestTBytesHelper.GetLongWord;
+var
+  actual: Cardinal;
+begin
+  fBytes := [99, 0, 0, 0, 2, 99];
+  actual := fBytes.GetLongWord(1);
+  Assert.AreEqual(2, actual);
+end;
+
+procedure TestTBytesHelper.GetReverseLongWord;
+var
+  aChunkLength: Cardinal;
+begin
+  fBytes := GivenPNGImageAsBytes;
+  aChunkLength := fBytes.GetReverseLongWord(8);
+  Assert.AreEqual(13, aChunkLength);
 end;
 
 initialization
