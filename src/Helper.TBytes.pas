@@ -22,6 +22,15 @@ type
     procedure SaveToStream(const aStream: TStream);
     procedure SaveToFile(const aFileName: string);
     procedure InitialiseFromBase64String(const aBase64Str: String);
+    // ---------------------
+    // Data getters
+    function GetSectorAsHex(aIndex: Integer = 0;
+      aLength: Integer = 100): string;
+    function GetSectorAsString(aIndex: Integer = 0;
+      aLength: Integer = 100): string;
+    function GetLongWord(aIndex: Integer = 0): LongWord;
+    function GetReverseLongWord(aIndex: Integer = 0): LongWord;
+    function GetSectorCRC32(aIndex: Integer; aLength: Integer): LongWord;
   end;
 
 implementation
@@ -87,6 +96,38 @@ end;
 procedure TBytesHelper.SaveToStream(const aStream: TStream);
 begin
   aStream.Write(Self[0], Length(Self));
+end;
+
+// -----------------------------------------------------------------------
+// Data getters
+// -----------------------------------------------------------------------
+
+function TBytesHelper.GetSectorAsHex(aIndex: Integer = 0;
+  aLength: Integer = 100): string;
+begin
+
+end;
+
+function TBytesHelper.GetSectorAsString(aIndex: Integer = 0;
+  aLength: Integer = 100): string;
+begin
+
+end;
+
+function TBytesHelper.GetLongWord(aIndex: Integer = 0): LongWord;
+begin
+
+end;
+
+function TBytesHelper.GetReverseLongWord(aIndex: Integer = 0): LongWord;
+begin
+
+end;
+
+function TBytesHelper.GetSectorCRC32(aIndex: Integer; aLength: Integer)
+  : LongWord;
+begin
+
 end;
 
 end.
