@@ -7,6 +7,7 @@ uses
   DUnitX.TestFramework,
   System.Classes,
   System.SysUtils,
+  System.IOUtils,
 
   Helper.TBytes;
 
@@ -32,6 +33,7 @@ type
     procedure InitialiseFromBase64String_SampleText;
     procedure LoadFromStream;
     procedure SaveToStream;
+    procedure SaveToFile_And_LoadFromFile;
   end;
 
 implementation
@@ -134,6 +136,21 @@ begin
   fBytes.SaveToStream(ms);
   Assert.AreEqual(3, Integer(ms.Size));
 end;
+
+procedure TestTBytesHelper.SaveToFile_And_LoadFromFile;
+var
+  aFileName: string;
+begin
+  aFileName := TPath.GetTempFileName;
+  fBytes := [1, 2, 3, 4, 5, 6, 7, 8, 9, 101, 102];
+  fBytes.SaveToFile(aFileName);
+  fBytes := [];
+  fBytes.LoadFromFile(aFileName);
+  DeleteFile(aFileName);
+  Assert.AreEqual(11, fBytes.Size);
+  Assert.AreEqual(101, integer(fBytes[9]));
+end;
+
 
 initialization
 
