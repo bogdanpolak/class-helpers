@@ -53,6 +53,7 @@ type
     ///   `[MapedToField('city')]`. For more mapping examples check sample code.
     /// </remarks>
     function LoadData<T: class, constructor>: TObjectList<T>;
+    procedure AppendRows (aRecordArray: TArray<TArray<Variant>>);
   end;
 
   EInvalidMapping = class(Exception)
@@ -165,6 +166,11 @@ begin
       dataList.Add(item);
     end);
   Result := dataList;
+end;
+
+procedure TDataSetHelper.AppendRows(aRecordArray: TArray<TArray<Variant>>);
+begin
+
 end;
 
 end.
