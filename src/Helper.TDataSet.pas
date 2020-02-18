@@ -180,10 +180,26 @@ begin
     self.Append;
     for idxField := 0 to High(aRecordArray[idxRow]) do
     begin
-      aField := Self.Fields[idxField];
-      aField.Value := aRecordArray[idxRow][idxField];
+      try
+        self.Fields[idxField].Value := aRecordArray[idxRow][idxField];
+      except
+        on E: EDatabaseError do
+        begin
+          E.Message := E.Message + Format(' (Row nr:%d, Index of field:%d)',
+            [idxRow + 1, idxField]);
+          raise;
+        end
+      end;
     end;
-    Self.Post;
+    try
+      self.Post;
+    except
+      on E: EDatabaseError do
+      begin
+        E.Message := E.Message + Format(' (Row nr:%d)', [idxRow + 1]);
+        raise;
+      end
+    end;
   end;
 end;
 
