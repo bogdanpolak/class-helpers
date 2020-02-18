@@ -169,8 +169,21 @@ begin
 end;
 
 procedure TDataSetHelper.AppendRows(aRecordArray: TArray<TArray<Variant>>);
+var
+  idxRow: Integer;
+  idxField: Integer;
+  aField: TField;
 begin
-
+  for idxRow := 0 to High(aRecordArray) do
+  begin
+    Self.Append;
+    for idxField := 0 to High(aRecordArray[idxRow]) do
+    begin
+      aField := Self.Fields[idxField];
+      aField.Value := aRecordArray[idxRow][idxField];
+    end;
+    Self.Post;
+  end;
 end;
 
 end.
