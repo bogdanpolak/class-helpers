@@ -6,8 +6,7 @@ uses
   DUnitX.TestFramework,
   System.Classes,
   System.SysUtils,
-  System.JSON,
-  System.Generics.Collections,
+  System.IOUtils,
 
   Helper.TStream;
 
@@ -18,7 +17,7 @@ type
   [TestFixture]
   TestTStreamHelper = class(TObject)
   private
-    fStream: TStream;
+    fStream: TMemoryStream;
   public
     [Setup]
     procedure Setup;
@@ -39,7 +38,7 @@ uses
 
 procedure TestTStreamHelper.Setup;
 begin
-  fStream := TStream.Create;
+  fStream := TMemoryStream.Create;
 end;
 
 procedure TestTStreamHelper.TearDown;
@@ -51,6 +50,11 @@ end;
 // Utilities
 // -----------------------------------------------------------------------
 
+procedure GivenBytesStream(aStream: TStream; const aBytes: TBytes);
+begin
+  aStream.Write(aBytes[0], Length(aBytes));
+  aStream.Position := 0;
+end;
 
 // -----------------------------------------------------------------------
 // Tests
