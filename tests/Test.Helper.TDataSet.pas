@@ -33,6 +33,8 @@ type
     procedure LoadData_OneCity_NoAttributes;
     procedure LoadData_OneCity_Mapped;
     procedure LoadData_OneCity_InvalidMapping;
+    procedure AppendRows_CheckCountRows;
+    procedure AppendRows_CheckFields;
   end;
 
 implementation
@@ -197,6 +199,32 @@ begin
         cities.Free;
       end;
     end, EInvalidMapping);
+end;
+
+procedure TestTDataSetHelper.AppendRows_CheckCountRows;
+begin
+  BuildDataSet_VisitedCities;
+
+  fDataset.AppendRows([
+  { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)],
+  { } [2, 'Glassgow', 4, EncodeDate(2015, 09, 13)],
+  { } [3, 'Cracow', 6, EncodeDate(2019, 01, 01)],
+  { } [4, 'Prague', 4, EncodeDate(2013, 06, 21)]]);
+
+  Assert.AreEqual(4, fDataset.RecNo);
+end;
+
+procedure TestTDataSetHelper.AppendRows_CheckFields;
+begin
+  BuildDataSet_VisitedCities;
+
+  fDataset.AppendRows([
+  { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]]);
+
+  Assert.AreEqual('Edinburgh', fDataset.FieldByName('City').AsString);
+  Assert.AreEqual(5, fDataset.FieldByName('rank').AsInteger);
+  Assert.AreEqual(EncodeDate(2018, 5, 28), fDataset.FieldByName('visited')
+    .AsDateTime);
 end;
 
 initialization
