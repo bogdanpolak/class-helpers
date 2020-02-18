@@ -26,7 +26,9 @@ uses
   Test.Helper.TDBGrid in 'Test.Helper.TDBGrid.pas',
   Attribute.MappedToField in '..\src\Attribute.MappedToField.pas',
   Helper.TBytes in '..\src\Helper.TBytes.pas',
-  Test.Helper.TBytes in 'Test.Helper.TBytes.pas';
+  Test.Helper.TBytes in 'Test.Helper.TBytes.pas',
+  Test.Helper.TStream in 'Test.Helper.TStream.pas',
+  Helper.TStream in '..\src\Helper.TStream.pas';
 
 var
   runner : ITestRunner;
