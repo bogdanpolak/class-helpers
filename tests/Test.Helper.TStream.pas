@@ -61,8 +61,15 @@ end;
 // -----------------------------------------------------------------------
 
 procedure TestTStreamHelper.Test;
+var
+  aFileName: string;
 begin
-   Assert.Fail;
+   GivenBytesStream(fStream, [ 1, 2, 3, 4, 5, 6]);
+
+   aFileName := fStream.SaveToTempFile;
+
+   Assert.IsTrue(FileExists(aFileName),'File '+aFileName+' not created');
+   DeleteFile(aFileName);
 end;
 
 
