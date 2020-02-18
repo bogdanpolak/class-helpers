@@ -35,6 +35,8 @@ type
     procedure LoadData_OneCity_InvalidMapping;
     procedure AppendRows_CheckCountRows;
     procedure AppendRows_CheckFields;
+    procedure AppendRows_WillRise_InvalidNumericValue;
+    procedure AppendRows_WillRise_MissingRequired;
   end;
 
 implementation
@@ -68,6 +70,8 @@ begin
     FieldDefs.Add('city', ftWideString, 30);
     FieldDefs.Add('rank', ftInteger);
     FieldDefs.Add('visited', ftDateTime);
+    FieldDefs[0].Required := True;
+    FieldDefs[1].Required := True;
     CreateDataSet;
   end;
 end;
@@ -218,13 +222,35 @@ procedure TestTDataSetHelper.AppendRows_CheckFields;
 begin
   BuildDataSet_VisitedCities;
 
-  fDataset.AppendRows([
-  { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]]);
+  fDataset.AppendRows([[1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]]);
 
   Assert.AreEqual('Edinburgh', fDataset.FieldByName('City').AsString);
   Assert.AreEqual(5, fDataset.FieldByName('rank').AsInteger);
   Assert.AreEqual(EncodeDate(2018, 5, 28), fDataset.FieldByName('visited')
     .AsDateTime);
+end;
+
+procedure TestTDataSetHelper.AppendRows_WillRise_InvalidNumericValue;
+begin
+  BuildDataSet_VisitedCities;
+
+  Assert.WillRaise(
+    procedure
+    begin
+      fDataset.AppendRows([[1, 'A', 5], [2, 'B', 'invalid numebr'],
+        [3, 'C', 6]]);
+    end, EDatabaseError);
+end;
+
+procedure TestTDataSetHelper.AppendRows_WillRise_MissingRequired;
+begin
+  BuildDataSet_VisitedCities;
+
+  Assert.WillRaise(
+    procedure
+    begin
+      fDataset.AppendRows([[1, 'A', 5], [2], [3, 'C', 6]]);
+    end, EDatabaseError);
 end;
 
 initialization
