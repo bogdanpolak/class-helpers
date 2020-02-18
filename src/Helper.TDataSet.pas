@@ -53,6 +53,17 @@ type
     ///   `[MapedToField('city')]`. For more mapping examples check sample code.
     /// </remarks>
     function LoadData<T: class, constructor>: TObjectList<T>;
+    /// <summary>
+    ///   Allows to append multiple row into dataset. Each master item in
+    ///   the array is appended as a new row, and each detail item value
+    ///   from this array is assigned to following dataset fields - ordered
+    ///   by index. To skip a value assignment for one field put Null variant
+    ///   value in the array
+    /// </summary>
+    /// <exception cref="EDatabaseError">
+    ///   Exception <b>EDatabaseError</b> has detailed information about
+    ///   row number and field index which was not able to assigned
+    /// </exception>
     procedure AppendRows(aRecordArray: TArray < TArray < Variant >> );
   end;
 
