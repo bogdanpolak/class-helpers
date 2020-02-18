@@ -34,6 +34,7 @@ type
     procedure LoadFromStream;
     procedure SaveToStream;
     procedure SaveToFile_And_LoadFromFile;
+    procedure SaveToStream_TwoBlocks;
   end;
 
 implementation
@@ -148,9 +149,30 @@ begin
   fBytes.LoadFromFile(aFileName);
   DeleteFile(aFileName);
   Assert.AreEqual(11, fBytes.Size);
-  Assert.AreEqual(101, integer(fBytes[9]));
+  Assert.AreEqual(1, Integer(fBytes[0]));
+  Assert.AreEqual(102, Integer(fBytes[10]));
 end;
 
+procedure TestTBytesHelper.SaveToStream_TwoBlocks;
+var
+  ms: TMemoryStream;
+begin
+  ms := GivenMemoryStream([]);
+  fBytes := [101, 102];
+  fBytes.SaveToStream(ms);
+  fBytes := [201, 202, 203];
+  fBytes.SaveToStream(ms);
+  fBytes := [];
+
+  // test 1:
+  Assert.AreEqual(5, integer(ms.Position));
+
+  // test 2: Load and data
+  fBytes.LoadFromStream(ms);
+  Assert.AreEqual(5, Integer(fBytes.Size));
+  Assert.AreEqual(101, Integer(fBytes[0]));
+  Assert.AreEqual(203, Integer(fBytes[4]));
+end;
 
 initialization
 
