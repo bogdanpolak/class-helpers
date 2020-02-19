@@ -60,19 +60,9 @@ var
   aBytes: TBytes;
 begin
   Self.Position := 0;
-  SetLength(aBytes,Self.Size);
-  Self.Read(aBytes,Self.Size);
+  SetLength(aBytes, Self.Size);
+  Self.Read(aBytes, Self.Size);
   Result := aEncoding.GetString(aBytes);
-end;
-
-procedure TStreamHelper.WriteLine(const aText: string);
-begin
-
-end;
-
-procedure TStreamHelper.WriteLine(const aText: string; aEncoding: TEncoding);
-begin
-
 end;
 
 procedure TStreamHelper.WriteString(const aText: string);
@@ -81,6 +71,16 @@ begin
 end;
 
 procedure TStreamHelper.WriteString(const aText: string; aEncoding: TEncoding);
+begin
+
+end;
+
+procedure TStreamHelper.WriteLine(const aText: string);
+begin
+
+end;
+
+procedure TStreamHelper.WriteLine(const aText: string; aEncoding: TEncoding);
 begin
 
 end;
