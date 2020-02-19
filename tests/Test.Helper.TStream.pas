@@ -79,7 +79,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------
-// Tests
+// Tests: SaveToTempFile
 // -----------------------------------------------------------------------
 
 procedure TestTStreamHelper.SaveToTempFile_FileExists;
@@ -109,6 +109,10 @@ begin
   Assert.AreEqual(byte(106), actual[5]);
   DeleteFile(aFileName);
 end;
+
+// -----------------------------------------------------------------------
+// Tests: AsString
+// -----------------------------------------------------------------------
 
 procedure TestTStreamHelper.AsString_AsciiText;
 var
@@ -154,6 +158,10 @@ begin
 
   Assert.AreEqual('1234567890', actual);
 end;
+
+// -----------------------------------------------------------------------
+// Tests: WriteString
+// -----------------------------------------------------------------------
 
 procedure TestTStreamHelper.WriteString_SimpleText;
 begin
