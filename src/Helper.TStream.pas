@@ -80,12 +80,12 @@ end;
 
 procedure TStreamHelper.WriteLine(const aText: string);
 begin
-
+  WriteString(aText + sLineBreak, TEncoding.UTF8);
 end;
 
 procedure TStreamHelper.WriteLine(const aText: string; aEncoding: TEncoding);
 begin
-
+  WriteString(aText + sLineBreak, aEncoding);
 end;
 
 end.
