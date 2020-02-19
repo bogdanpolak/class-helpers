@@ -52,12 +52,17 @@ end;
 
 function TStreamHelper.AsString: string;
 begin
-
+  Result := AsString(TEncoding.UTF8);
 end;
 
 function TStreamHelper.AsString(aEncoding: TEncoding): string;
+var
+  aBytes: TBytes;
 begin
-
+  Self.Position := 0;
+  SetLength(aBytes,Self.Size);
+  Self.Read(aBytes,Self.Size);
+  Result := aEncoding.GetString(aBytes);
 end;
 
 procedure TStreamHelper.WriteLine(const aText: string);
