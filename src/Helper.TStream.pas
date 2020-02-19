@@ -67,12 +67,15 @@ end;
 
 procedure TStreamHelper.WriteString(const aText: string);
 begin
-
+  WriteString(aText, TEncoding.UTF8);
 end;
 
 procedure TStreamHelper.WriteString(const aText: string; aEncoding: TEncoding);
+var
+  aBytes: TBytes;
 begin
-
+  aBytes := aEncoding.GetBytes(aText);
+  Self.Write(aBytes[0],Length(aBytes))
 end;
 
 procedure TStreamHelper.WriteLine(const aText: string);
