@@ -38,7 +38,7 @@ begin
   Self.Position := 0;
   fs := TFileStream.Create(aFileName, fmCreate);
   try
-    fs.CopyFrom(Self,Self.Size);
+    fs.CopyFrom(Self, Self.Size);
   finally
     fs.Free;
   end;
