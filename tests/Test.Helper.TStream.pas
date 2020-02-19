@@ -35,6 +35,7 @@ type
     procedure WriteString_HearthUtf8;
     procedure WriteString_AppendToStream;
     procedure WriteLine_SimpleText;
+    procedure WriteLine_UnicodeText;
   end;
 
 implementation
@@ -206,6 +207,13 @@ begin
   fStream.WriteLine('12');
 
   Assert.AreEqual(4, integer(fStream.Size));
+end;
+
+procedure TestTStreamHelper.WriteLine_UnicodeText;
+begin
+  fStream.WriteLine('12', TEncoding.Unicode);
+
+  Assert.AreEqual(8, integer(fStream.Size));
 end;
 
 initialization
