@@ -163,37 +163,40 @@ end;
 // Tests: WriteString
 // -----------------------------------------------------------------------
 
+function StreamToHexString(fStream: TStream): string;
+var
+  aBytes: TBytes;
+  i: Integer;
+begin
+  SetLength(aBytes, fStream.Size);
+  fStream.Position := 0;
+  fStream.Read(aBytes[0], fStream.Size);
+  for i := 0 to High(aBytes) do
+    if i = 0 then
+      Result := IntToHex(aBytes[0], 2)
+    else
+      Result := Result + ' ' + IntToHex(aBytes[i], 2);
+end;
+
 procedure TestTStreamHelper.WriteString_SimpleText;
 begin
   fStream.WriteString('Sample');
-
-  Assert.AreEqual(6, integer(fStream.Size));
-  Assert.AreEqual(byte(ord('S')), (PByte(fStream.Memory))^);
-  Assert.AreEqual(byte(ord('e')), (PByte(fStream.Memory) + 5)^);
+  // . . . . . . . S  a  m  p  l  e
+  Assert.AreEqual('53 61 6D 70 6C 65', StreamToHexString(fStream));
 end;
 
 procedure TestTStreamHelper.WriteString_UnicodeText;
 begin
-  fStream.WriteString('Abc', TEncoding.Unicode);
-
-  Assert.AreEqual(6, integer(fStream.Size));
-  Assert.AreEqual(byte(ord('A')), (PByte(fStream.Memory))^);
-  Assert.AreEqual(byte(0), (PByte(fStream.Memory) + 1)^);
-  Assert.AreEqual(byte(ord('b')), (PByte(fStream.Memory) + 2)^);
-  Assert.AreEqual(byte(0), (PByte(fStream.Memory) + 3)^);
-  Assert.AreEqual(byte(ord('c')), (PByte(fStream.Memory) + 4)^);
-  Assert.AreEqual(byte(0), (PByte(fStream.Memory) + 5)^);
+  fStream.WriteString('abc', TEncoding.Unicode);
+  // . . . . . . . a     b     c
+  Assert.AreEqual('61 00 62 00 63 00', StreamToHexString(fStream));
 end;
 
 procedure TestTStreamHelper.WriteString_HearthUtf8;
 begin
   fStream.WriteString('1234 ♥');
-
-  Assert.AreEqual(8, integer(fStream.Size));
-  Assert.AreEqual(byte(ord(' ')), (PByte(fStream.Memory) + 4)^);
-  Assert.AreEqual(byte($E2), (PByte(fStream.Memory) + 5)^);
-  Assert.AreEqual(byte($99), (PByte(fStream.Memory) + 6)^);
-  Assert.AreEqual(byte($A5), (PByte(fStream.Memory) + 7)^);
+  // . . . . . . . 1  2  3  4     heart=♥
+  Assert.AreEqual('31 32 33 34 20 E2 99 A5', StreamToHexString(fStream));
 end;
 
 procedure TestTStreamHelper.WriteString_AppendToStream;
