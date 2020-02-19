@@ -206,7 +206,7 @@ begin
 
   fStream.WriteString('4567');
 
-  Assert.AreEqual(7, integer(fStream.Size));
+  Assert.AreEqual(7, Integer(fStream.Size));
 end;
 
 // -----------------------------------------------------------------------
@@ -217,14 +217,14 @@ procedure TestTStreamHelper.WriteLine_SimpleText;
 begin
   fStream.WriteLine('12');
 
-  Assert.AreEqual(4, integer(fStream.Size));
+  Assert.AreEqual(4, Integer(fStream.Size));
 end;
 
 procedure TestTStreamHelper.WriteLine_UnicodeText;
 begin
   fStream.WriteLine('12', TEncoding.Unicode);
 
-  Assert.AreEqual(8, integer(fStream.Size));
+  Assert.AreEqual(8, Integer(fStream.Size));
 end;
 
 initialization

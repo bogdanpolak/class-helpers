@@ -75,7 +75,7 @@ var
   aBytes: TBytes;
 begin
   aBytes := aEncoding.GetBytes(aText);
-  Self.Write(aBytes[0],Length(aBytes))
+  Self.Write(aBytes[0], Length(aBytes))
 end;
 
 procedure TStreamHelper.WriteLine(const aText: string);
