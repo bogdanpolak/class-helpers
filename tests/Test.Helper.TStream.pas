@@ -1,4 +1,4 @@
-unit Test.Helper.TStream;
+﻿unit Test.Helper.TStream;
 
 interface
 
@@ -27,6 +27,9 @@ type
     procedure SaveToTempFile_FileExists;
     procedure SaveToTempFile_SizeAndContent;
     procedure AsString_AsciiText;
+    procedure AsString_CyrlicUtf8Stream;
+    procedure AsString_Unicode16Stream;
+    procedure AsString_IgnorePosition;
   end;
 
 implementation
@@ -110,6 +113,40 @@ begin
   actual := fStream.AsString;
 
   Assert.AreEqual('|ASCII text 123|',actual);
+end;
+
+procedure TestTStreamHelper.AsString_CyrlicUtf8Stream;
+var
+  actual: string;
+begin
+  GivenStringStream(fStream, '|Каждый человек|',TEncoding.UTF8);
+
+  actual := fStream.AsString;
+
+  Assert.AreEqual('|Каждый человек|',actual);
+end;
+
+procedure TestTStreamHelper.AsString_Unicode16Stream;
+var
+  actual: string;
+begin
+  GivenStringStream(fStream, '|Sample Text|',TEncoding.Unicode);
+
+  actual := fStream.AsString(TEncoding.Unicode);
+
+  Assert.AreEqual('|Sample Text|',actual);
+end;
+
+procedure TestTStreamHelper.AsString_IgnorePosition;
+var
+  actual: string;
+begin
+  GivenStringStream(fStream, '1234567890',TEncoding.UTF8);
+
+  fStream.Position := 5;
+  actual := fStream.AsString;
+
+  Assert.AreEqual('1234567890',actual);
 end;
 
 initialization
