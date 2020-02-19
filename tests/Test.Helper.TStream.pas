@@ -26,6 +26,7 @@ type
   published
     procedure SaveToTempFile_FileExists;
     procedure SaveToTempFile_SizeAndContent;
+    procedure AsString_AsciiText;
   end;
 
 implementation
@@ -52,6 +53,19 @@ procedure GivenBytesStream(aStream: TStream; const aBytes: TBytes);
 begin
   aStream.Write(aBytes[0], Length(aBytes));
   aStream.Position := 0;
+end;
+
+procedure GivenStringStream(aStream: TStream; aText: String; aEncoding: TEncoding);
+var
+  ss: TStringStream;
+begin
+  ss := TStringStream.Create(aText, aEncoding);
+  try
+    aStream.CopyFrom(ss, ss.Size);
+  aStream.Position := 0;
+  finally
+    ss.Free;
+  end;
 end;
 
 // -----------------------------------------------------------------------
@@ -86,6 +100,17 @@ begin
    DeleteFile(aFileName);
 end;
 
+
+procedure TestTStreamHelper.AsString_AsciiText;
+var
+  actual: string;
+begin
+  GivenStringStream(fStream, '|ASCII text 123|',TEncoding.UTF8);
+
+  actual := fStream.AsString;
+
+  Assert.AreEqual('|ASCII text 123|',actual);
+end;
 
 initialization
 
