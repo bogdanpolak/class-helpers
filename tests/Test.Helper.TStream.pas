@@ -34,6 +34,7 @@ type
     procedure WriteString_UnicodeText;
     procedure WriteString_HearthUtf8;
     procedure WriteString_AppendToStream;
+    procedure WriteLine_SimpleText;
   end;
 
 implementation
@@ -194,6 +195,17 @@ begin
   fStream.WriteString('4567');
 
   Assert.AreEqual(7, integer(fStream.Size));
+end;
+
+// -----------------------------------------------------------------------
+// Tests: WriteLine
+// -----------------------------------------------------------------------
+
+procedure TestTStreamHelper.WriteLine_SimpleText;
+begin
+  fStream.WriteLine('12');
+
+  Assert.AreEqual(4, integer(fStream.Size));
 end;
 
 initialization
