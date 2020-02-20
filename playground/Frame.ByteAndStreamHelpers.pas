@@ -7,7 +7,8 @@ uses
   System.Variants,
   System.Classes,
   Winapi.Windows, Winapi.Messages,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
+  Vcl.ExtCtrls;
 
 type
   TBytesStreamHelpersFrame = class(TFrame)
@@ -27,14 +28,27 @@ type
 implementation
 
 uses
+  Vcl.Imaging.pngimage,
   Helper.TBytes,
   Helper.TStream;
 
 {$R *.dfm}
 
+function BytesAsStream(const aStream: TStream; const aBytes: TBytes): TStream;
+var
+  aPos: Int64;
+begin
+  aPos := aStream.Position;
+  aStream.Write(aBytes[0], aBytes.Size);
+  aStream.Position := aPos;
+  Result := aStream;
+end;
+
 procedure TBytesStreamHelpersFrame.btnShowPngImageClick(Sender: TObject);
 var
   aBytes: TBytes;
+  png: TPngImage;
+  aStream: TStream;
 begin
   aBytes.InitialiseFromBase64String
     ('iVBORw0KGgoAAAANSUhEUgAAAFsAAAAaCAMAAADv7NBiAAAAe1BMVEXw8PD/' +
@@ -48,38 +62,44 @@ begin
     'qniUdJbNzJ/TO5F7ccu2hlcLQHTtvZD9P2F/cobvZStJ2kf1h8NTo52i6Ql7' +
     'Ld6YF627d73iN+gbhCvKW45Ri5VF/CUCKb6dWs4gHvNt2MvwIV3+dzYxNlgq' +
     '9X7+fAq2SmHCzhJYWvYBmzQSEHa+IRoAAAAASUVORK5CYII=');
+  aStream := BytesAsStream(TMemoryStream.Create, aBytes);
   // -----
-  Memo1.Lines.Add ('Image file size: ' + aBytes.Size.ToString);
-  Memo1.Lines.Add ('Bytes[1..3] as string: ' + aBytes.GetSectorAsString(1, 3));
-  Memo1.Lines.Add ('Bytes[0..7] as hex: ' + aBytes.GetSectorAsHex(0, 8));
+  png := TPngImage.Create;
+  png.LoadFromStream(aStream);
+  Image1.Picture.Graphic := png;
+  Memo1.Lines.Add('Image file size: ' + aBytes.Size.ToString);
+  Memo1.Lines.Add('Bytes[1..3] as string: ' + aBytes.GetSectorAsString(1, 3));
+  Memo1.Lines.Add('Bytes[0..7] as hex: ' + aBytes.GetSectorAsHex(0, 8));
 
   {
-  Assert.AreEqual(13, aBytes.GetReverseLongWord(8)); // Chunk length (bytes)
-  Assert.AreEqual('IHDR', aBytes.GetSectorAsString(12, 4)); // Chunk header
-  Assert.AreEqual(91, aBytes.GetReverseLongWord(16)); // Height
-  Assert.AreEqual(26, aBytes.GetReverseLongWord(20)); // Width
-  Assert.AreEqual(8, Word(aBytes[24])); // Bit depth:
-  Assert.AreEqual(3, Word(aBytes[25])); // Color type (3 = PLTE)
-  Assert.AreEqual(0, Word(aBytes[26])); // Compression method
-  Assert.AreEqual(0, Word(aBytes[27])); // Filter method
-  Assert.AreEqual(0, Word(aBytes[28])); // Interlace method
-  Assert.AreEqual($EFECD062, aBytes.GetReverseLongWord(29)); // CRC
-  // ----------------------------------
-  Assert.AreEqual(123, aBytes.GetReverseLongWord(33)); // Chunk length
-  Assert.AreEqual('PLTE', aBytes.GetSectorAsString(37, 4)); // Chunk header
-  Assert.AreEqual($7A0C5DC1, aBytes.GetSectorCRC32(37, 127)); // Calulate CRC
-  Assert.AreEqual($7A0C5DC1, aBytes.GetReverseLongWord(41 + 123)); // CRC
-  // ----------------------------------
-  Assert.AreEqual(293, aBytes.GetReverseLongWord(168)); // Chunk length
-  Assert.AreEqual('IDAT', aBytes.GetSectorAsString(172, 4)); // Chunk header
-  Assert.AreEqual($76BE211A, aBytes.GetSectorCRC32(172, 297)); // Calulate CRC
-  Assert.AreEqual($76BE211A, aBytes.GetReverseLongWord(176 + 293)); // CRC
-  // ----------------------------------
-  Assert.AreEqual(0, aBytes.GetReverseLongWord(473)); // Chunk length (bytes)
-  Assert.AreEqual('IEND', aBytes.GetSectorAsString(477, 4)); // Chunk header
-  Assert.AreEqual($AE426082, aBytes.GetSectorCRC32(477, 4)); // Calulate CRC
-  Assert.AreEqual($AE426082, aBytes.GetReverseLongWord(481)); // CRC
+   Assert.AreEqual(13, aBytes.GetReverseLongWord(8)); // Chunk length (bytes)
+   Assert.AreEqual('IHDR', aBytes.GetSectorAsString(12, 4)); // Chunk header
+   Assert.AreEqual(91, aBytes.GetReverseLongWord(16)); // Height
+   Assert.AreEqual(26, aBytes.GetReverseLongWord(20)); // Width
+   Assert.AreEqual(8, Word(aBytes[24])); // Bit depth:
+   Assert.AreEqual(3, Word(aBytes[25])); // Color type (3 = PLTE)
+   Assert.AreEqual(0, Word(aBytes[26])); // Compression method
+   Assert.AreEqual(0, Word(aBytes[27])); // Filter method
+   Assert.AreEqual(0, Word(aBytes[28])); // Interlace method
+   Assert.AreEqual($EFECD062, aBytes.GetReverseLongWord(29)); // CRC
+   // ----------------------------------
+   Assert.AreEqual(123, aBytes.GetReverseLongWord(33)); // Chunk length
+   Assert.AreEqual('PLTE', aBytes.GetSectorAsString(37, 4)); // Chunk header
+   Assert.AreEqual($7A0C5DC1, aBytes.GetSectorCRC32(37, 127)); // Calulate CRC
+   Assert.AreEqual($7A0C5DC1, aBytes.GetReverseLongWord(41 + 123)); // CRC
+   // ----------------------------------
+   Assert.AreEqual(293, aBytes.GetReverseLongWord(168)); // Chunk length
+   Assert.AreEqual('IDAT', aBytes.GetSectorAsString(172, 4)); // Chunk header
+   Assert.AreEqual($76BE211A, aBytes.GetSectorCRC32(172, 297)); // Calulate CRC
+   Assert.AreEqual($76BE211A, aBytes.GetReverseLongWord(176 + 293)); // CRC
+   // ----------------------------------
+   Assert.AreEqual(0, aBytes.GetReverseLongWord(473)); // Chunk length (bytes)
+   Assert.AreEqual('IEND', aBytes.GetSectorAsString(477, 4)); // Chunk header
+   Assert.AreEqual($AE426082, aBytes.GetSectorCRC32(477, 4)); // Calulate CRC
+   Assert.AreEqual($AE426082, aBytes.GetReverseLongWord(481)); // CRC
   }
+  aStream.Free;
+  png.Free;
 end;
 
 end.
