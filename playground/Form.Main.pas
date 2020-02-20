@@ -35,7 +35,8 @@ implementation
 
 uses
   Frame.StringGridHelper,
-  Frame.DataSetHelper;
+  Frame.DataSetHelper,
+  Frame.ByteAndStreamHelpers;
 
 type
   TFrameType = type of TFrame;
@@ -46,12 +47,13 @@ type
   end;
 
 const
-  PlaygroudItems = 2;
+  PlaygroudItems = 3;
   PlaygroudDefs: array [0 .. PlaygroudItems - 1] of TPlaygroundItem = //.
     ( //.
     (caption: 'Helper - TStringGrid'; frameType: TFrameStringGridHelper),
-    (caption: 'Helper - TDataSet && TDBGrid'; frameType: TFrameDataSetHelper)
-    );
+    (caption: 'Helper - TDataSet && TDBGrid'; frameType: TFrameDataSetHelper),
+    (caption: 'Helper - TBytes && TStream';
+    frameType: TBytesStreamHelpersFrame));
 
 function BuildButton(const aCaption: string; const aParent: TWinControl;
   const aOnClick: TNotifyEvent): TButton;
