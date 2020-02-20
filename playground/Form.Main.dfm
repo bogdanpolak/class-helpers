@@ -34,4 +34,10 @@ object FormMain: TFormMain
     Align = alClient
     TabOrder = 1
   end
+  object Timer1: TTimer
+    Interval = 1
+    OnTimer = Timer1Timer
+    Left = 376
+    Top = 200
+  end
 end
