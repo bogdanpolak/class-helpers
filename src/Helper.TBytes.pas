@@ -30,6 +30,8 @@ type
       aLength: Integer = 100): string;
     function GetSectorAsString(aIndex: Integer = 0;
       aLength: Integer = 100): string;
+    function GetWord(aIndex: Integer = 0): Word;
+    function GetReverseWord(aIndex: Integer = 0): Word;
     function GetLongWord(aIndex: Integer = 0): LongWord;
     function GetReverseLongWord(aIndex: Integer = 0): LongWord;
     // ---------------------
@@ -133,6 +135,16 @@ begin
       Result := chr(Self[aIndex + i])
     else
       Result := Result + chr(Self[aIndex + i]);
+end;
+
+function TBytesHelper.GetWord(aIndex: Integer = 0): Word;
+begin
+  Result := Word(Self[aIndex]) or (Word(Self[aIndex + 1] shl 8));
+end;
+
+function TBytesHelper.GetReverseWord(aIndex: Integer = 0): Word;
+begin
+  Result := (Word(Self[aIndex]) shl 8) or Word(Self[aIndex + 1]);
 end;
 
 function TBytesHelper.GetLongWord(aIndex: Integer = 0): LongWord;

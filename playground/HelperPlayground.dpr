@@ -12,7 +12,10 @@ uses
   Helper.TStringGrid in '..\src\Helper.TStringGrid.pas',
   Helper.TWinControl in '..\src\Helper.TWinControl.pas',
   Frame.DataSetHelper in 'Frame.DataSetHelper.pas' {FrameDataSetHelper: TFrame},
-  Attribute.MappedToField in '..\src\Attribute.MappedToField.pas';
+  Attribute.MappedToField in '..\src\Attribute.MappedToField.pas',
+  Frame.ByteAndStreamHelpers in 'Frame.ByteAndStreamHelpers.pas' {BytesStreamHelpersFrame: TFrame},
+  Helper.TBytes in '..\src\Helper.TBytes.pas',
+  Helper.TStream in '..\src\Helper.TStream.pas';
 
 {$R *.res}
 
