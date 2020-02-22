@@ -184,7 +184,6 @@ procedure TDataSetHelper.AppendRows(aRecordArray: TArray < TArray <
 var
   idxRow: integer;
   idxField: integer;
-  aField: TField;
 begin
   for idxRow := 0 to High(aRecordArray) do
   begin
