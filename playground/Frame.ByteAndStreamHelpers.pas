@@ -45,7 +45,6 @@ uses
   Helper.TStream;
 
 {$R *.dfm}
-
 // ------------------------------------------------------------------------
 // TBytes Helper new method candidates
 // ------------------------------------------------------------------------
@@ -98,7 +97,7 @@ var
   aIsPngImage: boolean;
   aIsJpegImage: boolean;
   png: TPngImage;
-  jpeg: TJPEGImage;
+  JPEG: TJPEGImage;
 begin
   if aBytes.Size < 8 then
     raise Exception.Create('Picture data too small. Minimal size is 8 bytes');
@@ -121,12 +120,12 @@ begin
     end
     else if aIsJpegImage then
     begin
-      jpeg := TJPEGImage.Create;
+      JPEG := TJPEGImage.Create;
       try
-        jpeg.LoadFromStream(aStream);
-        aPicture.Graphic := jpeg;
+        JPEG.LoadFromStream(aStream);
+        aPicture.Graphic := JPEG;
       finally
-        jpeg.Free;
+        JPEG.Free;
       end;
     end
   finally
