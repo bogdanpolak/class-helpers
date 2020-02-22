@@ -46,18 +46,15 @@ type
   TPlaygroundItem = record
     caption: string;
     frameType: TFrameType;
-    isClickOnReady: boolean;
   end;
 
 const
   PlaygroudItems = 3;
-  PlaygroudDefs: array [0 .. PlaygroudItems - 1] of TPlaygroundItem = //.
-    ( //.
-    (caption: 'Helper - TStringGrid'; frameType: TFrameStringGridHelper;
-    isClickOnReady: false), (caption: 'Helper - TDataSet && TDBGrid';
-    frameType: TFrameDataSetHelper; isClickOnReady: false),
-    (caption: 'Helper - TBytes && TStream'; frameType: TBytesStreamHelpersFrame;
-    isClickOnReady: true));
+  PlaygroudDefs: array [0 .. PlaygroudItems - 1] of TPlaygroundItem =
+    ((caption: 'TDataSet && TDBGrid'; frameType: TFrameDataSetHelper),
+    (caption: 'TBytes && TStream'; frameType: TBytesStreamHelpersFrame),
+    (caption: 'TStringGrid'; frameType: TFrameStringGridHelper));
+  AutoOpenFrame = 3; // [0 .. Items-1]    other values = do not open
 
 var
   PlaygroudButtons: array [0 .. PlaygroudItems - 1] of TButton;
@@ -101,7 +98,7 @@ var
 begin
   Timer1.Enabled := false;
   for i := 0 to PlaygroudItems - 1 do
-    if PlaygroudDefs[i].isClickOnReady then
+    if i=AutoOpenFrame then
       PlaygroudButtons[i].Click;
 end;
 
@@ -129,9 +126,8 @@ begin
     Frame.Parent := tabsheet;
     Frame.Visible := true;
     Frame.Align := alClient;
-  end
-  else
-    PageControl1.ActivePage := fDemoTabSheets[btn];
+  end;
+  PageControl1.ActivePage := fDemoTabSheets[btn];
 end;
 
 end.
