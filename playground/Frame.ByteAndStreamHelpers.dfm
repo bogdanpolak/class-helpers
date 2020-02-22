@@ -43,6 +43,16 @@ object BytesStreamHelpersFrame: TBytesStreamHelpersFrame
       TabOrder = 1
       OnClick = btnShowSmaileClick
     end
+    object btnShowJPEG: TButton
+      AlignWithMargins = True
+      Left = 282
+      Top = 4
+      Width = 133
+      Height = 30
+      Caption = 'Show JPEG'
+      TabOrder = 2
+      OnClick = btnShowJPEGClick
+    end
   end
   object ScrollBox1: TScrollBox
     AlignWithMargins = True

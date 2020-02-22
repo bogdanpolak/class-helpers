@@ -19,8 +19,10 @@ type
     ScrollBox1: TScrollBox;
     Splitter1: TSplitter;
     btnShowSmaile: TButton;
+    btnShowJPEG: TButton;
     procedure btnShowPngImageClick(Sender: TObject);
     procedure btnShowSmaileClick(Sender: TObject);
+    procedure btnShowJPEGClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -187,6 +189,71 @@ begin
     'ciuhGOd9jmM/ZiqtnkI+2/MezhwdFzaFh6/WXIbVciEoAnAYBGXtPCQ2O182q9qg3EByei' +
     'wNB18uUGEaOTQ4nk/9hE1kn8BvTzHgaA1GMMAAAAAElFTkSuQmCC');
   AssignBytesToPicture(Image1.Picture, aBytes);
+end;
+
+procedure TBytesStreamHelpersFrame.btnShowJPEGClick(Sender: TObject);
+var
+  aBytes: TBytes;
+begin
+  aBytes.InitialiseFromBase64String
+    ('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');
+  AssignBytesToPicture(Image1.Picture, aBytes);
+  Memo1.Lines.Add('Image file size: ' + aBytes.Size.ToString);
+  Memo1.Lines.Add('  Bytes[0..3] as hex: ' + aBytes.GetSectorAsHex(0, 4));
+  Memo1.Lines.Add('  Bytes[3,4] as word (reverse): ' + aBytes.GetReverseWord(4)
+    .ToString);
+  Memo1.Lines.Add('  Bytes[6..9] as string: ' + aBytes.GetSectorAsString(6, 4));
+  Memo1.Lines.Add('  Byte[10] Zero: ' + IntToStr(aBytes[10]));
+  Memo1.Lines.Add('  Bytes[11,12] Version: ' + Format('%d.%d',
+    [aBytes[11], aBytes[13]]));
 end;
 
 end.
