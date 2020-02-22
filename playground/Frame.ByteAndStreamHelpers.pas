@@ -44,11 +44,61 @@ begin
   Result := aStream;
 end;
 
+function SubBytes(const aBytes: TBytes; aIndex: Integer;
+  aLength: Integer): TBytes;
+begin
+  if aIndex + aLength > Length(aBytes) then
+    aLength := Length(aBytes) - aIndex;
+  SetLength(Result, aLength);
+  move(aBytes[0], Result[0], aLength);
+end;
+
+function BytesIsEqual(const aBytes1: TBytes; const aBytes2: TBytes): boolean;
+var
+  i: Integer;
+begin
+  if Length(aBytes1) <> Length(aBytes2) then
+    Exit(False);
+  for i := 0 to High(aBytes1) do
+  begin
+    if aBytes1[i] <> aBytes2[i] then
+      Exit(False);
+  end;
+  Result := True;
+end;
+
+procedure AssignBytesToPicture(aPicture: TPicture; const aBytes: TBytes);
+const
+  // . . . . . . . . . . . . . . . P    N    G   lineBreak
+  PNG_HEADER: TArray<byte> = [$89, $50, $4E, $47, $0D, $0A, $1A, $0A];
+var
+  png: TPngImage;
+  aStream: TStream;
+begin
+  if aBytes.Size < 0 then
+    raise Exception.Create('Picture data too small. Minimal size is 8 bytes');
+  if BytesIsEqual(SubBytes(aBytes, 0, 8), PNG_HEADER) then
+  begin
+    png := TPngImage.Create;
+    try
+      aStream := BytesAsStream(TMemoryStream.Create, aBytes);
+      try
+        png.LoadFromStream(aStream);
+        aPicture.Graphic := png;
+      finally
+        aStream.Free;
+      end;
+    finally
+      png.Free;
+    end;
+  end
+  else
+    raise Exception.Create('Not supported image format');
+end;
+
 procedure TBytesStreamHelpersFrame.btnShowPngImageClick(Sender: TObject);
 var
   aBytes: TBytes;
-  png: TPngImage;
-  aStream: TStream;
 begin
   aBytes.InitialiseFromBase64String
     ('iVBORw0KGgoAAAANSUhEUgAAAFsAAAAaCAMAAADv7NBiAAAAe1BMVEXw8PD/' +
@@ -62,25 +112,22 @@ begin
     'qniUdJbNzJ/TO5F7ccu2hlcLQHTtvZD9P2F/cobvZStJ2kf1h8NTo52i6Ql7' +
     'Ld6YF627d73iN+gbhCvKW45Ri5VF/CUCKb6dWs4gHvNt2MvwIV3+dzYxNlgq' +
     '9X7+fAq2SmHCzhJYWvYBmzQSEHa+IRoAAAAASUVORK5CYII=');
-  aStream := BytesAsStream(TMemoryStream.Create, aBytes);
-  // -----
-  png := TPngImage.Create;
-  png.LoadFromStream(aStream);
-  Image1.Picture.Graphic := png;
+  AssignBytesToPicture(Image1.Picture, aBytes);
   Memo1.Lines.Add('Image file size: ' + aBytes.Size.ToString);
   Memo1.Lines.Add('  Bytes[1..3] as string: ' + aBytes.GetSectorAsString(1, 3));
   Memo1.Lines.Add('  Bytes[0..7] as hex: ' + aBytes.GetSectorAsHex(0, 8));
-  Memo1.Lines.Add('  Chunk length (bytes)' + aBytes.GetReverseLongWord(8).ToString);
+  Memo1.Lines.Add('  Chunk length (bytes)' + aBytes.GetReverseLongWord(8)
+    .ToString);
   Memo1.Lines.Add('  Chunk header: ' + aBytes.GetSectorAsString(12, 4));
   Memo1.Lines.Add('  Height:' + aBytes.GetReverseLongWord(16).ToString);
   Memo1.Lines.Add('  Width:' + aBytes.GetReverseLongWord(20).ToString);
   Memo1.Lines.Add('  Bit depth:' + Word(aBytes[24]).ToString);
   Memo1.Lines.Add('  CRC: 0x' + IntToHex(aBytes.GetReverseLongWord(29)));
   Memo1.Lines.Add('  --');
-  Memo1.Lines.Add('  Chunk length (bytes)' + aBytes.GetReverseLongWord(33).ToString);
+  Memo1.Lines.Add('  Chunk length (bytes)' + aBytes.GetReverseLongWord(33)
+    .ToString);
   Memo1.Lines.Add('  Chunk header: ' + aBytes.GetSectorAsString(37, 4));
-  aStream.Free;
-  png.Free;
+end;
 end;
 
 end.
