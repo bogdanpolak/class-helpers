@@ -82,10 +82,6 @@ begin
   Result := True;
 end;
 
-// ------------------------------------------------------------------------
-// TBytes Helper samples
-// ------------------------------------------------------------------------
-
 procedure AssignBytesToPicture(aPicture: TPicture; const aBytes: TBytes);
 const
   // . . . . . . . . . . . . . . . P    N    G   lineBreak
@@ -133,10 +129,15 @@ begin
   end;
 end;
 
+// ------------------------------------------------------------------------
+// TBytes Helper samples
+// ------------------------------------------------------------------------
+
 procedure TBytesStreamHelpersFrame.btnShowPngImageClick(Sender: TObject);
 var
   aBytes: TBytes;
 begin
+  Memo1.Lines.Add('--------------------------------');
   aBytes.InitialiseFromBase64String
     ('iVBORw0KGgoAAAANSUhEUgAAAFsAAAAaCAMAAADv7NBiAAAAe1BMVEXw8PD/' +
     '///Z2dnwz4c3NofP8PAAAAAoKSmHz/Dw8Ks2AgA1h8+r8PDPz4cANodgEmBd' +
@@ -170,6 +171,7 @@ procedure TBytesStreamHelpersFrame.btnShowSmaileClick(Sender: TObject);
 var
   aBytes: TBytes;
 begin
+  Memo1.Lines.Add('--------------------------------');
   aBytes.InitialiseFromBase64String
     ('iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAMAAABHPGVmAAABrVBMVEX+2Gj////vUmQkKz' +
     'j+2Wz/22sAAi7/3Wo1NTr+12H+1lahjVEAJzL/1lkxMznxVWUAAzIuMDkwKzkpLjjuOmPv' +
@@ -227,6 +229,7 @@ procedure TBytesStreamHelpersFrame.btnShowJPEGClick(Sender: TObject);
 var
   aBytes: TBytes;
 begin
+  Memo1.Lines.Add('--------------------------------');
   aBytes.InitialiseFromBase64String
     ('/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUEBAUEAwUFBAUGBgUGCA4JCAcHCBEMDQoOFB' +
     'EVFBMRExMWGB8bFhceFxMTGyUcHiAhIyMjFRomKSYiKR8iIyL/2wBDAQYGBggHCBAJCRAi' +
