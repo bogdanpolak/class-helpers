@@ -34,6 +34,7 @@ implementation
 uses
   System.NetEncoding,
   Vcl.Imaging.pngimage,
+  Vcl.Imaging.JPEG,
   Helper.TBytes,
   Helper.TStream;
 
@@ -75,30 +76,48 @@ end;
 procedure AssignBytesToPicture(aPicture: TPicture; const aBytes: TBytes);
 const
   // . . . . . . . . . . . . . . . P    N    G   lineBreak
-  PNG_HEADER: TArray<byte> = [$89, $50, $4E, $47, $0D, $0A, $1A, $0A];
+  PNG_SIGNATURE: TArray<byte> = [$89, $50, $4E, $47, $0D, $0A, $1A, $0A];
+  JPEG_SIGNATURE: TArray<byte> = [$FF, $D8, $FF, $E0];
 var
-  png: TPngImage;
   aStream: TStream;
+  aSignature: TBytes;
+  aIsPngImage: boolean;
+  aIsJpegImage: boolean;
+  png: TPngImage;
+  jpeg: TJPEGImage;
 begin
-  if aBytes.Size < 0 then
+  if aBytes.Size < 8 then
     raise Exception.Create('Picture data too small. Minimal size is 8 bytes');
-  if BytesIsEqual(SubBytes(aBytes, 0, 8), PNG_HEADER) then
-  begin
-    png := TPngImage.Create;
-    try
-      aStream := BytesAsStream(TMemoryStream.Create, aBytes);
+  aSignature := SubBytes(aBytes, 0, 8);
+  aIsPngImage := BytesIsEqual(aSignature, PNG_SIGNATURE);
+  aIsJpegImage := BytesIsEqual(SubBytes(aSignature, 0, 4), JPEG_SIGNATURE);
+  if not(aIsPngImage) and not(aIsJpegImage) then
+    raise Exception.Create('Not supported image format');
+  aStream := BytesAsStream(TMemoryStream.Create, aBytes);
+  try
+    if aIsPngImage then
+    begin
+      png := TPngImage.Create;
       try
         png.LoadFromStream(aStream);
         aPicture.Graphic := png;
       finally
-        aStream.Free;
+        png.Free;
       end;
-    finally
-      png.Free;
-    end;
-  end
-  else
-    raise Exception.Create('Not supported image format');
+    end
+    else if aIsJpegImage then
+    begin
+      jpeg := TJPEGImage.Create;
+      try
+        jpeg.LoadFromStream(aStream);
+        aPicture.Graphic := jpeg;
+      finally
+        jpeg.Free;
+      end;
+    end
+  finally
+    aStream.Free;
+  end;
 end;
 
 procedure TBytesStreamHelpersFrame.btnShowPngImageClick(Sender: TObject);
