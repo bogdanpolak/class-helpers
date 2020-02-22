@@ -332,7 +332,17 @@ begin
 end;
 
 procedure TBytesStreamHelpersFrame.btnWriteTextToStreamClick(Sender: TObject);
+var
+  ms: TMemoryStream;
 begin
+  Memo1.Lines.Add('--------------------------------');
+  ms := TMemoryStream.Create;
+  ms.WriteString('Generate random number: ');
+  ms.WriteLine(IntToStr(1 + Random(100)));
+  ms.WriteLine('1) First Line');
+  ms.WriteLine('2) Second with Lorem Ipsum ...');
+  Memo1.Lines.Add(ms.AsString);
+  ms.Free;
 end;
 
 end.
