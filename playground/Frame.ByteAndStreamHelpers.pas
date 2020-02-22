@@ -20,9 +20,15 @@ type
     Splitter1: TSplitter;
     btnShowSmaile: TButton;
     btnShowJPEG: TButton;
+    btnSaveAsTempFile: TButton;
+    btnWriteTextToStream: TButton;
+    Panel1: TPanel;
+    Panel2: TPanel;
     procedure btnShowPngImageClick(Sender: TObject);
     procedure btnShowSmaileClick(Sender: TObject);
     procedure btnShowJPEGClick(Sender: TObject);
+    procedure btnSaveAsTempFileClick(Sender: TObject);
+    procedure btnWriteTextToStreamClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -39,6 +45,10 @@ uses
   Helper.TStream;
 
 {$R *.dfm}
+
+// ------------------------------------------------------------------------
+// TBytes Helper new method candidates
+// ------------------------------------------------------------------------
 
 function BytesAsStream(const aStream: TStream; const aBytes: TBytes): TStream;
 var
@@ -72,6 +82,10 @@ begin
   end;
   Result := True;
 end;
+
+// ------------------------------------------------------------------------
+// TBytes Helper samples
+// ------------------------------------------------------------------------
 
 procedure AssignBytesToPicture(aPicture: TPicture; const aBytes: TBytes);
 const
@@ -273,6 +287,18 @@ begin
   Memo1.Lines.Add('  Byte[10] Zero: ' + IntToStr(aBytes[10]));
   Memo1.Lines.Add('  Bytes[11,12] Version: ' + Format('%d.%d',
     [aBytes[11], aBytes[13]]));
+end;
+
+// ------------------------------------------------------------------------
+// TStream Helper samples
+// ------------------------------------------------------------------------
+
+procedure TBytesStreamHelpersFrame.btnSaveAsTempFileClick(Sender: TObject);
+begin
+end;
+
+procedure TBytesStreamHelpersFrame.btnWriteTextToStreamClick(Sender: TObject);
+begin
 end;
 
 end.
