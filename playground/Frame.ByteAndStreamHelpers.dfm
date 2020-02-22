@@ -21,7 +21,7 @@ object BytesStreamHelpersFrame: TBytesStreamHelpersFrame
     Align = alTop
     AutoSize = True
     BevelOuter = bvLowered
-    Caption = 'FlowPanel1'
+    Caption = ' '
     TabOrder = 0
     object btnShowPngImage: TButton
       AlignWithMargins = True
@@ -33,6 +33,16 @@ object BytesStreamHelpersFrame: TBytesStreamHelpersFrame
       TabOrder = 0
       OnClick = btnShowPngImageClick
     end
+    object btnShowSmaile: TButton
+      AlignWithMargins = True
+      Left = 143
+      Top = 4
+      Width = 133
+      Height = 30
+      Caption = 'Show Smaile'
+      TabOrder = 1
+      OnClick = btnShowSmaileClick
+    end
   end
   object ScrollBox1: TScrollBox
     AlignWithMargins = True
@@ -43,19 +53,15 @@ object BytesStreamHelpersFrame: TBytesStreamHelpersFrame
     Margins.Left = 0
     Align = alRight
     TabOrder = 1
-    ExplicitLeft = 368
-    ExplicitHeight = 196
     DesignSize = (
       174
       186)
     object Image1: TImage
       Left = 36
-      Top = 53
+      Top = 37
       Width = 109
-      Height = 89
+      Height = 108
       Anchors = []
-      ExplicitLeft = 40
-      ExplicitTop = 56
     end
   end
   object Memo1: TMemo
@@ -74,8 +80,5 @@ object BytesStreamHelpersFrame: TBytesStreamHelpersFrame
     ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 2
-    ExplicitTop = 3
-    ExplicitWidth = 185
-    ExplicitHeight = 79
   end
 end
