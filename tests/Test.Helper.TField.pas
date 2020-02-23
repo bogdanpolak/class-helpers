@@ -36,6 +36,8 @@ type
     procedure SetBlobFromBase64String_WillRaise;
     procedure CheckBlobImageFormat_PNG;
     procedure CheckBlobImageFormat_Jpeg;
+    procedure CheckBlobImageFormat_Gif;
+    procedure CheckBlobImageFormat_Bmp;
   end;
 
 implementation
@@ -141,6 +143,12 @@ const
     'QEOHQoYNAyBIQOLDzqMaNFyIwEBBgadQoz4NSrUhAalYFSIbMuNBgAIEwooVW7Xs2LNX' +
     'CUQAIoQIih8sBM4pOEC37gFzZYMemGv3AAJ/NZAcmQAjSBIjLgIowJu3cV6GD3ygKDKB' +
     'RSAAOw==';
+
+  // piece8x3.bmp
+  BMP_IMAGE1 =
+    'Qk1+AAAAAAAAADYAAAAoAAAACAAAAAMAAAABABgAAAAAAEgAAADEDgAAxA4AAAAAAAAA' +
+    'AAAA9uTb9uTb9uTb9uTb7+La6Mew/KAo/6Ao/f///f///f///f//+v7/5efk9qtd/54n' +
+    '//7+//7+//7+//7+//7+7fHz7b6X/50m';
 
 // -----------------------------------------------------------------------
 // Tests - SetBlobFromBase64String
@@ -249,6 +257,31 @@ begin
 
   Assert.AreEqual(ifJPEG, actualFormat);
 end;
+
+procedure TestTFieldHelper.CheckBlobImageFormat_Gif;
+var
+  actualFormat: TImageFormat;
+begin
+  fDataset := Givien_DataSet(fOwner);
+  AppendImage(fDataset, 1, GIF_IMAGE1);
+
+  actualFormat := fDataset.FieldByName('blob').CheckBlobImageFormat;
+
+  Assert.AreEqual(ifGIF, actualFormat);
+end;
+
+procedure TestTFieldHelper.CheckBlobImageFormat_Bmp;
+var
+  actualFormat: TImageFormat;
+begin
+  fDataset := Givien_DataSet(fOwner);
+  AppendImage(fDataset, 1, BMP_IMAGE1);
+
+  actualFormat := fDataset.FieldByName('blob').CheckBlobImageFormat;
+
+  Assert.AreEqual(ifBMP, actualFormat);
+end;
+
 
 initialization
 
