@@ -156,7 +156,7 @@ end;
 function TFormHelper.SetInterval(aInterval: Cardinal;
   aOnInterval: TProc): integer;
 var
-  aTimer: TTimer;
+  aTimer: TTImer;
 begin
   aTimer := CreateNewTimer(tkInterval, aInterval, aOnInterval);
   Result := aTimer.Tag;
@@ -166,7 +166,7 @@ procedure TFormHelper.StopInterval(aIntervalID: integer);
 var
   aTimerRec: TTimerRecord;
 begin
-  aTimerRec :=  FindTimer(aIntervalID);
+  aTimerRec := FindTimer(aIntervalID);
   if aTimerRec.fTimer <> nil then
     aTimerRec.fTimer.Enabled := False;
   LocalGarbageCollector;

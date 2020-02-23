@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 0
   ActiveControl = Memo1
   Caption = 'Form1'
-  ClientHeight = 350
+  ClientHeight = 423
   ClientWidth = 555
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -20,7 +20,7 @@ object Form1: TForm1
     Left = 3
     Top = 77
     Width = 549
-    Height = 270
+    Height = 343
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -32,10 +32,7 @@ object Form1: TForm1
     ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 0
-    ExplicitLeft = -2
-    ExplicitTop = 81
-    ExplicitWidth = 547
-    ExplicitHeight = 266
+    ExplicitHeight = 270
   end
   object FlowPanel1: TFlowPanel
     AlignWithMargins = True
