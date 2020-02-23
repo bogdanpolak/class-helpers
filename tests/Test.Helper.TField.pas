@@ -33,6 +33,7 @@ type
     procedure SetBlobFromBase64String_Size;
     procedure SetBlobFromBase64String_Siganture;
     procedure SetBlobFromBase64String_LoadToPngImage;
+    procedure SetBlobFromBase64String_WillRaise;
   end;
 
 implementation
@@ -76,7 +77,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------
-// Tests
+// Images
 // -----------------------------------------------------------------------
 
 const
@@ -92,6 +93,33 @@ const
     'GH8m/cyf3x+03WpYMWg74EQc428Xjg1lzhibfh+97DtIavjcxFLdYRV9n1y4' +
     'V2k7w0H3x1+NDS4p6LE6av0YG0wFD6ChL9H7xBcrHPk3XXu6cAxn6vLfcKv4' +
     'Kr6oLxmYWi2EfQE93BbPGkadYAAAAABJRU5ErkJggg==';
+
+  JPEG_IMAGE1 =
+    '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMF' +
+    'BwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYD' +
+    'AwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwM' +
+    'DAwMDAz/wgARCAAeAB4DAREAAhEBAxEB/8QAGQAAAwADAAAAAAAAAAAAAAAABQcIAgYJ' +
+    '/8QAGwEAAgIDAQAAAAAAAAAAAAAABAUDBwECBgj/2gAMAwEAAhADEAAAAH55x7xJvIUy' +
+    '20xLGpKuyY9sGJD9FHq5Sjs1T7WIbDIRrWMOQvvyqZ13YJwHOoEkP//EAC8QAAEDAwIG' +
+    'AgEBCQAAAAAAAAECAwQFBhESIQAHCBMiMQkUMhUXI0FRUnGDobH/2gAIAQEAAT8AF2UV' +
+    't4IV2Vup/dNuL1dv8AoeOMkAbAn2VYO3HVv1rHphqtIYh0SDXzWm3XXUO1FyN2gkpAHi' +
+    'hWdWV5GwTjx1HgfLrNQ8pSeW9BydI3rb2Nv8G2T7/mOKP8yCX3pTcnl1Rw6heA2xVHig' +
+    'JH8SQhKtRzn0Qc8SY8ZLwL3eCGUax9dKsupHiHEhWTgAYPrP/Ove9oX7VqfAn0lupNU+' +
+    'ltmP9iQuIWu4ckkN41atAznP+9xe1vMP6U2pR9Zz4Lqksr297BYPFKrdEhX1Uag5btKS' +
+    'h9sj6cmW92Gsr/JCtYXvoPiVEAes++IfLei3XWIFGgzPp1N1tZjtPzCHpyG0YIAAUopT' +
+    'nOcYByRvx1y3tdPKHqVrVtQrbtetoosWNHalzbN/WZISY6XNCHcZDSdRITpABzvvxdPO' +
+    'K8+aFtSqGbdgrhrdbckooFlJZUwpBC063WGStpONyCpIUkbkpPHLC3r+gVmbPs63rsqj' +
+    'wZRHcl0q1Hau0hBw521K+s80F7oOMBY/sd7usi5K/ZT1Yl1ePGrtpOu1GK4zlbYS35BI' +
+    'JSCCAMDIIykHAyRxffyz3nVobdPixqjAZYw1LW3VgFzz/V4MJDer2QnIGcbgbo+Sqt0q' +
+    'zbop1HthNKRVIUpLq0XDLJR3GSC4dKU9xWFelYB9Z46auve5+kjlWza1ApMeZCdcTNUt' +
+    'dYmQ/NTaEfgwpKPxbRvjj//EAB4RAAICAwADAQAAAAAAAAAAAAABAhEDBAUSEyEU/9oA' +
+    'CAECAQE/AJSRz+b7kLgi4KojBuRwY1Av6Rfw0NN7Co5+t+bFRBJkYKrODmcMtEcnm6Mb' +
+    'Z5tH/8QAHREAAwACAgMAAAAAAAAAAAAAAAECAxEEIRITMf/aAAgBAwEBPwAuyc+kPmI8' +
+    'yjJGpKT2RRCLjo9b2zGYy30T9Z//2Q==';
+
+// -----------------------------------------------------------------------
+// Tests - SetBlobFromBase64String
+// -----------------------------------------------------------------------
 
 procedure TestTFieldHelper.SetBlobFromBase64String_Size;
 begin
@@ -126,7 +154,6 @@ end;
 
 procedure TestTFieldHelper.SetBlobFromBase64String_LoadToPngImage;
 var
-  aSignature: String;
   aPngImage: TPngImage;
   actualRes: string;
 begin
@@ -138,15 +165,27 @@ begin
   fDataset.Post;
 
   fBytes := TBlobField(fDataset.FieldByName('blob')).Value;
-  fMemoryStream.Write(fBytes[0],Length(fBytes));
+  fMemoryStream.Write(fBytes[0], Length(fBytes));
   fMemoryStream.Position := 0;
   aPngImage := TPngImage.Create;
   aPngImage.LoadFromStream(fMemoryStream);
-  actualRes := Format('%dx%d',[aPngImage.Width,aPngImage.Height]);
+  actualRes := Format('%dx%d', [aPngImage.Width, aPngImage.Height]);
   aPngImage.Free;
 
   // 1) no exception was at line: aPngImage.LoadFromStream
   Assert.AreEqual('124x27', actualRes);
+end;
+
+procedure TestTFieldHelper.SetBlobFromBase64String_WillRaise;
+begin
+  fDataset := Givien_DataSet(fOwner);
+
+  fDataset.Append;
+  Assert.WillRaise(
+    procedure
+    begin
+      fDataset.FieldByName('id').SetBlobFromBase64String(PNG_IMAGE1);
+    end, EDatabaseError);
 end;
 
 initialization
