@@ -151,13 +151,11 @@ end;
 procedure TestTDBGridHelper.AutoSizeColumns_CurrencyColumn;
 var
   aDataSet: TDataSet;
-  fBudgetField: TCurrencyField;
 begin
   FormatSettings := TFormatSettings.Create('en-GB');
   aDataSet := GivenEmptyDataset(fForm);
   aDataSet.AppendRecord([1, 'Edinburgh', 7, TDateTime(0), 125.99]);
   fDBGrid.DataSource.DataSet := aDataSet;
-  fBudgetField := aDataSet.FieldByName('budget') as TCurrencyField;
 
   fDBGrid.AutoSizeColumns();
 
