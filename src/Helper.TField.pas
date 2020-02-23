@@ -8,6 +8,10 @@ uses
   Data.DB;
 
 type
+  /// <summary>
+  ///   Recognizable BLOB data formats: Images (PNG, JPEG, GIF, BMP) ...
+  /// </summary>
+  ///  <see cref="TFieldHelper.GetBlobFormat"/>
   TBlobFormat = (bfUnknown, bfImagePNG, bfImageJPEG, bfImageGIF, bfImageBMP);
 
   TFieldHelper = class helper for TField
@@ -17,7 +21,26 @@ type
     procedure AssertIsBlobField;
     procedure AssertNotNull;
   public
+    /// <summary>
+    ///   Stored BLOB data in the field. Provided parameter has to be a valid
+    ///   Base64 format string.
+    /// </summary>
+    /// <exception cref="EDatabaseError">
+    ///   Exception <b>EDatabaseError</b> is thrown when field in not TBlobField
+    /// </exception>
     function SetBlobFromBase64String(const aBase64Str: String): TBlobField;
+    /// <summary>
+    ///   Loads 8 bytes signature of BLOB data and checks for knowns data
+    ///   formats, like images: PNG, JPEG.
+    /// </summary>
+    /// <returns cref="TBlobFormat">
+    ///   Enumereted type <b>TBlobFormat</b> informs about recognized format of
+    ///   then BLOB content.
+    /// </returns>
+    /// <exception cref="EDatabaseError">
+    ///   Exception <b>EDatabaseError</b> is thrown when field in not
+    ///   a TBlobField or has NULL value.
+    /// </exception>
     function GetBlobFormat: TBlobFormat;
   end;
 
