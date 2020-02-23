@@ -22,7 +22,6 @@ type
   private
     fOwner: TComponent;
     fDataset: TDataSet;
-    fLength: Integer;
     fBytes: TBytes;
   public
     [Setup]
@@ -96,9 +95,8 @@ begin
   fDataset.Post;
 
   fBytes := TBlobField(fDataset.FieldByName('blob')).Value;
-  fLength := Length(fBytes);
 
-  Assert.AreEqual(526, fLength);
+  Assert.AreEqual(526, Length(fBytes));
 end;
 
 
