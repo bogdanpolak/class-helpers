@@ -34,10 +34,10 @@ type
     procedure SetBlobFromBase64String_Siganture;
     procedure SetBlobFromBase64String_LoadToPngImage;
     procedure SetBlobFromBase64String_WillRaise;
-    procedure CheckBlobImageFormat_PNG;
-    procedure CheckBlobImageFormat_Jpeg;
-    procedure CheckBlobImageFormat_Gif;
-    procedure CheckBlobImageFormat_Bmp;
+    procedure GetBlobFormat_ImagePNG;
+    procedure GetBlobFormat_ImageJPEG;
+    procedure GetBlobFormat_ImageGIF;
+    procedure GetBlobFormat_ImageBMP;
   end;
 
 implementation
@@ -222,7 +222,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------
-// Tests - CheckBlobImageFormat
+// Tests - GetBlobFormat
 // -----------------------------------------------------------------------
 
 procedure AppendImage(aDataset: TDataSet; aID: Integer;
@@ -234,54 +234,53 @@ begin
   aDataset.Post;
 end;
 
-procedure TestTFieldHelper.CheckBlobImageFormat_PNG;
+procedure TestTFieldHelper.GetBlobFormat_ImagePNG;
 var
-  actualFormat: TImageFormat;
+  actualFormat: TBlobFormat;
 begin
   fDataset := Givien_DataSet(fOwner);
   AppendImage(fDataset, 1, PNG_IMAGE1);
 
-  actualFormat := fDataset.FieldByName('blob').CheckBlobImageFormat;
+  actualFormat := fDataset.FieldByName('blob').GetBlobFormat;
 
-  Assert.AreEqual(ifPNG, actualFormat);
+  Assert.AreEqual(bfImagePNG, actualFormat);
 end;
 
-procedure TestTFieldHelper.CheckBlobImageFormat_Jpeg;
+procedure TestTFieldHelper.GetBlobFormat_ImageJPEG;
 var
-  actualFormat: TImageFormat;
+  actualFormat: TBlobFormat;
 begin
   fDataset := Givien_DataSet(fOwner);
   AppendImage(fDataset, 1, JPEG_IMAGE1);
 
-  actualFormat := fDataset.FieldByName('blob').CheckBlobImageFormat;
+  actualFormat := fDataset.FieldByName('blob').GetBlobFormat;
 
-  Assert.AreEqual(ifJPEG, actualFormat);
+  Assert.AreEqual(bfImageJPEG, actualFormat);
 end;
 
-procedure TestTFieldHelper.CheckBlobImageFormat_Gif;
+procedure TestTFieldHelper.GetBlobFormat_ImageGIF;
 var
-  actualFormat: TImageFormat;
+  actualFormat: TBlobFormat;
 begin
   fDataset := Givien_DataSet(fOwner);
   AppendImage(fDataset, 1, GIF_IMAGE1);
 
-  actualFormat := fDataset.FieldByName('blob').CheckBlobImageFormat;
+  actualFormat := fDataset.FieldByName('blob').GetBlobFormat;
 
-  Assert.AreEqual(ifGIF, actualFormat);
+  Assert.AreEqual(bfImageGIF, actualFormat);
 end;
 
-procedure TestTFieldHelper.CheckBlobImageFormat_Bmp;
+procedure TestTFieldHelper.GetBlobFormat_ImageBMP;
 var
-  actualFormat: TImageFormat;
+  actualFormat: TBlobFormat;
 begin
   fDataset := Givien_DataSet(fOwner);
   AppendImage(fDataset, 1, BMP_IMAGE1);
 
-  actualFormat := fDataset.FieldByName('blob').CheckBlobImageFormat;
+  actualFormat := fDataset.FieldByName('blob').GetBlobFormat;
 
-  Assert.AreEqual(ifBMP, actualFormat);
+  Assert.AreEqual(bfImageBMP, actualFormat);
 end;
-
 
 initialization
 

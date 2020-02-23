@@ -8,7 +8,7 @@ uses
   Data.DB;
 
 type
-  TImageFormat = (ifUnknown, ifPNG, ifJPEG, ifGIF, ifBMP);
+  TBlobFormat = (bfUnknown, bfImagePNG, bfImageJPEG, bfImageGIF, bfImageBMP);
 
   TFieldHelper = class helper for TField
   private const
@@ -18,7 +18,7 @@ type
     procedure AssertNotNull;
   public
     function SetBlobFromBase64String(const aBase64Str: String): TBlobField;
-    function CheckBlobImageFormat: TImageFormat;
+    function GetBlobFormat: TBlobFormat;
   end;
 
 implementation
@@ -62,7 +62,7 @@ begin
     (Cardinal(aSignature[4]) shl 16) or (Cardinal(aSignature[5]) shl 24);
 end;
 
-function TFieldHelper.CheckBlobImageFormat: TImageFormat;
+function TFieldHelper.GetBlobFormat: TBlobFormat;
 const
   // ................. _-P-N-G-_-_-_-_-
   PNG_HEX_SIGNATURE = '89504E470D0A1A0A';
@@ -81,20 +81,20 @@ begin
   aBlobField := (Self as TBlobField);
   aSize := Length(aBlobField.Value);
   if aSize < 8 then
-    Exit(ifUnknown);
+    Exit(bfUnknown);
   SetLength(aSign, 8);
   move(aBlobField.Value[0], aSign[0], 8);
   if BytesSectorToHex(aSign, 8) = PNG_HEX_SIGNATURE then
-    Result := ifPNG
+    Result := bfImagePNG
   else if BytesSectorToHex(aSign, 4) = JPEG_HEX_SIGNATURE then
-    Result := ifJPEG
+    Result := bfImageJPEG
   else if BytesSectorToHex(aSign, 6) = GIF_HEX_SIGNATURE then
-    Result := ifGIF
+    Result := bfImageGIF
   else if (BytesSectorToHex(aSign, 2) = BMP_HEX_SIGNATURE) and
     (GetBitmapSize(aSign) = aSize) then
-    Result := ifBMP
+    Result := bfImageBMP
   else
-    Result := ifUnknown;
+    Result := bfUnknown;
 end;
 
 end.
