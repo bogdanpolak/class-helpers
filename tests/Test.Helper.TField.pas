@@ -34,6 +34,8 @@ type
     procedure SetBlobFromBase64String_Siganture;
     procedure SetBlobFromBase64String_LoadToPngImage;
     procedure SetBlobFromBase64String_WillRaise;
+    procedure CheckBlobImageFormat_PNG;
+    procedure CheckBlobImageFormat_Jpeg;
   end;
 
 implementation
@@ -186,6 +188,43 @@ begin
     begin
       fDataset.FieldByName('id').SetBlobFromBase64String(PNG_IMAGE1);
     end, EDatabaseError);
+end;
+
+// -----------------------------------------------------------------------
+// Tests - CheckBlobImageFormat
+// -----------------------------------------------------------------------
+
+procedure AppendImage(aDataset: TDataSet; aID: Integer;
+const aImageBase64: string);
+begin
+  aDataset.Append;
+  aDataset.FieldByName('id').AsInteger := aID;
+  aDataset.FieldByName('blob').SetBlobFromBase64String(aImageBase64);
+  aDataset.Post;
+end;
+
+procedure TestTFieldHelper.CheckBlobImageFormat_PNG;
+var
+  actualFormat: TImageFormat;
+begin
+  fDataset := Givien_DataSet(fOwner);
+  AppendImage(fDataset, 1, PNG_IMAGE1);
+
+  actualFormat := fDataset.FieldByName('blob').CheckBlobImageFormat;
+
+  Assert.AreEqual(ifPNG, actualFormat);
+end;
+
+procedure TestTFieldHelper.CheckBlobImageFormat_Jpeg;
+var
+  actualFormat: TImageFormat;
+begin
+  fDataset := Givien_DataSet(fOwner);
+  AppendImage(fDataset, 1, JPEG_IMAGE1);
+
+  actualFormat := fDataset.FieldByName('blob').CheckBlobImageFormat;
+
+  Assert.AreEqual(ifJPEG, actualFormat);
 end;
 
 initialization
