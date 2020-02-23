@@ -8,12 +8,15 @@ uses
   Data.DB;
 
 type
+  TImageFormat = (ifUnknown, ifPNG, ifJPEG, ifGIF, ifBMP);
+
   TFieldHelper = class helper for TField
   private const
     Version = '1.6';
   private
   public
     function SetBlobFromBase64String(const aBase64Str: String): TBlobField;
+    function CheckBlobImageFormat: TImageFormat;
   end;
 
 implementation
@@ -29,6 +32,10 @@ begin
       ' Method LoadFromBase64String is supported only for blob fields');
   Result := (Self as TBlobField);
   Result.Value := TNetEncoding.Base64.DecodeStringToBytes(aBase64Str);
+end;
+
+function TFieldHelper.CheckBlobImageFormat: TImageFormat;
+begin
 end;
 
 end.
