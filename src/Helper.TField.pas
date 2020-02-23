@@ -56,11 +56,21 @@ begin
     Result := Result + IntToHex(aBytes[idx], 2);
 end;
 
+function GetBitmapSize(const aSignature: TBytes): integer;
+begin
+  Result := Cardinal(aSignature[2]) or (Cardinal(aSignature[3]) shl 8) or
+    (Cardinal(aSignature[4]) shl 16) or (Cardinal(aSignature[5]) shl 24);
+end;
+
 function TFieldHelper.CheckBlobImageFormat: TImageFormat;
 const
   // ................. _-P-N-G-_-_-_-_-
   PNG_HEX_SIGNATURE = '89504E470D0A1A0A';
   JPEG_HEX_SIGNATURE = 'FFD8FFE0';
+  // ................. G-I-F-8-9-a-
+  GIF_HEX_SIGNATURE = '474946383961';
+  // ................. B-M-
+  BMP_HEX_SIGNATURE = '424D';
 var
   aBlobField: TBlobField;
   aSize: integer;
@@ -78,6 +88,11 @@ begin
     Result := ifPNG
   else if BytesSectorToHex(aSign, 4) = JPEG_HEX_SIGNATURE then
     Result := ifJPEG
+  else if BytesSectorToHex(aSign, 6) = GIF_HEX_SIGNATURE then
+    Result := ifGIF
+  else if (BytesSectorToHex(aSign, 2) = BMP_HEX_SIGNATURE) and
+    (GetBitmapSize(aSign) = aSize) then
+    Result := ifBMP
   else
     Result := ifUnknown;
 end;
