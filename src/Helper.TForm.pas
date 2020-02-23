@@ -35,11 +35,38 @@ type
   public
     class constructor Create;
     class destructor Destory;
+    /// <summary>
+    ///   Starts a new interval counter and returns its ID, which you can
+    ///   use to delete / stop the interval at a later time. Interval is a
+    ///   cyclic timer call executed every "aInterval" milliseconds.
+    ///   The "aOnInterval" parameter is the method invoked (object, class or
+    ///   anonymous methods can be provided)
+    /// </summary>
+    ///  <see cref="TFormHelper.StopInterval"/>
     function SetInterval(aInterval: Cardinal; aOnInterval: TProc): integer;
-    function GetTimersCount: integer;
+    /// <summary>
+    ///   Stops an active interval using its ID.
+    /// </summary>
+    ///  <see cref="TFormHelper.SetInterval"/>
     procedure StopInterval(aIntervalID: integer);
+    /// <summary>
+    ///   Starts one-time timer and invokes "aOnTimeout" method after
+    ///   "aTimeout" milliseconds.
+    /// </summary>
+    ///  <see cref="TFormHelper.SetInterval"/>
     procedure SetTimeout(aTimeout: Cardinal; aOnTimeout: TProc);
+    /// <summary>
+    ///   Allows to define method invoked just after a first display on the
+    ///   form, when all its resources are initialized and activated. The
+    ///   "aOnReady" method is invoked only once.
+    /// </summary>
     procedure SetOnFormReady(aOnReady: TProc);
+    /// <summary>
+    ///   Allows to check number of currently constructed internal timers. This
+    ///   timers should be removed automatically when they are no longer needed.
+    ///   Available for diagnostic purposes.
+    /// </summary>
+    function GetTimersCount: integer;
   end;
 
 implementation
