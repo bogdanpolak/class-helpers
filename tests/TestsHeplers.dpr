@@ -28,7 +28,9 @@ uses
   Helper.TBytes in '..\src\Helper.TBytes.pas',
   Test.Helper.TBytes in 'Test.Helper.TBytes.pas',
   Test.Helper.TStream in 'Test.Helper.TStream.pas',
-  Helper.TStream in '..\src\Helper.TStream.pas';
+  Helper.TStream in '..\src\Helper.TStream.pas',
+  Test.Helper.TField in 'Test.Helper.TField.pas',
+  Helper.TField in '..\src\Helper.TField.pas';
 
 var
   runner : ITestRunner;
