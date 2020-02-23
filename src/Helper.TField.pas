@@ -49,21 +49,21 @@ end;
 
 function BytesSectorToHex(const aBytes: TBytes; aLength: integer): string;
 var
-  idx: Integer;
+  idx: integer;
 begin
   Result := '';
-  for idx := 0 to aLength-1 do
-    Result := Result + IntToHex(aBytes[idx],2);
+  for idx := 0 to aLength - 1 do
+    Result := Result + IntToHex(aBytes[idx], 2);
 end;
 
 function TFieldHelper.CheckBlobImageFormat: TImageFormat;
 const
-  // .................. _-P-N-G-_-_-_-_-
-  PNG_HEX_SIGNATURE =  '89504E470D0A1A0A';
+  // ................. _-P-N-G-_-_-_-_-
+  PNG_HEX_SIGNATURE = '89504E470D0A1A0A';
   JPEG_HEX_SIGNATURE = 'FFD8FFE0';
 var
   aBlobField: TBlobField;
-  aSize: Integer;
+  aSize: integer;
   aSign: TBytes;
 begin
   AssertIsBlobField;
@@ -72,12 +72,14 @@ begin
   aSize := Length(aBlobField.Value);
   if aSize < 8 then
     Exit(ifUnknown);
-  SetLength(aSign,8);
-  move(aBlobField.Value[0],aSign[0],8);
-  if BytesSectorToHex(aSign,8) = PNG_HEX_SIGNATURE then
-    Exit(ifPNG)
-  else if BytesSectorToHex(aSign,4) = JPEG_HEX_SIGNATURE then
-    Exit(ifJPEG)
+  SetLength(aSign, 8);
+  move(aBlobField.Value[0], aSign[0], 8);
+  if BytesSectorToHex(aSign, 8) = PNG_HEX_SIGNATURE then
+    Result := ifPNG
+  else if BytesSectorToHex(aSign, 4) = JPEG_HEX_SIGNATURE then
+    Result := ifJPEG
+  else
+    Result := ifUnknown;
 end;
 
 end.
