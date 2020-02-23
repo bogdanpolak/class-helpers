@@ -23,6 +23,7 @@ type
     fOwner: TComponent;
     fDataset: TDataSet;
     fBytes: TBytes;
+    fMemoryStream: TMemoryStream;
   public
     [Setup]
     procedure Setup;
@@ -30,9 +31,14 @@ type
     procedure TearDown;
   published
     procedure SetBlobFromBase64String_Size;
+    procedure SetBlobFromBase64String_Siganture;
+    procedure SetBlobFromBase64String_LoadToPngImage;
   end;
 
 implementation
+
+uses
+  Vcl.Imaging.pngimage;
 
 // -----------------------------------------------------------------------
 // Utilities
@@ -60,11 +66,13 @@ end;
 procedure TestTFieldHelper.Setup;
 begin
   fOwner := TComponent.Create(nil);
+  fMemoryStream := TMemoryStream.Create;
 end;
 
 procedure TestTFieldHelper.TearDown;
 begin
   fOwner.Free;
+  fMemoryStream.Free;
 end;
 
 // -----------------------------------------------------------------------
@@ -99,6 +107,47 @@ begin
   Assert.AreEqual(526, Length(fBytes));
 end;
 
+procedure TestTFieldHelper.SetBlobFromBase64String_Siganture;
+var
+  aSignature: String;
+begin
+  fDataset := Givien_DataSet(fOwner);
+
+  fDataset.Append;
+  fDataset.FieldByName('id').AsInteger := 1;
+  fDataset.FieldByName('blob').SetBlobFromBase64String(PNG_IMAGE1);
+  fDataset.Post;
+
+  fBytes := TBlobField(fDataset.FieldByName('blob')).Value;
+  aSignature := Chr(fBytes[1]) + Chr(fBytes[2]) + Chr(fBytes[3]);
+
+  Assert.AreEqual('PNG', aSignature);
+end;
+
+procedure TestTFieldHelper.SetBlobFromBase64String_LoadToPngImage;
+var
+  aSignature: String;
+  aPngImage: TPngImage;
+  actualRes: string;
+begin
+  fDataset := Givien_DataSet(fOwner);
+
+  fDataset.Append;
+  fDataset.FieldByName('id').AsInteger := 1;
+  fDataset.FieldByName('blob').SetBlobFromBase64String(PNG_IMAGE1);
+  fDataset.Post;
+
+  fBytes := TBlobField(fDataset.FieldByName('blob')).Value;
+  fMemoryStream.Write(fBytes[0],Length(fBytes));
+  fMemoryStream.Position := 0;
+  aPngImage := TPngImage.Create;
+  aPngImage.LoadFromStream(fMemoryStream);
+  actualRes := Format('%dx%d',[aPngImage.Width,aPngImage.Height]);
+  aPngImage.Free;
+
+  // 1) no exception was at line: aPngImage.LoadFromStream
+  Assert.AreEqual('124x27', actualRes);
+end;
 
 initialization
 
