@@ -41,7 +41,10 @@ type
 implementation
 
 uses
-  Vcl.Imaging.pngimage;
+  Vcl.Imaging.pngimage,
+  Vcl.Imaging.JPEG,
+  Vcl.Imaging.GIFImg,
+  Vcl.Graphics;
 
 // -----------------------------------------------------------------------
 // Utilities
@@ -83,19 +86,21 @@ end;
 // -----------------------------------------------------------------------
 
 const
-  PNG_IMAGE1 = 'iVBORw0KGgoAAAANSUhEUgAAAHwAAAAbCAMAAACJMRtuAAAAclBMVEX////w' +
-    '8PDZ2dn/248AAADb/v85OY85AwCP2////bYAOZDbjzm2/v9mtv9mCAA5j9vb' +
-    '248BDmZmDDlmFGb//tv/tmbb/LYABDkAZra22484EGaQOgA4ZWW2ZgC2ZmaP' +
-    'OTiPZQC2/LaPZo86OmZmOTk6Bznxkw7DAAABV0lEQVRIx+1W7W6DMAzMSsKA' +
-    'hAIbtKys+977v+IOX5WBWDfWPxEqVpWcE/sOOylC3QS0axbfBDKKqyAm4ptA' +
-    '4uErX6Z4FJuLw6fiVmtdzCagE90iKYdXd5kZczSA7Vxxi+z6zfxPHAMeIAd4' +
-    '/0jIkW5F3VZOqSc3U/wuwSC17JMofkFBHlfOaqC6Q1myJhVnFOdgi2OhUuGQ' +
-    'tfrZ01XuFM7UH8X5ZOm9Q3aJYpps57G0se1pub/b5l5XcqDVgB2euNg4OKFD' +
-    'oG1TCSedOSOOyrKyP8TqITaI85hnK+SRXxuJY0bZA3FCHsthSOfOth0RsWHO' +
-    'GH8m/cyf3x+03WpYMWg74EQc428Xjg1lzhibfh+97DtIavjcxFLdYRV9n1y4' +
-    'V2k7w0H3x1+NDS4p6LE6av0YG0wFD6ChL9H7xBcrHPk3XXu6cAxn6vLfcKv4' +
-    'Kr6oLxmYWi2EfQE93BbPGkadYAAAAABJRU5ErkJggg==';
+  // vcl-tabsheet124x27.png
+  PNG_IMAGE1 =
+    'iVBORw0KGgoAAAANSUhEUgAAAHwAAAAbCAMAAACJMRtuAAAAclBMVEX////w8PDZ2dn/' +
+    '248AAADb/v85OY85AwCP2////bYAOZDbjzm2/v9mtv9mCAA5j9vb248BDmZmDDlmFGb/' +
+    '/tv/tmbb/LYABDkAZra22484EGaQOgA4ZWW2ZgC2ZmaPOTiPZQC2/LaPZo86OmZmOTk6' +
+    'Bznxkw7DAAABV0lEQVRIx+1W7W6DMAzMSsKAhAIbtKys+977v+IOX5WBWDfWPxEqVpWc' +
+    'E/sOOylC3QS0axbfBDKKqyAm4ptA4uErX6Z4FJuLw6fiVmtdzCagE90iKYdXd5kZczSA' +
+    '7Vxxi+z6zfxPHAMeIAd4/0jIkW5F3VZOqSc3U/wuwSC17JMofkFBHlfOaqC6Q1myJhVn' +
+    'FOdgi2OhUuGQtfrZ01XuFM7UH8X5ZOm9Q3aJYpps57G0se1pub/b5l5XcqDVgB2euNg4' +
+    'OKFDoG1TCSedOSOOyrKyP8TqITaI85hnK+SRXxuJY0bZA3FCHsthSOfOth0RsWHOGH8m' +
+    '/cyf3x+03WpYMWg74EQc428Xjg1lzhibfh+97DtIavjcxFLdYRV9n1y4V2k7w0H3x1+N' +
+    'DS4p6LE6av0YG0wFD6ChL9H7xBcrHPk3XXu6cAxn6vLfcKv4Kr6oLxmYWi2EfQE93BbP' +
+    'GkadYAAAAABJRU5ErkJggg==';
 
+  // bench30x30.jpg
   JPEG_IMAGE1 =
     '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMF' +
     'BwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYD' +
@@ -118,6 +123,24 @@ const
     'CAECAQE/AJSRz+b7kLgi4KojBuRwY1Av6Rfw0NN7Co5+t+bFRBJkYKrODmcMtEcnm6Mb' +
     'Z5tH/8QAHREAAwACAgMAAAAAAAAAAAAAAAECAxEEIRITMf/aAAgBAwEBPwAuyc+kPmI8' +
     'yjJGpKT2RRCLjo9b2zGYy30T9Z//2Q==';
+
+  // Shape40x20.gif
+  GIF_IMAGE1 =
+    'R0lGODlhKAAUAPYAAP///ymh//7+/////Sig/yif/tvk9i2h/zGi/yad/y6h/jSi/yee' +
+    '//78+iuh/yef/yed/Sig/Pr38uzs6iWa//79/P/++tnl+FKo9vz59d3l9Xy18ou67vDv' +
+    '7N7j59Tc57zQ5/b4+UWl+F2r9oW27/Px7bnO6Nrg57O6vzyj/unz+y2j+/j4+ZfH9yme' +
+    '902n9vLy8/758qzK8ESh8Nri70Wg797l7Ze+7ZK87bPL6LDH6K3H6MDS5+Tn5WSi4Gqj' +
+    '34ew3uLg3dbZ2azA1t/b1djVz4anzdPPyJywx8TDvwAAAAAAAAAAAAAAAAAAAAAAAAAA' +
+    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' +
+    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' +
+    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAA' +
+    'AAAoABQAAAf+gACCg4SFgxUqIQOGjI2OhAIDIS0XFgKPmJkCFjYrMhKXmaKMAhImFBsT' +
+    'FaOsg5EdHBQiHw2hraICDScYDww7oLejAhkgEAsJqQK2wY3KsBQpD7O1i8zNDR4YDAsB' +
+    'EDnAy9auxBAOAcckE8rV4pAlOAncCA8vJ9TtkBUeIwwIAQ4HIJgAFc7agGE8IhBQEOBc' +
+    'Ag4d1mlSRrFixRI3EvhriIABBg+1LIpcN6CkyZMlLfTgt7GhAwggYqCcafKCBgM4c+o0' +
+    'QEOHQoYNAyBIQOLDzqMaNFyIwEBBgadQoz4NSrUhAalYFSIbMuNBgAIEwooVW7Xs2LNX' +
+    'CUQAIoQIih8sBM4pOEC37gFzZYMemGv3AAJ/NZAcmQAjSBIjLgIowJu3cV6GD3ygKDKB' +
+    'RSAAOw==';
 
 // -----------------------------------------------------------------------
 // Tests - SetBlobFromBase64String
