@@ -3,9 +3,6 @@
 -------------------------------------------------------------------------
 PLAN:
 
-- TByteHelper
-- TStreamHelper
-- TFieldHelper
 - Moved demos to : examples/01-playground (add section)
 -------------------------------------------------------------------------
 
@@ -48,10 +45,14 @@ From the very beginning (Delphi 2006) till Delphi Berlin / 10.1 version there wa
 | Expanded class | Helper methods description |
 | --- | --- |
 | TApplication | Sample helper containing experimental method `InDeveloperMode`. |
+| TByte | Allows to manipulates arrays of bytes: size, load & save, getter & setters |
 | TDataSet | Methods like: `WhileNotEof` - iterating through dataset or LoadData - loads data into the object list |
 | TDateTime | Methods that allow easily manipulate date and time (from unit: System.DateUtils) |
 | TDBGrid | Methods manipulating DBGrid columns, like: AutoSizeColumns - automatically arranging with of each column |
+| TField | Allows to load Base64 data into Blob Field or verifying signature of the stored data |
 | TJSONObject | Methods reading data or storing in the JSON DOM structure, like IsValidIsoDate(fieldName) |
+| TForm | Methods managing timers: SetInterval and SetTimeout |
+| TStream | Methods which facilitate reading and writing data to streams |
 | TStringGrid | Filling and configuring String Grid control: loading data, setting columns. clearing |
 | TWinControl | Utility methods for searching child controls by type or by name. Visible for all TWinControl descendants: TForm, TPanel, etc.  |
 
