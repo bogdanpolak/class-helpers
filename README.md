@@ -16,7 +16,7 @@ PLAN:
 
 ### 1. Safe cleaning technique
 
-The huge amount of VCL (FMX) code can be cleared using class helpers, which are actually an easy refactoring technique with low risk for complex projects. Using this method, teams can start upgrading their legacy projects even without unit tests safety net. Moreover the verification of newly created helpers can be easily done with unit tests. This approach allow to teach developers how to write unit tests in a correct way (learn in practice F.I.R.S.T principles or other). Teams can also easily applay TDD development process (write tests first and then implement functionality) in a fun and non-invasive way.
+The huge amount of VCL (FMX) code can be cleared using class helpers, which are actually an easy refactoring technique with low risk for complex projects. Using this method, teams can start upgrading their legacy projects even without unit tests safety net. Moreover the verification of newly created helpers can be easily done with unit tests. This approach allow to teach developers how to write unit tests in a correct way (learn in practice F.I.R.S.T principles or other). Teams can also easily apply TDD development process (write tests first and then implement functionality) in a fun and non-invasive way.
 
 Sometimes class helpers could be also dangerous if they are used improperly. For this reason it is required to apply a little more disciplined development and delivery process, suggestions connected with that area are covered in the following sections. 
 
