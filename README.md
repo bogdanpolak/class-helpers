@@ -1,4 +1,4 @@
-﻿# Repository of VCL and RTL Class Helpers
+# Repository of VCL and RTL Class Helpers
 
 -------------------------------------------------------------------------
 PLAN:
@@ -43,15 +43,17 @@ From the very beginning (Delphi 2006) till Delphi Berlin / 10.1 version there wa
 
 ## Helpers in this repo
 
-| Helper name | Expanded class | Information |
-| --- | --- | --- |
-| TApplicationHelper | TApplication | concept solution for storing general reusable functions  |
-| TDataSetHelper | TDataSet | extension function for data manipulation and storage |
-| TDateTimeHelper | TDateTime | sample record helper  |
-| TDBGridHelper | TDBGrid | expanding classic DBGrid |
-| TJSONObjectHelper | TJSONObject | function manipulating on JSON memory DOM |
-| TStringGridHelper | TStringGrid | more advanced features added to StringGrid control |
-| TWinControlHelper | TWinControl | utility methods available for all TWinControl descendants (TForm, TPanel, etc.)  |
+| Expanded class | Helper methods description |
+| --- | --- |
+| TApplication | Sample helper containing experimental method `InDeveloperMode`. |
+| TDataSet | Methods like: `WhileNotEof` - iterating through dataset or LoadData - loads data into the object list |
+| TDateTime | Methods that allow easily manipulate date and time (from unit: System.DateUtils) |
+| TDBGrid | Methods manipulating DBGrid columns, like: AutoSizeColumns - automatically arranging with of each column |
+| TJSONObject | Methods reading data or storing in the JSON DOM structure, like IsValidIsoDate(fieldName) |
+| TStringGrid | Filling and configuring String Grid control: loading data, setting columns. clearing |
+| TWinControl | Utility methods for searching child controls by type or by name. Visible for all TWinControl descendants: TForm, TPanel, etc.  |
+
+Helper naming convention is to add suffix `Helper` to the name of the expanded class, what means that class helper for `TDataSet` will has a name `TDataSetHelper`. Each helper is stored in separate file and unit its name is `Helper.<ExpanedClassName>.pas`.
 
 [Full helper catalog](https://github.com/bogdanpolak/class-helpers/tree/master/src)
 
