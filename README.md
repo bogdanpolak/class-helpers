@@ -1,4 +1,4 @@
-# Repository of VCL and RTL Class Helpers
+﻿# Repository of VCL and RTL Class Helpers
 
 -------------------------------------------------------------------------
 PLAN:
@@ -6,11 +6,12 @@ PLAN:
 - TByteHelper
 - TStreamHelper
 - TFieldHelper
-- Moved demos to : examples/01-playground
+- Moved demos to : examples/01-playground (add section)
 -------------------------------------------------------------------------
 
 ![ Delphi Support ](https://img.shields.io/badge/Delphi%20Support-%2010%20..%2010.3%20Rio-blue.svg)
 ![ version ](https://img.shields.io/badge/version-%201.6-yellow.svg)
+
 
 ## Why use Class Helpers?
 
@@ -40,6 +41,7 @@ mysqlDataSet.StoreRows_ThenUpdateData_StopAfterFirstError(rsChanged);
 ### 2. Private fields/methods lock-pick (now not available)
 
 From the very beginning (Delphi 2006) till Delphi Berlin / 10.1 version there was quite popular class helper bug, which allows to access private fields and private methods using helpers. Because of this bug many developers identified this interesting language extension with such hack. The misuse of class helpers has caused that value of this super powerful solution is underestimated. 
+
 
 ## Helpers in this repo
 
@@ -76,6 +78,7 @@ begin
 end;
 ```
 
+
 ## Good practices
 
 Class helpers looks really promising in the begging and actually there are great solution, but as you create and use more and more of them, you'll start to notice some obstacles. For this reason, good practices should be adapted from the beginning to help avoid potential problems.
@@ -85,6 +88,7 @@ Class helpers looks really promising in the begging and actually there are great
 1. **Use only when necessary.** Do not declare class helpers for your classes, which can be easily extend using classic OOP methods, such as inheritance, polymorphism and composition. Helpers are really useful for extending the functionality of RTL, VCL or FMX classes. They can also be successfully used to extend third-party components. The added functionality should be domain independent and easy to reuse in various projects.
 1. **Define as close as possible.** The class helper should be defined as close to the used class as possible. The VCL framework has very expanded inheritance tree and in some cases developer can define expanding method for more general class (like TWinControl) or for more specialized one (like TGroupBox). From usage perspective, it is much better to expand specialized classes then general: it could be more difficult to figure out which helper unit has to be included (added to uses section) after coping existing code into a new unit. When helper is defined for the same class which is actually used this is not a problem.
 1. **Define release cycle.** A project with helpers should be treated as an independent product. As a consumer the developer should be aware of helpers version which he is using now and about possible available updates. More information you can find in Maintenance section.
+
 
 ## Helpers maintenance
 
@@ -112,6 +116,7 @@ This GitHub project is live example of such deployment techniques. We are using 
 ![](./doc/resources/kanban-board.png)
 
 Kanban board and planning sessions are suggested techniques to achieve - incremental delivery. Class helpers project can't be delivered too often, because of integration cost (integration class helper repository with final Delphi projects). And from the other side delivery of the new version shouldn't take too long, because all projects should use advantages of new helpers (high reusability).
+
 
 ## The Dark Side of class helpers
 
