@@ -1,5 +1,14 @@
 ﻿# Repository of VCL and RTL Class Helpers
 
+-------------------------------------------------------------------------
+PLAN:
+
+- TByteHelper
+- TStreamHelper
+- TFieldHelper
+- Moved demos to : examples/01-playground
+-------------------------------------------------------------------------
+
 ![ Delphi Support ](https://img.shields.io/badge/Delphi%20Support-%2010%20..%2010.3%20Rio-blue.svg)
 ![ version ](https://img.shields.io/badge/version-%201.6-yellow.svg)
 
