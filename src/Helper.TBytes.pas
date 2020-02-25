@@ -36,6 +36,7 @@ type
     function GetReverseLongWord(aIndex: Integer = 0): LongWord;
     // ---------------------
     // Utils
+    function CreatesStream: TMemoryStream;
     function GenerateBase64Code(aLineLength: Integer = 68): string;
     function GetSectorCRC32(aIndex: Integer; aLength: Integer): LongWord;
   end;
@@ -163,9 +164,19 @@ end;
 
 // -----------------------------------------------------------------------
 // Utils:
+//  * CreatesStream - Creates TMemoryStream and files it with bytes
 //  * GenerateBase64Code - Fake code generator
 //  * GetSectorCRC32 - Calc Checksums
 // -----------------------------------------------------------------------
+
+function TBytesHelper.CreatesStream: TMemoryStream;
+var
+  aPos: Int64;
+begin
+  Result := TMemoryStream.Create;
+  Result.Write(Self[0], Length(Self));
+  Result.Position := 0;
+end;
 
 function TBytesHelper.GenerateBase64Code(aLineLength: Integer = 68): string;
 var

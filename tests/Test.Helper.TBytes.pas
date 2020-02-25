@@ -41,6 +41,7 @@ type
     procedure GetLongWord;
     procedure GetReverseLongWord;
     // -----
+    procedure CreatesStream;
     procedure GenerateBase64Code_ElevnBytes;
     procedure GenerateBase64Code_MoreLines;
     procedure GenerateBase64Code_NarrowLines;
@@ -74,6 +75,21 @@ begin
     'qniUdJbNzJ/TO5F7ccu2hlcLQHTtvZD9P2F/cobvZStJ2kf1h8NTo52i6Ql7' +
     'Ld6YF627d73iN+gbhCvKW45Ri5VF/CUCKb6dWs4gHvNt2MvwIV3+dzYxNlgq' +
     '9X7+fAq2SmHCzhJYWvYBmzQSEHa+IRoAAAAASUVORK5CYII=');
+end;
+
+function StreamToHexString(fStream: TStream): string;
+var
+  aBytes: TBytes;
+  i: Integer;
+begin
+  SetLength(aBytes, fStream.Size);
+  fStream.Position := 0;
+  fStream.Read(aBytes[0], fStream.Size);
+  for i := 0 to High(aBytes) do
+    if i = 0 then
+      Result := IntToHex(aBytes[0], 2)
+    else
+      Result := Result + ' ' + IntToHex(aBytes[i], 2);
 end;
 
 // -----------------------------------------------------------------------
@@ -243,6 +259,18 @@ end;
 // -----------------------------------------------------------------------
 // Tests TBytes - Utils
 // -----------------------------------------------------------------------
+
+procedure TestTBytesHelper.CreatesStream;
+var
+  aMemoryStream: TMemoryStream;
+  actual: string;
+begin
+  fBytes := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+  aMemoryStream := fBytes.CreatesStream;
+  actual := StreamToHexString(aMemoryStream);
+  aMemoryStream.Free;
+  Assert.AreEqual('01 02 03 04 05 06 07 08 09 0A 0B', actual);
+end;
 
 procedure TestTBytesHelper.GenerateBase64Code_ElevnBytes;
 var
