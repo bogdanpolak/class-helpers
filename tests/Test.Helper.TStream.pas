@@ -34,6 +34,12 @@ type
     procedure WriteString_UnicodeText;
     procedure WriteString_HearthUtf8;
     procedure WriteString_AppendToStream;
+    // ----
+    procedure ToHexString_FiveBytes;
+    procedure ToHexString_EmptyStream;
+    procedure ToHexString_SomeBytes;
+    procedure ToHexString_TooMuchBytes;
+    // ----
     procedure WriteLine_SimpleText;
     procedure WriteLine_UnicodeText;
   end;
@@ -208,6 +214,48 @@ begin
 
   Assert.AreEqual(7, Integer(fStream.Size));
 end;
+
+
+// -----------------------------------------------------------------------
+// Tests: ToHexString
+// -----------------------------------------------------------------------
+
+procedure TestTStreamHelper.ToHexString_FiveBytes;
+var
+  actual: string;
+begin
+ GivenBytesStream(fStream, [3, 4, 5, 6, 7]);
+ actual := fStream.ToHexString;
+ Assert.AreEqual('03 04 05 06 07',actual);
+end;
+
+procedure TestTStreamHelper.ToHexString_EmptyStream;
+var
+  actual: string;
+begin
+ actual := fStream.ToHexString;
+ Assert.AreEqual('',actual);
+end;
+
+
+procedure TestTStreamHelper.ToHexString_SomeBytes;
+var
+  actual: string;
+begin
+ GivenBytesStream(fStream, [3, 4, 5, 6, 7]);
+ actual := fStream.ToHexString(2);
+ Assert.AreEqual('03 04',actual);
+end;
+
+procedure TestTStreamHelper.ToHexString_TooMuchBytes;
+var
+  actual: string;
+begin
+ GivenBytesStream(fStream, [101, 102, 103]);
+ actual := fStream.ToHexString(9);
+ Assert.AreEqual('65 66 67',actual);
+end;
+
 
 // -----------------------------------------------------------------------
 // Tests: WriteLine
