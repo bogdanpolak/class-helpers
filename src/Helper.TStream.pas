@@ -38,6 +38,8 @@ type
     /// </summary>
     function AsString: string; overload;
     function AsString(aEncoding: TEncoding): string; overload;
+
+    function ToHexString(aByteCount: integer = 0): string;
     /// <summary>
     ///   Writes a string to the stream using the UTF8 encodeing (by default)
     ///   or any other provided encoding.
@@ -92,6 +94,26 @@ begin
   SetLength(aBytes, Self.Size);
   Self.Read(aBytes, Self.Size);
   Result := aEncoding.GetString(aBytes);
+end;
+
+function TStreamHelper.ToHexString(aByteCount: integer = 0): string;
+var
+  aBytes: TBytes;
+  idx: Integer;
+begin
+  SetLength(aBytes, Self.Size);
+  Self.Position := 0;
+  Self.Read(aBytes[0], Self.Size);
+  if aByteCount<=0 then
+    aByteCount := Length(aBytes)
+  else if aByteCount>Length(aBytes) then
+    aByteCount:=Length(aBytes);
+  Result := '';
+  for idx := 0 to aByteCount-1 do
+    if idx = 0 then
+      Result := IntToHex(aBytes[0], 2)
+    else
+      Result := Result + ' ' + IntToHex(aBytes[idx], 2);
 end;
 
 procedure TStreamHelper.WriteString(const aText: string);
