@@ -1,4 +1,4 @@
-unit Helper.TStream;
+﻿unit Helper.TStream;
 
 interface
 
@@ -11,7 +11,7 @@ type
 
   TStreamHelper = class helper for TStream
   private const
-    Version = '1.6';
+    Version = '1.7';
   private
   public
     /// <summary>

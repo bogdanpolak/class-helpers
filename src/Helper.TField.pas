@@ -1,4 +1,4 @@
-unit Helper.TField;
+﻿unit Helper.TField;
 
 interface
 
@@ -16,7 +16,7 @@ type
 
   TFieldHelper = class helper for TField
   private const
-    Version = '1.6';
+    Version = '1.7';
   private
     procedure AssertIsBlobField;
     procedure AssertNotNull;

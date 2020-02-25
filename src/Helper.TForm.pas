@@ -1,4 +1,4 @@
-unit Helper.TForm;
+﻿unit Helper.TForm;
 
 interface
 
@@ -21,7 +21,7 @@ type
 
   TFormHelper = class helper for TForm
   private const
-    Version = '1.6';
+    Version = '1.7';
   private
     class var fTimers: TArray<TTimerRecord>;
     class var fTimerCount: integer;

@@ -1,4 +1,4 @@
-unit Helper.TBytes;
+﻿unit Helper.TBytes;
 
 interface
 
@@ -9,7 +9,7 @@ uses
 type
   TBytesHelper = record helper for TBytes
   private const
-    Version = '1.6';
+    Version = '1.7';
   private
   public
     // ---------------------

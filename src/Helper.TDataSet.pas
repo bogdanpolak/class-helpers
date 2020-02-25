@@ -11,7 +11,7 @@ uses
 type
   TDataSetHelper = class helper for TDataSet
   private const
-    Version = '1.6';
+    Version = '1.7';
   public
     /// <summary>
     ///   Iterates through the dataset and it's calling anonymous methods
