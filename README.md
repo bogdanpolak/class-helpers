@@ -50,7 +50,9 @@ From the very beginning (Delphi 2006) till Delphi Berlin / 10.1 version there wa
 | TStringGrid | Filling and configuring String Grid control: loading data, setting columns. clearing |
 | TWinControl | Utility methods for searching child controls by type or by name. Visible for all TWinControl descendants: TForm, TPanel, etc.  |
 
-Helper naming convention is to add suffix `Helper` to the name of the expanded class, what means that class helper for `TDataSet` will has a name `TDataSetHelper`. Each helper is stored in separate file and unit its name is `Helper.<ExpanedClassName>.pas`.
+Helper naming convention is to add suffix `Helper` to the name of the expanded class, what means that class helper for `TDataSet` will has a name `TDataSetHelper`. 
+
+Each helper is stored in a separate file and unit its name is `Helper.<ExpanedClassName>.pas`.
 
 All helper units are stored in the `src` subfolder -  [go to that location](src/).
 
@@ -72,9 +74,9 @@ All helper units are stored in the `src` subfolder -  [go to that location](src/
 
 ## Unit testing
 
-One of the important purposes of using class helpers is to learn how to write unit tests. This repository contains a sample DUnitX test project for the included helpers. I encourage to start analyzing this collection from opening and executing this project. Unit test sets can be easily expanded to provide better (tighter) test coverage. To have better unit testing experience I suggest to install the best TDD Delphi IDE extension: [TestInsight](https://bitbucket.org/sglienke/testinsight/wiki/Home) - very productive platform of working with unit test project (glory to the author! Stefan Glienke).
+One of the important purposes of using class helpers is to learn how to write unit tests. This repository contains a sample DUnitX test project for the included helpers. I encourage to start analyzing this collection from opening and executing this project. Unit test sets can be easily expanded to provide better (tighter) test coverage. To have better unit testing experience I suggest to install the best TDD Delphi IDE extension: **TestInsight** - very productive platform of working with unit test project. Glory to its author - Stefan Glienke!. Link to the TestInsight repo: [go to the Bitbucket site](https://bitbucket.org/sglienke/testinsight/wiki/Home)
 
-Sample unit test can be found in `tests` repository folder. [Jump to this folder ...](https://github.com/bogdanpolak/class-helpers/tree/master/tests)
+Sample unit test can be found in `tests` repository folder - [go to that location](tests/)
 
 Sample test of `TStringGrid` class helper `ColsWidth` method:
 
