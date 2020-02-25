@@ -38,7 +38,12 @@ type
     /// </summary>
     function AsString: string; overload;
     function AsString(aEncoding: TEncoding): string; overload;
-
+    /// <summary>
+    ///   Convert whole bytes from the stream or portion of it into string of
+    ///   a hex values. If parameter "aByteCount" is equal to 0 then method is
+    ///   converting all bytes (be careful with a big streams) otherwise is
+    ///   converting only provided numbers of bytes
+    /// </summary>
     function ToHexString(aByteCount: integer = 0): string;
     /// <summary>
     ///   Writes a string to the stream using the UTF8 encodeing (by default)
