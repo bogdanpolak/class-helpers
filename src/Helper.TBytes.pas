@@ -34,6 +34,7 @@ type
     function GetReverseWord(aIndex: Integer = 0): Word;
     function GetLongWord(aIndex: Integer = 0): LongWord;
     function GetReverseLongWord(aIndex: Integer = 0): LongWord;
+    function SubBytes(aIndex, aLength: Integer): TBytes;
     // ---------------------
     // Utils
     function CreatesStream: TMemoryStream;
@@ -160,6 +161,14 @@ begin
   Result := (LongWord(Self[aIndex]) shl 24) or
     (LongWord(Self[aIndex + 1]) shl 16) or (LongWord(Self[aIndex + 2]) shl 8) or
     LongWord(Self[aIndex + 3]);
+end;
+
+function TBytesHelper.SubBytes(aIndex: Integer;  aLength: Integer): TBytes;
+begin
+  if aIndex + aLength > Length(Self) then
+    aLength := Length(Self) - aIndex;
+  SetLength(Result, aLength);
+  move(Self[aIndex], Result[0], aLength);
 end;
 
 // -----------------------------------------------------------------------

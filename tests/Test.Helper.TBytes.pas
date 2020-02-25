@@ -40,6 +40,9 @@ type
     procedure GetSectorAsHex;
     procedure GetLongWord;
     procedure GetReverseLongWord;
+    procedure SubBytes_FirstTwoBytes;
+    procedure SubBytes_LastTwoBytes;
+    procedure SubBytes_OutRange;
     // -----
     procedure CreatesStream;
     procedure GenerateBase64Code_ElevnBytes;
@@ -77,19 +80,26 @@ begin
     '9X7+fAq2SmHCzhJYWvYBmzQSEHa+IRoAAAAASUVORK5CYII=');
 end;
 
+function BytesToHexString(const aBytes: TBytes): string;
+var
+  idx: Integer;
+begin
+  Result := '';
+  for idx := 0 to High(aBytes) do
+    if idx = 0 then
+      Result := IntToHex(aBytes[0], 2)
+    else
+      Result := Result + ' ' + IntToHex(aBytes[idx], 2);
+end;
+
 function StreamToHexString(fStream: TStream): string;
 var
   aBytes: TBytes;
-  i: Integer;
 begin
   SetLength(aBytes, fStream.Size);
   fStream.Position := 0;
   fStream.Read(aBytes[0], fStream.Size);
-  for i := 0 to High(aBytes) do
-    if i = 0 then
-      Result := IntToHex(aBytes[0], 2)
-    else
-      Result := Result + ' ' + IntToHex(aBytes[i], 2);
+  Result := BytesToHexString(aBytes);
 end;
 
 // -----------------------------------------------------------------------
@@ -254,6 +264,33 @@ begin
   fBytes := [255, 0, 0, 0, 3, 255];
   actual := fBytes.GetReverseLongWord(1);
   Assert.AreEqual(3, actual);
+end;
+
+procedure TestTBytesHelper.SubBytes_FirstTwoBytes;
+var
+  actual: string;
+begin
+  fBytes := [0, 1, 2, 3, 4, 5, 6];
+  actual := BytesToHexString(fBytes.SubBytes(0, 2));
+  Assert.AreEqual('00 01', actual);
+end;
+
+procedure TestTBytesHelper.SubBytes_LastTwoBytes;
+var
+  actual: string;
+begin
+  fBytes := [0, 1, 2, 3, 4, 5, 6];
+  actual := BytesToHexString(fBytes.SubBytes(5, 2));
+  Assert.AreEqual('05 06', actual);
+end;
+
+procedure TestTBytesHelper.SubBytes_OutRange;
+var
+  actual: string;
+begin
+  fBytes := [0, 1, 2, 3, 4, 5, 6];
+  actual := BytesToHexString(fBytes.SubBytes(6, 2));
+  Assert.AreEqual('06', actual);
 end;
 
 // -----------------------------------------------------------------------
