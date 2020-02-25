@@ -1,13 +1,14 @@
 ﻿# Repository of VCL and RTL Class Helpers
 
 ![ Delphi Support ](https://img.shields.io/badge/Delphi%20Support-%2010%20..%2010.3%20Rio-blue.svg)
-![ version ](https://img.shields.io/badge/version-%201.6-yellow.svg)
+![ version ](https://img.shields.io/badge/version-%201.7-yellow.svg)
+
 
 ## Why use Class Helpers?
 
 ### 1. Safe cleaning technique
 
-The huge amount of VCL (FMX) code can be cleared using class helpers, which are actually an easy refactoring technique with low risk for complex projects. Using this method, teams can start upgrading their legacy projects even without unit tests safety net. Moreover the verification of newly created helpers can be easily done with unit tests. This approach allow to teach developers how to write unit tests in a correct way (learn in practice F.I.R.S.T principles or other). Teams can also easily applay TDD development process (write tests first and then implement functionality) in a fun and non-invasive way.
+The huge amount of VCL (FMX) code can be cleared using class helpers, which are actually an easy refactoring technique with low risk for complex projects. Using this method, teams can start upgrading their legacy projects even without unit tests safety net. Moreover the verification of newly created helpers can be easily done with unit tests. This approach allow to teach developers how to write unit tests in a correct way (learn in practice F.I.R.S.T principles or other). Teams can also easily apply TDD development process (write tests first and then implement functionality) in a fun and non-invasive way.
 
 Sometimes class helpers could be also dangerous if they are used improperly. For this reason it is required to apply a little more disciplined development and delivery process, suggestions connected with that area are covered in the following sections. 
 
@@ -32,26 +33,50 @@ mysqlDataSet.StoreRows_ThenUpdateData_StopAfterFirstError(rsChanged);
 
 From the very beginning (Delphi 2006) till Delphi Berlin / 10.1 version there was quite popular class helper bug, which allows to access private fields and private methods using helpers. Because of this bug many developers identified this interesting language extension with such hack. The misuse of class helpers has caused that value of this super powerful solution is underestimated. 
 
+
 ## Helpers in this repo
 
-| Helper name | Expanded class | Information |
-| --- | --- | --- |
-| TApplicationHelper | TApplication | concept solution for storing general reusable functions  |
-| TDataSetHelper | TDataSet | extension function for data manipulation and storage |
-| TDateTimeHelper | TDateTime | sample record helper  |
-| TDBGridHelper | TDBGrid | expanding classic DBGrid |
-| TJSONObjectHelper | TJSONObject | function manipulating on JSON memory DOM |
-| TStringGridHelper | TStringGrid | more advanced features added to StringGrid control |
-| TWinControlHelper | TWinControl | utility methods available for all TWinControl descendants (TForm, TPanel, etc.)  |
+| Expanded class | Helper methods description |
+| --- | --- |
+| TApplication | Sample helper containing experimental method `InDeveloperMode`. |
+| TByte | Allows to manipulates arrays of bytes: size, load & save, getter & setters |
+| TDataSet | Methods like: `WhileNotEof` - iterating through dataset or LoadData - loads data into the object list |
+| TDateTime | Methods that allow easily manipulate date and time (from unit: System.DateUtils) |
+| TDBGrid | Methods manipulating DBGrid columns, like: AutoSizeColumns - automatically arranging with of each column |
+| TField | Allows to load Base64 data into Blob Field or verifying signature of the stored data |
+| TJSONObject | Methods reading data or storing in the JSON DOM structure, like IsValidIsoDate(fieldName) |
+| TForm | Methods managing timers: SetInterval and SetTimeout |
+| TStream | Methods which facilitate reading and writing data to streams |
+| TStringGrid | Filling and configuring String Grid control: loading data, setting columns. clearing |
+| TWinControl | Utility methods for searching child controls by type or by name. Visible for all TWinControl descendants: TForm, TPanel, etc.  |
 
-[Full helper catalog](https://github.com/bogdanpolak/class-helpers/tree/master/src)
+Helper naming convention is to add suffix `Helper` to the name of the expanded class, what means that class helper for `TDataSet` will has a name `TDataSetHelper`. 
 
+Each helper is stored in a separate file and unit its name is `Helper.<ExpanedClassName>.pas`.
+
+All helper units are stored in the `src` subfolder -  [go to that location](src/).
+
+
+## Helpers Sample Projects
+
+1) Class Helper Playground - sample project
+   - Location: `examples/01-playground/` - [go to that location](examples/01-playground/)
+   - Project name: `HelperPlayground.dpr`
+   - Contains several frames and each of them is demonstrating one or two helpers
+   - Demo frames:
+      - **Frame.StringGridHelper** - `Helper.TStringGrid.pas`
+      - **Frame.DataSetHelper** - `Helper.TDataSet.pas` and `Helper.TDBGrid.pas`
+      - **Frame.ByteAndStreamHelpers** - `Helper.TBytes.pas` and `Helper.TStream.pas`
+1) Form Helper Demo
+   - Location: `examples/02-formhelper/` - [go to that location](examples/02-formhelper/)
+   - Project name: `HelpersMiniDemo.dpr`
+   - Simple project presenting `Helper.TForm.pas` and usage of timer a helper methods
 
 ## Unit testing
 
-One of the important purposes of using class helpers is to learn how to write unit tests. This repository contains a sample DUnitX test project for the included helpers. I encourage to start analyzing this collection from opening and executing this project. Unit test sets can be easily expanded to provide better (tighter) test coverage. To have better unit testing experience I suggest to install the best TDD Delphi IDE extension: [TestInsight](https://bitbucket.org/sglienke/testinsight/wiki/Home) - very productive platform of working with unit test project (glory to the author! Stefan Glienke).
+One of the important purposes of using class helpers is to learn how to write unit tests. This repository contains a sample DUnitX test project for the included helpers. I encourage to start analyzing this collection from opening and executing this project. Unit test sets can be easily expanded to provide better (tighter) test coverage. To have better unit testing experience I suggest to install the best TDD Delphi IDE extension: **TestInsight** - very productive platform of working with unit test project. Glory to its author - Stefan Glienke!. Link to the TestInsight repo: [go to the Bitbucket site](https://bitbucket.org/sglienke/testinsight/wiki/Home)
 
-Sample unit test can be found in `tests` repository folder. [Jump to this folder ...](https://github.com/bogdanpolak/class-helpers/tree/master/tests)
+Sample unit test can be found in `tests` repository folder - [go to that location](tests/)
 
 Sample test of `TStringGrid` class helper `ColsWidth` method:
 
@@ -65,6 +90,7 @@ begin
 end;
 ```
 
+
 ## Good practices
 
 Class helpers looks really promising in the begging and actually there are great solution, but as you create and use more and more of them, you'll start to notice some obstacles. For this reason, good practices should be adapted from the beginning to help avoid potential problems.
@@ -74,6 +100,7 @@ Class helpers looks really promising in the begging and actually there are great
 1. **Use only when necessary.** Do not declare class helpers for your classes, which can be easily extend using classic OOP methods, such as inheritance, polymorphism and composition. Helpers are really useful for extending the functionality of RTL, VCL or FMX classes. They can also be successfully used to extend third-party components. The added functionality should be domain independent and easy to reuse in various projects.
 1. **Define as close as possible.** The class helper should be defined as close to the used class as possible. The VCL framework has very expanded inheritance tree and in some cases developer can define expanding method for more general class (like TWinControl) or for more specialized one (like TGroupBox). From usage perspective, it is much better to expand specialized classes then general: it could be more difficult to figure out which helper unit has to be included (added to uses section) after coping existing code into a new unit. When helper is defined for the same class which is actually used this is not a problem.
 1. **Define release cycle.** A project with helpers should be treated as an independent product. As a consumer the developer should be aware of helpers version which he is using now and about possible available updates. More information you can find in Maintenance section.
+
 
 ## Helpers maintenance
 
@@ -101,6 +128,7 @@ This GitHub project is live example of such deployment techniques. We are using 
 ![](./doc/resources/kanban-board.png)
 
 Kanban board and planning sessions are suggested techniques to achieve - incremental delivery. Class helpers project can't be delivered too often, because of integration cost (integration class helper repository with final Delphi projects). And from the other side delivery of the new version shouldn't take too long, because all projects should use advantages of new helpers (high reusability).
+
 
 ## The Dark Side of class helpers
 

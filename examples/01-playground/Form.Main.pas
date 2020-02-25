@@ -11,15 +11,17 @@ uses
   Winapi.Windows, Winapi.Messages,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Actions,
   Vcl.ActnList, Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan,
-  Vcl.StdCtrls, Vcl.Grids, Vcl.ComCtrls;
+  Vcl.StdCtrls, Vcl.Grids, Vcl.ComCtrls, Vcl.ExtCtrls;
 
 type
   TFormMain = class(TForm)
     GroupBox1: TGroupBox;
     PageControl1: TPageControl;
+    Timer1: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ButtonCommandClick(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
   private
     fDemoTabSheets: TDictionary<TButton, TTabSheet>;
     fDemoFrames: TDictionary<TButton, TFrame>;
@@ -35,7 +37,8 @@ implementation
 
 uses
   Frame.StringGridHelper,
-  Frame.DataSetHelper;
+  Frame.DataSetHelper,
+  Frame.ByteAndStreamHelpers;
 
 type
   TFrameType = type of TFrame;
@@ -46,12 +49,15 @@ type
   end;
 
 const
-  PlaygroudItems = 2;
-  PlaygroudDefs: array [0 .. PlaygroudItems - 1] of TPlaygroundItem = //.
-    ( //.
-    (caption: 'Helper - TStringGrid'; frameType: TFrameStringGridHelper),
-    (caption: 'Helper - TDataSet && TDBGrid'; frameType: TFrameDataSetHelper)
-    );
+  PlaygroudItems = 3;
+  PlaygroudDefs: array [0 .. PlaygroudItems - 1] of TPlaygroundItem =
+    ((caption: 'TDataSet && TDBGrid'; frameType: TFrameDataSetHelper),
+    (caption: 'TBytes && TStream'; frameType: TBytesStreamHelpersFrame),
+    (caption: 'TStringGrid'; frameType: TFrameStringGridHelper));
+  AutoOpenFrame = 3; // [0 .. Items-1]    other values = do not open
+
+var
+  PlaygroudButtons: array [0 .. PlaygroudItems - 1] of TButton;
 
 function BuildButton(const aCaption: string; const aParent: TWinControl;
   const aOnClick: TNotifyEvent): TButton;
@@ -60,12 +66,12 @@ begin
   with Result do
   begin
     Top := 999;
-    caption := aCaption;
+    caption := '   ' + aCaption + '    ';
     OnClick := aOnClick;
     Parent := aParent;
     Align := alTop;
     Height := 32;
-    AlignWithMargins := True;
+    AlignWithMargins := true;
   end;
 end;
 
@@ -79,9 +85,21 @@ begin
   for i := 0 to PlaygroudItems - 1 do
   begin
     btn := BuildButton(PlaygroudDefs[i].caption, GroupBox1, ButtonCommandClick);
+    PlaygroudButtons[i] := btn;
+    btn.Name := Format('btn%.3d', [i + 1]);
     fDemoTabSheets.Add(btn, nil);
     fDemoFrames.Add(btn, PlaygroudDefs[i].frameType.Create(Self));
   end;
+end;
+
+procedure TFormMain.Timer1Timer(Sender: TObject);
+var
+  i: Integer;
+begin
+  Timer1.Enabled := false;
+  for i := 0 to PlaygroudItems - 1 do
+    if i=AutoOpenFrame then
+      PlaygroudButtons[i].Click;
 end;
 
 procedure TFormMain.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -106,11 +124,10 @@ begin
     tabsheet.PageControl := PageControl1;
     fDemoTabSheets.Items[btn] := tabsheet;
     Frame.Parent := tabsheet;
-    Frame.Visible := True;
+    Frame.Visible := true;
     Frame.Align := alClient;
-  end
-  else
-    PageControl1.ActivePage := fDemoTabSheets[btn];
+  end;
+  PageControl1.ActivePage := fDemoTabSheets[btn];
 end;
 
 end.

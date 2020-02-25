@@ -19,19 +19,27 @@ object FormMain: TFormMain
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 174
+    Width = 150
     Height = 376
     Align = alLeft
-    Caption = 'GroupBox1'
+    Caption = 'Helpers:'
     TabOrder = 0
   end
   object PageControl1: TPageControl
     AlignWithMargins = True
-    Left = 183
+    Left = 159
     Top = 3
-    Width = 572
+    Width = 596
     Height = 376
     Align = alClient
     TabOrder = 1
+    ExplicitLeft = 183
+    ExplicitWidth = 572
+  end
+  object Timer1: TTimer
+    Interval = 1
+    OnTimer = Timer1Timer
+    Left = 376
+    Top = 200
   end
 end

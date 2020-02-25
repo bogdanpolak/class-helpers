@@ -24,7 +24,13 @@ uses
   Test.Helper.TDataSet in 'Test.Helper.TDataSet.pas',
   Test.Helper.TJSONObject in 'Test.Helper.TJSONObject.pas',
   Test.Helper.TDBGrid in 'Test.Helper.TDBGrid.pas',
-  Attribute.MappedToField in '..\src\Attribute.MappedToField.pas';
+  Attribute.MappedToField in '..\src\Attribute.MappedToField.pas',
+  Helper.TBytes in '..\src\Helper.TBytes.pas',
+  Test.Helper.TBytes in 'Test.Helper.TBytes.pas',
+  Test.Helper.TStream in 'Test.Helper.TStream.pas',
+  Helper.TStream in '..\src\Helper.TStream.pas',
+  Test.Helper.TField in 'Test.Helper.TField.pas',
+  Helper.TField in '..\src\Helper.TField.pas';
 
 var
   runner : ITestRunner;
