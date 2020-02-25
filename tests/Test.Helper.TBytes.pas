@@ -44,6 +44,12 @@ type
     procedure SubBytes_LastTwoBytes;
     procedure SubBytes_OutRange;
     // -----
+    procedure IsEqual_True_OneItem;
+    procedure IsEqual_True_ThreeItem;
+    procedure IsEqual_False_OneItemWithEmpty;
+    procedure IsEqual_False_OneDiffrent;
+    procedure IsEqual_False_ThreeItemAndOneDiffrent;
+    // -----
     procedure CreatesStream;
     procedure GenerateBase64Code_ElevnBytes;
     procedure GenerateBase64Code_MoreLines;
@@ -291,6 +297,40 @@ begin
   fBytes := [0, 1, 2, 3, 4, 5, 6];
   actual := BytesToHexString(fBytes.SubBytes(6, 2));
   Assert.AreEqual('06', actual);
+end;
+
+// -----------------------------------------------------------------------
+// Tests TBytes - Comparers
+// -----------------------------------------------------------------------
+
+procedure TestTBytesHelper.IsEqual_True_OneItem;
+begin
+  fBytes := [101];
+  Assert.IsTrue (fBytes.IsEqual([101]),'IsEqual expected True');
+end;
+
+procedure TestTBytesHelper.IsEqual_True_ThreeItem;
+begin
+  fBytes := [101, 102, 103];
+  Assert.IsTrue (fBytes.IsEqual([101, 102, 103]),'IsEqual expected True');
+end;
+
+procedure TestTBytesHelper.IsEqual_False_OneItemWithEmpty;
+begin
+  fBytes := [101];
+  Assert.IsFalse (fBytes.IsEqual([]),'IsEqual expected False');
+end;
+
+procedure TestTBytesHelper.IsEqual_False_OneDiffrent;
+begin
+  fBytes := [0];
+  Assert.IsFalse (fBytes.IsEqual([255]),'IsEqual expected False');
+end;
+
+procedure TestTBytesHelper.IsEqual_False_ThreeItemAndOneDiffrent;
+begin
+  fBytes := [101, 0, 102];
+  Assert.IsFalse (fBytes.IsEqual([101, 102, 103]),'IsEqual expected False');
 end;
 
 // -----------------------------------------------------------------------

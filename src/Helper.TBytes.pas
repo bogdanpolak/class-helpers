@@ -36,6 +36,9 @@ type
     function GetReverseLongWord(aIndex: Integer = 0): LongWord;
     function SubBytes(aIndex, aLength: Integer): TBytes;
     // ---------------------
+    // Comparers
+    function IsEqual(const aBytes: TBytes): boolean;
+    // ---------------------
     // Utils
     function CreatesStream: TMemoryStream;
     function GenerateBase64Code(aLineLength: Integer = 68): string;
@@ -169,6 +172,24 @@ begin
     aLength := Length(Self) - aIndex;
   SetLength(Result, aLength);
   move(Self[aIndex], Result[0], aLength);
+end;
+
+// -----------------------------------------------------------------------
+// Comparers
+// -----------------------------------------------------------------------
+
+function TBytesHelper.IsEqual(const aBytes: TBytes): boolean;
+var
+  i: Integer;
+begin
+  if Length(Self) <> Length(aBytes) then
+    Exit(False);
+  for i := 0 to High(Self) do
+  begin
+    if Self[i] <> aBytes[i] then
+      Exit(False);
+  end;
+  Result := True;
 end;
 
 // -----------------------------------------------------------------------
