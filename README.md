@@ -1,11 +1,5 @@
 ﻿# Repository of VCL and RTL Class Helpers
 
--------------------------------------------------------------------------
-PLAN:
-
-- Moved demos to : examples/01-playground (add section)
--------------------------------------------------------------------------
-
 ![ Delphi Support ](https://img.shields.io/badge/Delphi%20Support-%2010%20..%2010.3%20Rio-blue.svg)
 ![ version ](https://img.shields.io/badge/version-%201.6-yellow.svg)
 
@@ -58,8 +52,23 @@ From the very beginning (Delphi 2006) till Delphi Berlin / 10.1 version there wa
 
 Helper naming convention is to add suffix `Helper` to the name of the expanded class, what means that class helper for `TDataSet` will has a name `TDataSetHelper`. Each helper is stored in separate file and unit its name is `Helper.<ExpanedClassName>.pas`.
 
-[Full helper catalog](https://github.com/bogdanpolak/class-helpers/tree/master/src)
+All helper units are stored in the `src` subfolder -  [go to that location](src/).
 
+
+## Helpers Sample Projects
+
+1) Class Helper Playground - sample project
+   - Location: `examples/01-playground/` - [go to that location](examples/01-playground/)
+   - Project name: `HelperPlayground.dpr`
+   - Contains several frames and each of them is demonstrating one or two helpers
+   - Demo frames:
+      - **Frame.StringGridHelper** - `Helper.TStringGrid.pas`
+      - **Frame.DataSetHelper** - `Helper.TDataSet.pas` and `Helper.TDBGrid.pas`
+      - **Frame.ByteAndStreamHelpers** - `Helper.TBytes.pas` and `Helper.TStream.pas`
+1) Form Helper Demo
+   - Location: `examples/02-formhelper/` - [go to that location](examples/02-formhelper/)
+   - Project name: `HelpersMiniDemo.dpr`
+   - Simple project presenting `Helper.TForm.pas` and usage of timer a helper methods
 
 ## Unit testing
 
