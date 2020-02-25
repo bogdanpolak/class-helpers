@@ -34,8 +34,14 @@ type
     function GetReverseWord(aIndex: Integer = 0): Word;
     function GetLongWord(aIndex: Integer = 0): LongWord;
     function GetReverseLongWord(aIndex: Integer = 0): LongWord;
+    function SubBytes(aIndex, aLength: Integer): TBytes;
     // ---------------------
-    // Calc Checksums
+    // Comparers
+    function IsEqual(const aBytes: TBytes): boolean;
+    // ---------------------
+    // Utils
+    function CreatesStream: TMemoryStream;
+    function GenerateBase64Code(aLineLength: Integer = 68): string;
     function GetSectorCRC32(aIndex: Integer; aLength: Integer): LongWord;
   end;
 
@@ -160,9 +166,68 @@ begin
     LongWord(Self[aIndex + 3]);
 end;
 
+function TBytesHelper.SubBytes(aIndex: Integer;  aLength: Integer): TBytes;
+begin
+  if aIndex + aLength > Length(Self) then
+    aLength := Length(Self) - aIndex;
+  SetLength(Result, aLength);
+  move(Self[aIndex], Result[0], aLength);
+end;
+
 // -----------------------------------------------------------------------
-// Calc Checksums
+// Comparers
 // -----------------------------------------------------------------------
+
+function TBytesHelper.IsEqual(const aBytes: TBytes): boolean;
+var
+  i: Integer;
+begin
+  if Length(Self) <> Length(aBytes) then
+    Exit(False);
+  for i := 0 to High(Self) do
+  begin
+    if Self[i] <> aBytes[i] then
+      Exit(False);
+  end;
+  Result := True;
+end;
+
+// -----------------------------------------------------------------------
+// Utils:
+//  * CreatesStream - Creates TMemoryStream and files it with bytes
+//  * GenerateBase64Code - Fake code generator
+//  * GetSectorCRC32 - Calc Checksums
+// -----------------------------------------------------------------------
+
+function TBytesHelper.CreatesStream: TMemoryStream;
+var
+  aPos: Int64;
+begin
+  Result := TMemoryStream.Create;
+  Result.Write(Self[0], Length(Self));
+  Result.Position := 0;
+end;
+
+function TBytesHelper.GenerateBase64Code(aLineLength: Integer = 68): string;
+var
+  sBase64: string;
+  sDecodedLines: string;
+  sLine: string;
+begin
+  sBase64 := TNetEncoding.Base64.EncodeBytesToString(Self);
+  sBase64 := StringReplace(sBase64, sLineBreak, '', [rfReplaceAll]);
+  sDecodedLines := '';
+  while Length(sBase64) > 0 do
+  begin
+    sLine := QuotedStr(sBase64.Substring(0, aLineLength));
+    sBase64 := sBase64.Remove(0, aLineLength);
+    if sDecodedLines = '' then
+      sDecodedLines := sLine
+    else
+      sDecodedLines := sDecodedLines + ' +' + sLineBreak + sLine;
+  end;
+  Result := 'aBytes.InitialiseFromBase64String(' + sDecodedLines + ');';
+end;
 
 function TBytesHelper.GetSectorCRC32(aIndex: Integer; aLength: Integer)
   : LongWord;
