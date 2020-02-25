@@ -35,7 +35,8 @@ type
     function GetLongWord(aIndex: Integer = 0): LongWord;
     function GetReverseLongWord(aIndex: Integer = 0): LongWord;
     // ---------------------
-    // Calc Checksums
+    // Utils
+    function GenerateBase64Code(aLineLength: Integer = 68): string;
     function GetSectorCRC32(aIndex: Integer; aLength: Integer): LongWord;
   end;
 
@@ -161,8 +162,31 @@ begin
 end;
 
 // -----------------------------------------------------------------------
-// Calc Checksums
+// Utils:
+//  * GenerateBase64Code - Fake code generator
+//  * GetSectorCRC32 - Calc Checksums
 // -----------------------------------------------------------------------
+
+function TBytesHelper.GenerateBase64Code(aLineLength: Integer = 68): string;
+var
+  sBase64: string;
+  sDecodedLines: string;
+  sLine: string;
+begin
+  sBase64 := TNetEncoding.Base64.EncodeBytesToString(Self);
+  sBase64 := StringReplace(sBase64, sLineBreak, '', [rfReplaceAll]);
+  sDecodedLines := '';
+  while Length(sBase64) > 0 do
+  begin
+    sLine := QuotedStr(sBase64.Substring(0, aLineLength));
+    sBase64 := sBase64.Remove(0, aLineLength);
+    if sDecodedLines = '' then
+      sDecodedLines := sLine
+    else
+      sDecodedLines := sDecodedLines + ' +' + sLineBreak + sLine;
+  end;
+  Result := 'aBytes.InitialiseFromBase64String(' + sDecodedLines + ');';
+end;
 
 function TBytesHelper.GetSectorCRC32(aIndex: Integer; aLength: Integer)
   : LongWord;

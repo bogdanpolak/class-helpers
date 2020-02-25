@@ -41,6 +41,9 @@ type
     procedure GetLongWord;
     procedure GetReverseLongWord;
     // -----
+    procedure GenerateBase64Code_ElevnBytes;
+    procedure GenerateBase64Code_MoreLines;
+    procedure GenerateBase64Code_NarrowLines;
     procedure GetSectorCRC32;
   end;
 
@@ -238,21 +241,57 @@ begin
 end;
 
 // -----------------------------------------------------------------------
-// Tests TBytes - Calc Checksums
+// Tests TBytes - Utils
 // -----------------------------------------------------------------------
+
+procedure TestTBytesHelper.GenerateBase64Code_ElevnBytes;
+var
+  actual: string;
+begin
+  fBytes := [0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57, 0, 0];
+  actual := fBytes.GenerateBase64Code;
+  Assert.AreEqual
+    ('aBytes.InitialiseFromBase64String(''AAAxMjM0NTY3ODkAAA=='');', actual);
+end;
+
+procedure TestTBytesHelper.GenerateBase64Code_MoreLines;
+var
+  actual: string;
+begin
+  fBytes := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    20, 11, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
+    39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+    58, 59, 60];
+  actual := fBytes.GenerateBase64Code;
+  Assert.AreEqual
+    ('aBytes.InitialiseFromBase64String(''AQIDBAUGBwgJCgsMDQ4PEBESExQLFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIz'' +'
+    + sLineBreak + '''NDU2Nzg5Ojs8'');', actual);
+end;
+
+procedure TestTBytesHelper.GenerateBase64Code_NarrowLines;
+var
+  actual: string;
+begin
+  fBytes := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    20, 11, 22, 23, 24, 25, 26, 27, 28, 29, 30];
+  actual := fBytes.GenerateBase64Code(10);
+  Assert.AreEqual(
+    {} 'aBytes.InitialiseFromBase64String(''AQIDBAUGBw'' +' + sLineBreak +
+    {} '''gJCgsMDQ4P'' +' + sLineBreak +
+    {} '''EBESExQLFh'' +' + sLineBreak +
+    {} '''cYGRobHB0e'');', actual);
+end;
 
 procedure TestTBytesHelper.GetSectorCRC32;
 var
   actual: Cardinal;
   expectedCRC32: Cardinal;
 begin
-  // 123456789
   fBytes := [0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57, 0, 0];
   expectedCRC32 := $CBF43926;
-  actual := fBytes.GetSectorCRC32(2,9);
+  actual := fBytes.GetSectorCRC32(2, 9);
   Assert.AreEqual(expectedCRC32, actual);
 end;
-
 
 initialization
 
