@@ -3,7 +3,7 @@ program HelpersMiniDemo;
 uses
   Vcl.Forms,
   Form.Main in 'Form.Main.pas' {Form1},
-  Helper.TForm in '..\..\src\Helper.TForm.pas';
+  Helper.TForm in '..\..\src\vcl\Helper.TForm.pas';
 
 {$R *.res}
 
