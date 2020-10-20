@@ -2,6 +2,7 @@ rmdir /Q /S __history
 rmdir /Q /S Win32
 rmdir /Q /S .svn
 rmdir /Q /S __recovery
+rmdir /Q /S bin
 
 del *.identcache
 del *.dproj.local
