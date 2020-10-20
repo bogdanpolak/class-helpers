@@ -200,8 +200,6 @@ end;
 // -----------------------------------------------------------------------
 
 function TBytesHelper.CreatesStream: TMemoryStream;
-var
-  aPos: Int64;
 begin
   Result := TMemoryStream.Create;
   Result.Write(Self[0], Length(Self));
