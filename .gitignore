@@ -103,3 +103,5 @@ TestInsightSettings.ini
 *.groupproj
 .vscode
 src-concept-helpers
+*Icon.ico
+dunitx-results.xml
