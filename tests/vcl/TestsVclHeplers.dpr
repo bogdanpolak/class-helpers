@@ -13,6 +13,8 @@ uses
   DUnitX.TestFramework,
   Helper.TDBGrid in '..\..\src\vcl\Helper.TDBGrid.pas',
   Helper.TWinControl in '..\..\src\vcl\Helper.TWinControl.pas',
+  Helper.TStringGrid in '..\..\src\vcl\Helper.TStringGrid.pas',
+  Test.Helper.TStringGrid in 'Test.Helper.TStringGrid.pas',
   Test.Helper.TDBGrid in 'Test.Helper.TDBGrid.pas',
   Test.Helper.TWinControl in 'Test.Helper.TWinControl.pas';
 
