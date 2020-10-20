@@ -1,4 +1,4 @@
-program TestsHeplers;
+program TestsVclHeplers;
 
 {$IFNDEF TESTINSIGHT}
 {$APPTYPE CONSOLE}
@@ -11,21 +11,6 @@ uses
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
-  Attribute.MappedToField in '..\..\src\rtl\Attribute.MappedToField.pas',
-  Helper.TDataSet in '..\..\src\rtl\Helper.TDataSet.pas',
-  Helper.TDateTime in '..\..\src\rtl\Helper.TDateTime.pas',
-  Helper.TJSONObject in '..\..\src\rtl\Helper.TJSONObject.pas',
-  Helper.TStringGrid in '..\..\src\rtl\Helper.TStringGrid.pas',
-  Helper.TBytes in '..\..\src\rtl\Helper.TBytes.pas',
-  Helper.TStream in '..\..\src\rtl\Helper.TStream.pas',
-  Helper.TField in '..\..\src\rtl\Helper.TField.pas',
-  Test.Helper.TDateTime in 'Test.Helper.TDateTime.pas',
-  Test.Helper.TStringGrid in 'Test.Helper.TStringGrid.pas',
-  Test.Helper.TDataSet in 'Test.Helper.TDataSet.pas',
-  Test.Helper.TJSONObject in 'Test.Helper.TJSONObject.pas',
-  Test.Helper.TBytes in 'Test.Helper.TBytes.pas',
-  Test.Helper.TStream in 'Test.Helper.TStream.pas',
-  Test.Helper.TField in 'Test.Helper.TField.pas',
   Helper.TDBGrid in '..\..\src\vcl\Helper.TDBGrid.pas',
   Helper.TWinControl in '..\..\src\vcl\Helper.TWinControl.pas',
   Test.Helper.TDBGrid in 'Test.Helper.TDBGrid.pas',
