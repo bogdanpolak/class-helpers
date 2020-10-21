@@ -29,6 +29,7 @@ type
     procedure CheckExistingConnectionDefinitions;
     procedure WithConnectionDef_SQLite_Demo;
     procedure GetTableNamesAsArray;
+    procedure GetFieldNamesAsArray;
   end;
 
 implementation
@@ -103,6 +104,21 @@ begin
     'Expected "Suppliers" table on the list');
   Assert.IsTrue(IsItemOnTheArray('Suppliers', tables),
     'Expected "Suppliers" table on the list');
+end;
+
+procedure TestTFDConnectionHelper.GetFieldNamesAsArray;
+var
+  connection: TFDConnection;
+  fields: TArray<String>;
+  fieldsAsString: string;
+begin
+  connection := TFDConnection.Create(fOwner).WithConnectionDef('SQLite_Demo');
+  connection.Open();
+  fields := connection.GetFieldNamesAsArray('Products');
+  fieldsAsString := String.Join(', ', fields);
+  Assert.AreEqual('ProductID, ProductName, SupplierID, CategoryID, ' +
+    'QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ' +
+    'ReorderLevel, Discontinued', fieldsAsString);
 end;
 
 initialization
