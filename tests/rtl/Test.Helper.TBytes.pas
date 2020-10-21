@@ -55,9 +55,16 @@ type
     procedure GenerateBase64Code_MoreLines;
     procedure GenerateBase64Code_NarrowLines;
     procedure GetSectorCRC32;
+    // -----
+    procedure DecompressFromStream;
+    procedure CompressToStream;
+    procedure CompressAndDecompress;
   end;
 
 implementation
+
+uses
+  System.NetEncoding;
 
 // -----------------------------------------------------------------------
 // Uitls
@@ -396,6 +403,111 @@ begin
   expectedCRC32 := $CBF43926;
   actual := fBytes.GetSectorCRC32(2, 9);
   Assert.AreEqual(expectedCRC32, actual);
+end;
+
+// -----------------------------------------------------------------------
+// Tests TBytes - ZLib Compression and decompression
+// -----------------------------------------------------------------------
+
+const
+  CompressedLorem =
+    'eJxNkFFuxDAIRK8yB4hyh6r9qVT1DsRhs0g2OAbfvySrSvuDBGKGx/zY4AbpPht2qzbg' +
+    'EqDGsaCYOpfgmAO0Sxcvoge4Sqy/s1Z6bZyTUjFLpPi2WKCmkNZ57MKBRnOIp47lwbpn' +
+    'HyG+4luR1mn7ur+AD/YgxzlzNp6mZfobT7cRBPlXrfis5A7qwRoIKhICtyLm50xiJKgN' +
+    'QpZzXisJdCHPTSgRPQYt90y0cA9zPKWxElt6f7AyKXY5VNwl06EuW/JU2XgY8q/HyDgk' +
+    'c1jxZcoFs8aQwsmcmeYzcSPHRZFcO1X29Q9c3olf';
+  LoremText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' +
+    'Nulla consequat auctor dolor, non imperdiet mauris eleifend mattis. ' +
+    'In turpis ipsum, egestas quis rhoncus sit amet, porta in turpis. ' +
+    'Class aptent taciti sociosqu ad litora torquent per conubia nostra, ' +
+    'per inceptos himenaeos. Aenean dignissim dapibus libero et fringilla. ' +
+    'Donec ultrices sem eget porttitor sodales.';
+
+procedure LoadStreamFromBase64(stream: TStream; const aBase64String: string);
+var
+  data: TArray<byte>;
+begin
+  data := TNetEncoding.Base64.DecodeStringToBytes(aBase64String);
+  data.SaveToStream(stream);
+end;
+
+function StringAsUtf8Bytes(const text: String): TArray<byte>;
+var
+  ss: TStringStream;
+begin
+  ss := TStringStream.Create(text, TEncoding.UTF8);
+  Result.LoadFromStream(ss);
+end;
+
+function BytesAsUtf8String(const aBytes: TArray<byte>): String;
+var
+  ss: TStringStream;
+begin
+  ss := TStringStream.Create('', TEncoding.UTF8);
+  aBytes.SaveToStream(ss);
+  Result := ss.DataString;
+end;
+
+function GetFirstSentence(const s: String): String;
+var
+  i: Integer;
+begin
+  i := s.IndexOf('.');
+  if i >= 0 then
+    Result := s.Substring(0, i)
+  else
+    Result := s;
+end;
+
+procedure TestTBytesHelper.DecompressFromStream;
+var
+  ms: TMemoryStream;
+  actual: string;
+  expectedSentence: string;
+  actualSentence: string;
+begin
+  ms := TMemoryStream.Create;
+  LoadStreamFromBase64(ms, CompressedLorem);
+  ms.Position := 0;
+
+  fBytes.DecompressFromStream(ms);
+
+  actual := BytesAsUtf8String(fBytes);
+  Assert.AreEqual(LoremText.Length, actual.Length);
+  expectedSentence := GetFirstSentence(LoremText);
+  actualSentence := GetFirstSentence(LoremText);
+  Assert.AreEqual(expectedSentence, actualSentence);
+  ms.Free;
+end;
+
+procedure TestTBytesHelper.CompressToStream;
+var
+  ms: TMemoryStream;
+begin
+  ms := TMemoryStream.Create;
+  fBytes := StringAsUtf8Bytes(LoremText);
+  fBytes.CompressToStream(ms);
+  Assert.IsTrue(ms.Size > 0,
+    'Expected data in compressed stream, but acutual stream is empty');
+  Assert.IsTrue(ms.Size < LoremText.Length,
+    'Expected compressed stream to be smaller than original text');
+  ms.Free;
+end;
+
+procedure TestTBytesHelper.CompressAndDecompress;
+var
+  ms: TMemoryStream;
+  aBytes2: TArray<byte>;
+  actual: string;
+begin
+  ms := TMemoryStream.Create;
+  fBytes := StringAsUtf8Bytes(LoremText);
+  fBytes.CompressToStream(ms);
+  ms.Position := 0;
+  aBytes2.DecompressFromStream(ms);
+  actual := BytesAsUtf8String(aBytes2);
+  Assert.AreEqual(LoremText, actual);
+  ms.Free;
 end;
 
 initialization
