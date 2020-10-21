@@ -7,6 +7,7 @@ uses
   System.Classes,
   System.SysUtils,
   System.IOUtils,
+  FireDAC.Comp.UI,
 
   Helper.TFDConnection;
 
@@ -18,6 +19,7 @@ type
   TestTFDConnectionHelper = class(TObject)
   private
     fOwner: TComponent;
+    fWaitCursor: TFDGUIxWaitCursor;
   public
     [Setup]
     procedure Setup;
@@ -26,6 +28,7 @@ type
   published
     procedure CheckExistingConnectionDefinitions;
     procedure WithConnectionDef_SQLite_Demo;
+    procedure GetTableNamesAsArray;
   end;
 
 implementation
@@ -37,11 +40,17 @@ uses
   FireDAC.Phys,
   FireDAC.Phys.SQLite,
   FireDAC.Phys.SQLiteDef,
+  FireDAC.Stan.Async,
+  FireDAC.ConsoleUI.Wait,
+  FireDAC.UI.Intf,
   FireDAC.Comp.Client;
 
 procedure TestTFDConnectionHelper.Setup;
 begin
   fOwner := TComponent.Create(nil);
+  fWaitCursor := TFDGUIxWaitCursor.Create(fOwner);
+  fWaitCursor.Provider := 'Console';
+  fWaitCursor.ScreenCursor := gcrNone;
 end;
 
 procedure TestTFDConnectionHelper.TearDown;
@@ -67,6 +76,33 @@ begin
   connection.Open();
   Assert.IsTrue(connection.Connected,
     'Not able to connect to SQLite database using "SQLite_Demo" definition');
+end;
+
+function IsItemOnTheArray(const item: String;
+  const arr: TArray<string>): boolean;
+var
+  i: Integer;
+begin
+  for i := 0 to High(arr) do
+    if arr[i] = item then
+      Exit(True);
+  Exit(False);
+end;
+
+procedure TestTFDConnectionHelper.GetTableNamesAsArray;
+var
+  connection: TFDConnection;
+  tables: TArray<String>;
+begin
+  connection := TFDConnection.Create(fOwner).WithConnectionDef('SQLite_Demo');
+  connection.Open();
+  tables := connection.GetTableNamesAsArray();
+  Assert.IsTrue(IsItemOnTheArray('Employees', tables),
+    'Expected "Employees" table on the list');
+  Assert.IsTrue(IsItemOnTheArray('Products', tables),
+    'Expected "Suppliers" table on the list');
+  Assert.IsTrue(IsItemOnTheArray('Suppliers', tables),
+    'Expected "Suppliers" table on the list');
 end;
 
 initialization
