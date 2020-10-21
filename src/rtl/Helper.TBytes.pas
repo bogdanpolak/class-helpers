@@ -36,20 +36,25 @@ type
     function GetReverseLongWord(aIndex: Integer = 0): LongWord;
     function SubBytes(aIndex, aLength: Integer): TBytes;
     // ---------------------
-    // Comparers
+    // Compare
     function IsEqual(const aBytes: TBytes): boolean;
     // ---------------------
     // Utils
     function CreatesStream: TMemoryStream;
     function GenerateBase64Code(aLineLength: Integer = 68): string;
     function GetSectorCRC32(aIndex: Integer; aLength: Integer): LongWord;
+    // ---------------------
+    // Compress
+    procedure DecompressFromStream(aComressedStream: TStream);
+    procedure CompressToStream(aStream: TStream);
   end;
 
 implementation
 
 uses
   System.NetEncoding,
-  System.Math;
+  System.Math,
+  System.ZLib;
 
 // -----------------------------------------------------------------------
 // Size
@@ -276,6 +281,47 @@ begin
     Result := (Result shr 8) xor
     { } crc32tab[Self[LongWord(aIndex) + i] xor byte(Result and $000000FF)];
   Result := not Result;
+end;
+
+// ---------------------
+// Compress
+procedure TBytesHelper.DecompressFromStream(aComressedStream: TStream);
+var
+  decompressionStream: TZDecompressionStream;
+  ms: TMemoryStream;
+begin
+  decompressionStream := TZDecompressionStream.Create(aComressedStream);
+  try
+    ms := TMemoryStream.Create;
+    try
+      ms.CopyFrom(decompressionStream, 0);
+      self.LoadFromStream(ms);
+    finally
+      ms.Free;
+    end;
+  finally
+    decompressionStream.Free;
+  end;
+end;
+
+procedure TBytesHelper.CompressToStream(aStream: TStream);
+var
+  ms: TMemoryStream;
+  compressionStream: TZCompressionStream;
+begin
+  ms := TMemoryStream.Create;
+  try
+    self.SaveToStream(ms);
+    ms.Position := 0;
+    compressionStream := TZCompressionStream.Create(aStream);
+    try
+      compressionStream.CopyFrom(ms, 0);
+    finally
+      compressionStream.Free;
+    end;
+  finally
+    ms.Free;
+  end;
 end;
 
 end.
