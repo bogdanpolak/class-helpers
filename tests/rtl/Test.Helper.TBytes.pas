@@ -313,31 +313,31 @@ end;
 procedure TestTBytesHelper.IsEqual_True_OneItem;
 begin
   fBytes := [101];
-  Assert.IsTrue (fBytes.IsEqual([101]),'IsEqual expected True');
+  Assert.IsTrue(fBytes.IsEqual([101]), 'IsEqual expected True');
 end;
 
 procedure TestTBytesHelper.IsEqual_True_ThreeItem;
 begin
   fBytes := [101, 102, 103];
-  Assert.IsTrue (fBytes.IsEqual([101, 102, 103]),'IsEqual expected True');
+  Assert.IsTrue(fBytes.IsEqual([101, 102, 103]), 'IsEqual expected True');
 end;
 
 procedure TestTBytesHelper.IsEqual_False_OneItemWithEmpty;
 begin
   fBytes := [101];
-  Assert.IsFalse (fBytes.IsEqual([]),'IsEqual expected False');
+  Assert.IsFalse(fBytes.IsEqual([]), 'IsEqual expected False');
 end;
 
 procedure TestTBytesHelper.IsEqual_False_OneDiffrent;
 begin
   fBytes := [0];
-  Assert.IsFalse (fBytes.IsEqual([255]),'IsEqual expected False');
+  Assert.IsFalse(fBytes.IsEqual([255]), 'IsEqual expected False');
 end;
 
 procedure TestTBytesHelper.IsEqual_False_ThreeItemAndOneDiffrent;
 begin
   fBytes := [101, 0, 102];
-  Assert.IsFalse (fBytes.IsEqual([101, 102, 103]),'IsEqual expected False');
+  Assert.IsFalse(fBytes.IsEqual([101, 102, 103]), 'IsEqual expected False');
 end;
 
 // -----------------------------------------------------------------------
@@ -388,10 +388,10 @@ begin
     20, 11, 22, 23, 24, 25, 26, 27, 28, 29, 30];
   actual := fBytes.GenerateBase64Code(10);
   Assert.AreEqual(
-    {} 'aBytes.InitialiseFromBase64String(''AQIDBAUGBw'' +' + sLineBreak +
-    {} '''gJCgsMDQ4P'' +' + sLineBreak +
-    {} '''EBESExQLFh'' +' + sLineBreak +
-    {} '''cYGRobHB0e'');', actual);
+    { } 'aBytes.InitialiseFromBase64String(''AQIDBAUGBw'' +' + sLineBreak +
+    { } '''gJCgsMDQ4P'' +' + sLineBreak +
+    { } '''EBESExQLFh'' +' + sLineBreak +
+    { } '''cYGRobHB0e'');', actual);
 end;
 
 procedure TestTBytesHelper.GetSectorCRC32;
