@@ -18,23 +18,35 @@ type
   TestTFDCustomManagerHelper = class(TObject)
   private
   public
-    [Setup]
-    procedure Setup;
   published
-    procedure T01;
+    procedure GetConnectionDefNames;
   end;
 
 implementation
 
+uses
+  FireDAC.Comp.Client;
 
-procedure TestTFDCustomManagerHelper.Setup;
+function IsItemOnTheArray(const item: String;
+  const arr: TArray<string>): boolean;
+var
+  i: Integer;
 begin
-
+  for i := 0 to High(arr) do
+    if arr[i] = item then
+      Exit(True);
+  Exit(False);
 end;
 
-procedure TestTFDCustomManagerHelper.T01;
+procedure TestTFDCustomManagerHelper.GetConnectionDefNames;
+var
+  connectionNames: TArray<string>;
+  connectionNamesAsString: string;
 begin
-  Assert.Fail('WIP');
+  connectionNames := FDManager.GetConnectionDefNames();
+  connectionNamesAsString := String.Join(', ', connectionNames);
+  Assert.IsTrue(IsItemOnTheArray('SQLite_Demo', connectionNames),
+    'Expected definition "SQLite_Demo" to be registered in FireDAC Manager');
 end;
 
 initialization
