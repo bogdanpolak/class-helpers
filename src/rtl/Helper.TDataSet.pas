@@ -70,10 +70,85 @@ type
   EInvalidMapping = class(Exception)
   end;
 
+  TDataSetToObjectMapper = class
+  private
+    class function SetObjectField(const aDataset: TDataSet; aFieldName: string;
+      const objectField: TRttiField; dest: TObject): boolean; static;
+  public
+    class procedure DataSetRowToObject(aDataset: TDataSet; aObject: TObject);
+  end;
+
 implementation
 
 uses
   Attribute.MappedToField;
+
+// ----------------------------------------------------------------------
+// TDataSetToObjectMapper
+// ----------------------------------------------------------------------
+
+class function TDataSetToObjectMapper.SetObjectField(const aDataset: TDataSet;
+  aFieldName: string; const objectField: TRttiField; dest: TObject): boolean;
+var
+  valueOfField: TValue;
+  field: TField;
+begin
+  field := aDataset.FindField(aFieldName);
+  if field = nil then
+    Result := False
+  else
+  begin
+    if field is TBlobField then
+      valueOfField := TValue.From((field as TBlobField).Value)
+    else
+      valueOfField := TValue.From(field.Value);
+    objectField.SetValue(TObject(dest), valueOfField);
+    Result := True;
+  end;
+end;
+
+class procedure TDataSetToObjectMapper.DataSetRowToObject(aDataset: TDataSet;
+  aObject: TObject);
+var
+  rttiType: TRttiType;
+  RttiContext: TRttiContext;
+  customAttr: TCustomAttribute;
+  rttiField: TRttiField;
+  customattribute: TCustomAttribute;
+  fieldName: string;
+  isDone: boolean;
+begin
+  rttiType := RttiContext.GetType(aObject.ClassType);
+  for rttiField in rttiType.GetFields do
+  begin
+    fieldName := rttiField.Name;
+    isDone := SetObjectField(aDataset, fieldName, rttiField, aObject);
+    if not isDone then
+    begin
+      // Find CustomAttribute defined above the class field
+      customAttr := nil;
+      for customattribute in rttiField.GetAttributes do
+        if customattribute is MappedToFieldAttribute then
+        begin
+          customAttr := customattribute;
+          break;
+        end;
+      // --------------------------------------------------------
+      if customAttr <> nil then
+      begin
+        fieldName := (customAttr as MappedToFieldAttribute).fieldName;
+        if not SetObjectField(aDataset, fieldName, rttiField, aObject) then
+          raise EInvalidMapping.Create
+            (Format('Invalid mapping defined for field "%s" in class %s',
+            [rttiField.Name, rttiType.Name]));
+      end;
+    end;
+  end;
+end;
+
+// ----------------------------------------------------------------------
+// TDataSetHelper
+// ----------------------------------------------------------------------
 
 function TDataSetHelper.GetMaxIntegerValue(const fieldName: string): integer;
 var
@@ -126,57 +201,25 @@ end;
 function TDataSetHelper.LoadData<T>: TObjectList<T>;
 var
   dataList: TObjectList<T>;
-  item: T;
-  RttiContext: TRttiContext;
-  itemType: TRttiType;
   dataField: TField;
-  customAttr: TCustomAttribute;
-  aDataFieldName: string;
+  obj: T;
 begin
   dataList := TObjectList<T>.Create(True);
-  WhileNotEof(
-    procedure
-    var
-      i: integer;
-      itemField: TRttiField;
-      ca: TCustomAttribute;
-    begin
-      item := T.Create();
-      itemType := RttiContext.GetType(item.ClassType);
-      for itemField in itemType.GetFields do
+  try
+    WhileNotEof(
+      procedure
       begin
-        dataField := self.FindField(itemField.Name);
-        if dataField <> nil then
-          itemField.SetValue(TObject(item), TValue.From(dataField.Value))
-        else
-        begin
-          // --------------------------------------------------------
-          // Find Custom Attribute define for field in class
-          // --------------------------------------------------------
-          customAttr := nil;
-          for ca in itemField.GetAttributes do
-            if ca is MappedToFieldAttribute then
-            begin
-              customAttr := ca;
-              break;
-            end;
-          // --------------------------------------------------------
-          if customAttr <> nil then
-          begin
-            aDataFieldName := (customAttr as MappedToFieldAttribute).fieldName;
-            dataField := self.FindField(aDataFieldName);
-            if dataField <> nil then
-              itemField.SetValue(TObject(item), TValue.From(dataField.Value))
-            else
-              raise EInvalidMapping.Create
-                (Format('Invalid mapping defined for field "%s" in class %s',
-                [itemField.Name, itemType.Name]));
-          end
-        end;
-      end;
-      dataList.Add(item);
-    end);
-  Result := dataList;
+        obj := T.Create();
+        dataList.Add(obj);
+        TDataSetToObjectMapper.DataSetRowToObject(self, obj);
+      end);
+    Result := dataList;
+  except on E: Exception do
+    begin
+      dataList.Free;
+      raise;
+    end
+  end;
 end;
 
 procedure TDataSetHelper.AppendRows(aRecordArray: TArray < TArray <
