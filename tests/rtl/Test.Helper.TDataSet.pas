@@ -35,6 +35,8 @@ type
     procedure LoadData_OneCity_Mapped;
     procedure LoadData_OneCity_InvalidMapping;
     // --
+    procedure LoadData_WithBlob;
+    // --
     procedure AppendRows_CheckCountRows;
     procedure AppendRows_CheckFields;
     procedure AppendRows_WillRise_InvalidNumericValue;
@@ -72,10 +74,47 @@ begin
     FieldDefs.Add('city', ftWideString, 30);
     FieldDefs.Add('rank', ftInteger);
     FieldDefs.Add('visited', ftDateTime);
+    FieldDefs.Add('blob', ftBlob);
     FieldDefs[0].Required := True;
     FieldDefs[1].Required := True;
     CreateDataSet;
   end;
+end;
+
+procedure WriteStringToBlob(aDataSet: TDataSet; const aFieldName: string;
+  const aContent: string);
+var
+  ss: TStringStream;
+  isBrowse: boolean;
+begin
+  ss := TStringStream.Create(aContent, TEncoding.UTF8);
+  try
+    isBrowse := (aDataSet.State = dsBrowse);
+    aDataSet.Edit;
+    (aDataSet.FieldByName(aFieldName) as TBlobField).Value := ss.Bytes;
+    if isBrowse then
+      aDataSet.Post;
+  finally
+    ss.Free;
+  end;
+end;
+
+// -----------------------------------------------------------------------
+// TBytes helepr
+// -----------------------------------------------------------------------
+
+type
+  TBytesHelper = record helper for TBytes
+    function AsUtf8String(): String;
+  end;
+
+function TBytesHelper.AsUtf8String(): String;
+var
+  ss: TStringStream;
+begin
+  ss := TStringStream.Create('', TEncoding.UTF8);
+  ss.Write(self[0], Length(self));
+  Result := ss.DataString;
 end;
 
 // -----------------------------------------------------------------------
@@ -209,6 +248,33 @@ begin
         cities.Free;
       end;
     end, EInvalidMapping);
+end;
+
+// -----------------------------------------------------------------------
+// Tests: LoadData - with blob field
+// -----------------------------------------------------------------------
+
+type
+  TBlobCity = class
+  public
+    id: Integer;
+    city: string;
+    blob: TBytes;
+  end;
+
+procedure TestTDataSetHelper.LoadData_WithBlob();
+var
+  citiesWithBlob: TObjectList<TBlobCity>;
+begin
+  BuildDataSet_VisitedCities;
+  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
+  WriteStringToBlob(fDataset,'blob','Sample: русский алфавит');
+  fDataset.First;
+  citiesWithBlob := fDataset.LoadData<TBlobCity>();
+  Assert.AreEqual(1,citiesWithBlob.Count);
+  // Assert.Fail();
+  // 'Sample: русский алфавит'
+  // 'Polish: Zażółć gęślą jaźń'
 end;
 
 // -----------------------------------------------------------------------
