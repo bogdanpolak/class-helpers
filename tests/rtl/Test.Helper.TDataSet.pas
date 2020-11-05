@@ -1,4 +1,4 @@
-unit Test.Helper.TDataSet;
+﻿unit Test.Helper.TDataSet;
 
 interface
 
@@ -30,9 +30,11 @@ type
   published
     procedure GetMaxIntegerValue_546;
     procedure ForEachRowVisitedDates;
+    // --
     procedure LoadData_OneCity_NoAttributes;
     procedure LoadData_OneCity_Mapped;
     procedure LoadData_OneCity_InvalidMapping;
+    // --
     procedure AppendRows_CheckCountRows;
     procedure AppendRows_CheckFields;
     procedure AppendRows_WillRise_InvalidNumericValue;
@@ -77,7 +79,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------
-// Tests
+// Tests: GetMaxIntegerValue, ForEachRow
 // -----------------------------------------------------------------------
 
 procedure TestTDataSetHelper.GetMaxIntegerValue_546;
@@ -120,6 +122,10 @@ begin
   // Assert
   Assert.AreEqual('2018-05 2015-09 2019-01 2013-06 ', s);
 end;
+
+// -----------------------------------------------------------------------
+// Tests: LoadData   - (no blobs)
+// -----------------------------------------------------------------------
 
 type
   TCityForDataset = class
@@ -204,6 +210,10 @@ begin
       end;
     end, EInvalidMapping);
 end;
+
+// -----------------------------------------------------------------------
+// Tests:  AppendRows
+// -----------------------------------------------------------------------
 
 procedure TestTDataSetHelper.AppendRows_CheckCountRows;
 begin
