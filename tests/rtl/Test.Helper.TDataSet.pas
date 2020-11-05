@@ -36,6 +36,7 @@ type
     procedure LoadData_OneCity_InvalidMapping;
     // --
     procedure LoadData_WithBlob;
+    procedure LoadData_UsingAttributes_WithBlob;
     // --
     procedure AppendRows_CheckCountRows;
     procedure AppendRows_CheckFields;
@@ -275,6 +276,37 @@ begin
   Assert.AreEqual('Sample: русский алфавит',
     citiesWithBlob[0].blob.AsUtf8String);
   citiesWithBlob.Free;
+end;
+
+type
+  TBlobCityWithAttributes = class
+  private
+    [MappedToField('city')]
+    fName: string;
+    [MappedToField('blob')]
+    fBinaryDetails: TBytes;
+  public
+    property Name: string read fName;
+    property BinaryDetails: TBytes read fBinaryDetails;
+  end;
+
+procedure TestTDataSetHelper.LoadData_UsingAttributes_WithBlob();
+var
+  cities: TObjectList<TBlobCityWithAttributes>;
+begin
+  BuildDataSet_VisitedCities;
+  fDataset.AppendRecord([1, 'Moscow', 7, EncodeDate(2015, 07, 11)]);
+  WriteStringToBlob(fDataset, 'blob', 'Russian: русский алфавит');
+  fDataset.AppendRecord([1, 'Warsaw', 6, EncodeDate(2011, 10, 02)]);
+  WriteStringToBlob(fDataset, 'blob', 'Polish: zażółć gęślą jaźń');
+  fDataset.First;
+  cities := fDataset.LoadData<TBlobCityWithAttributes>();
+  Assert.AreEqual(2, cities.Count);
+  Assert.AreEqual('Russian: русский алфавит',
+    cities[0].BinaryDetails.AsUtf8String);
+  Assert.AreEqual('Polish: zażółć gęślą jaźń',
+    cities[1].BinaryDetails.AsUtf8String);
+  cities.Free;
 end;
 
 // -----------------------------------------------------------------------
