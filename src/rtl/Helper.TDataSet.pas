@@ -132,6 +132,7 @@ var
   dataField: TField;
   customAttr: TCustomAttribute;
   aDataFieldName: string;
+  valueOfField: TValue;
 begin
   dataList := TObjectList<T>.Create(True);
   WhileNotEof(
@@ -147,7 +148,13 @@ begin
       begin
         dataField := self.FindField(itemField.Name);
         if dataField <> nil then
-          itemField.SetValue(TObject(item), TValue.From(dataField.Value))
+        begin
+          if dataField is TBlobField then
+            valueOfField := TValue.From((dataField as TBlobField).Value)
+          else
+            valueOfField := TValue.From(dataField.Value);
+          itemField.SetValue(TObject(item), valueOfField);
+        end
         else
         begin
           // --------------------------------------------------------

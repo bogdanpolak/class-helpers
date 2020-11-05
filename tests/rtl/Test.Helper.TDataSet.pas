@@ -268,13 +268,13 @@ var
 begin
   BuildDataSet_VisitedCities;
   fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
-  WriteStringToBlob(fDataset,'blob','Sample: русский алфавит');
+  WriteStringToBlob(fDataset, 'blob', 'Sample: русский алфавит');
   fDataset.First;
   citiesWithBlob := fDataset.LoadData<TBlobCity>();
-  Assert.AreEqual(1,citiesWithBlob.Count);
-  // Assert.Fail();
-  // 'Sample: русский алфавит'
-  // 'Polish: Zażółć gęślą jaźń'
+  Assert.AreEqual(1, citiesWithBlob.Count);
+  Assert.AreEqual('Sample: русский алфавит',
+    citiesWithBlob[0].blob.AsUtf8String);
+  citiesWithBlob.Free;
 end;
 
 // -----------------------------------------------------------------------
