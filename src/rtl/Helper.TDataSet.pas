@@ -54,6 +54,10 @@ type
     /// </remarks>
     function LoadData<T: class, constructor>: TObjectList<T>;
     /// <summary>
+    ///   TODO: add documentation
+    /// </summary>
+    function SaveData<T: class>(list: TObjectList<T>): integer;
+    /// <summary>
     ///   Allows to append multiple row into dataset. Each master item in
     ///   the array is appended as a new row, and each detail item value
     ///   from this array is assigned to following dataset fields - ordered
@@ -214,12 +218,28 @@ begin
         TDataSetToObjectMapper.DataSetRowToObject(self, obj);
       end);
     Result := dataList;
-  except on E: Exception do
+  except
+    on E: Exception do
     begin
       dataList.Free;
       raise;
     end
   end;
+end;
+
+function TDataSetHelper.SaveData<T>(list: TObjectList<T>): integer;
+var
+  item: T;
+  rttiType: TRttiType;
+  RttiContext: TRttiContext;
+begin
+  if (list = nil) or (list.Count = 0) then
+    exit;
+  rttiType := RttiContext.GetType(list[0].ClassType);
+  for item in list do
+  begin
+  end;
+  Result := 0;
 end;
 
 procedure TDataSetHelper.AppendRows(aRecordArray: TArray < TArray <

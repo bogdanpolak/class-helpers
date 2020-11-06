@@ -38,6 +38,8 @@ type
     procedure LoadData_WithBlob;
     procedure LoadData_UsingAttributes_WithBlob;
     // --
+    procedure SaveData_WhenLoadAndChangeOneItem;
+    // --
     procedure AppendRows_CheckCountRows;
     procedure AppendRows_CheckFields;
     procedure AppendRows_WillRise_InvalidNumericValue;
@@ -259,7 +261,7 @@ type
   TBlobCity = class
   public
     id: Integer;
-    city: string;
+    City: string;
     blob: TBytes;
   end;
 
@@ -307,6 +309,37 @@ begin
   Assert.AreEqual('Polish: zażółć gęślą jaźń',
     cities[1].BinaryDetails.AsUtf8String);
   cities.Free;
+end;
+
+// -----------------------------------------------------------------------
+// Tests:  SaveData
+// -----------------------------------------------------------------------
+
+type
+  TCity = class
+  public
+    id: Integer;
+    City: string;
+    Rank: Integer;
+    visited: TDateTime;
+    IsChanged: boolean;
+  end;
+
+procedure TestTDataSetHelper.SaveData_WhenLoadAndChangeOneItem();
+var
+  cities: TObjectList<TCity>;
+  changed: Integer;
+begin
+  BuildDataSet_VisitedCities;
+  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
+  fDataset.First;
+  cities := fDataset.LoadData<TCity>();
+  cities[0].City := 'Moscow';
+  cities[0].visited := EncodeDate(2020, 07, 29);
+  cities[0].IsChanged := True;
+  changed := fDataset.SaveData<TCity>(cities);
+  Assert.AreEqual(1, changed);
+  Assert.AreEqual(cities[0].City, fDataset.FieldByName('city').AsString);
 end;
 
 // -----------------------------------------------------------------------
