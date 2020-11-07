@@ -38,8 +38,9 @@ type
     procedure LoadData_WithBlob;
     procedure LoadData_UsingAttributes_WithBlob;
     // --
-    procedure SaveData_AllCasesScenario();
+    procedure SaveData_ExcepyionWhenIsChangedNotExist;
     procedure SaveData_WhenChangedOneObject;
+    procedure SaveData_AllCasesScenario();
     // --
     procedure AppendRows_CheckCountRows;
     procedure AppendRows_CheckFields;
@@ -329,16 +330,10 @@ end;
 
 type
   TCity01 = class
-  private
-    [MappedToDBField('Blob')]
-    fBlob: TBytes;
   public
     Id: Integer;
     City: string;
-    Rank: Integer;
-    Visited: TDateTime;
     IsChanged: boolean;
-    property Blob: TBytes read fBlob write fBlob;
   end;
 
 procedure TestTDataSetHelper.SaveData_WhenChangedOneObject();
@@ -362,9 +357,50 @@ begin
   cities.Free;
 end;
 
+type
+  TCity02 = class
+  public
+    Id: Integer;
+    City: string;
+  end;
+
+procedure TestTDataSetHelper.SaveData_ExcepyionWhenIsChangedNotExist();
+var
+  cities: TObjectList<TCity02>;
+  changed: Integer;
+begin
+  BuildDataSet_VisitedCities;
+  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
+  cities := fDataset.LoadData<TCity02>();
+  cities[0].City := 'New York';
+  Assert.WillRaise(
+    procedure
+    begin
+      try
+        changed := fDataset.SaveData<TCity02>(cities);
+      finally
+        cities.Free;
+      end;
+    end, EDataMapperError);
+end;
+
+type
+  TCity03 = class
+  private
+    [MappedToDBField('Blob')]
+    fBlob: TBytes;
+  public
+    Id: Integer;
+    City: string;
+    Rank: Integer;
+    Visited: TDateTime;
+    IsChanged: boolean;
+    property Blob: TBytes read fBlob write fBlob;
+  end;
+
 procedure TestTDataSetHelper.SaveData_AllCasesScenario();
 var
-  cities: TObjectList<TCity01>;
+  cities: TObjectList<TCity03>;
   changed: Integer;
   actual: string;
 begin
@@ -374,7 +410,7 @@ begin
   fDataset.AppendRecord([3, 'Cracow', 6, EncodeDate(2019, 01, 01)]);
   fDataset.AppendRecord([4, 'Prague', 4, EncodeDate(2013, 06, 21)]);
   fDataset.First;
-  cities := fDataset.LoadData<TCity01>();
+  cities := fDataset.LoadData<TCity03>();
   with cities[0] do
   begin
     Blob := StringAsUtf8Bytes('Polish: zażółć gęślą jaźń');
@@ -391,7 +427,7 @@ begin
     City := 'Brno';
     IsChanged := True;
   end;
-  changed := fDataset.SaveData<TCity01>(cities);
+  changed := fDataset.SaveData<TCity03>(cities);
   Assert.AreEqual(3, changed);
   fDataset.Locate('Id', 2, []);
   Assert.AreEqual('Moscow', fDataset.FieldByName('city').AsString);
