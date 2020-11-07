@@ -8,6 +8,7 @@ uses
   System.SysUtils,
   System.JSON,
   System.Generics.Collections,
+  System.Variants,
   Data.DB,
   Datasnap.DBClient,
 
@@ -31,7 +32,8 @@ type
     procedure GetMaxIntegerValue_546;
     procedure ForEachRowVisitedDates;
     // --
-    procedure LoadData_OneCity_NoAttributes;
+    procedure LoadData_OneCity;
+    procedure LoadData_OneCity_WithNulls;
     procedure LoadData_OneCity_Mapped;
     procedure LoadData_OneCity_InvalidMapping;
     // --
@@ -188,11 +190,11 @@ type
   public
     id: Integer;
     City: string;
-    Rank: Integer;
-    visited: TDateTime;
+    Rank: Variant; // Nullable<Integer>
+    visited: Variant; // Nullable<TDateTime>
   end;
 
-procedure TestTDataSetHelper.LoadData_OneCity_NoAttributes;
+procedure TestTDataSetHelper.LoadData_OneCity;
 var
   cities: TObjectList<TCityForDataset>;
 begin
@@ -205,8 +207,28 @@ begin
   Assert.AreEqual(1, cities.Count);
   Assert.AreEqual(1, cities[0].id);
   Assert.AreEqual('Edinburgh', cities[0].City);
-  Assert.AreEqual(5, cities[0].Rank);
-  Assert.AreEqual(EncodeDate(2018, 05, 28), cities[0].visited);
+  Assert.AreEqual(5, Integer(cities[0].Rank));
+  Assert.AreEqual(EncodeDate(2018, 05, 28), TDateTime(cities[0].visited));
+  cities.Free;
+end;
+
+procedure TestTDataSetHelper.LoadData_OneCity_WithNulls;
+var
+  cities: TObjectList<TCityForDataset>;
+  cityEdi: TCityForDataset;
+begin
+  BuildDataSet_VisitedCities;
+  fDataset.AppendRecord([1, 'Edinburgh', Null, Null]);
+  fDataset.First;
+
+  cities := fDataset.LoadData<TCityForDataset>();
+  cityEdi := cities[0];
+
+  Assert.AreEqual(1, cities.Count);
+  Assert.AreEqual(1, cityEdi.id);
+  Assert.AreEqual('Edinburgh', cityEdi.City);
+  Assert.AreEqual(Null, cityEdi.Rank);
+  Assert.AreEqual(Null, cityEdi.visited);
   cities.Free;
 end;
 
