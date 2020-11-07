@@ -247,7 +247,7 @@ var
   dbfieldname: string;
   rttiField: TRttiField;
   field: TField;
-  value: Variant;
+  Value: Variant;
 begin
   //
   keyfields := '';
@@ -257,29 +257,29 @@ begin
     dbfieldname := fKeyDataFieldNames[idx].fieldName;
     keyfields := IfThen(keyfields = '', dbfieldname, ';' + dbfieldname);
     rttiField := RttiFieldByName(dbfieldname);
-    if rttiField=nil then
+    if rttiField = nil then
       raise Exception.Create('Error Message');
     values := values + [rttiField.GetValue(aObject).AsVariant];
   end;
-  if fDataSet.Locate(keyfields,values,[]) then
+  if fDataSet.Locate(keyfields, values, []) then
   begin
     // UPDATE
-    for idx := 0 to fDataSet.Fields.Count-1 do
+    for idx := 0 to fDataSet.Fields.count - 1 do
     begin
       field := fDataSet.Fields[idx];
       if not(pfInKey in field.ProviderFlags) then
       begin
-        rttiField := RttiFieldByName(field.FieldName);
-        if rttiField<>nil then
+        rttiField := RttiFieldByName(field.fieldName);
+        if rttiField <> nil then
         begin
           if field is TBlobField then
-            value := rttiField.GetValue(aObject).AsType<TBytes>()
+            Value := rttiField.GetValue(aObject).AsType<TBytes>()
           else
-            value := rttiField.GetValue(aObject).AsVariant;
-          if value <> field.Value then
+            Value := rttiField.GetValue(aObject).AsVariant;
+          if Value <> field.Value then
           begin
             fDataSet.Edit;
-            field.Value := value;
+            field.Value := Value;
           end;
         end;
       end;
