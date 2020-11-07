@@ -103,6 +103,15 @@ begin
   end;
 end;
 
+function StringAsUtf8Bytes(const s: string): TBytes;
+var
+  ss: TStringStream;
+begin
+  ss := TStringStream.Create(s, TEncoding.UTF8);
+  Result := ss.Bytes;
+  ss.Free;
+end;
+
 // -----------------------------------------------------------------------
 // TBytes helper
 // -----------------------------------------------------------------------
@@ -332,6 +341,7 @@ procedure TestTDataSetHelper.SaveData_WhenLoadAndChangeOneItem();
 var
   cities: TObjectList<TCity>;
   changed: Integer;
+  actual: string;
 begin
   BuildDataSet_VisitedCities;
   fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
@@ -340,18 +350,33 @@ begin
   fDataset.AppendRecord([4, 'Prague', 4, EncodeDate(2013, 06, 21)]);
   fDataset.First;
   cities := fDataset.LoadData<TCity>();
+  with cities[0] do
+  begin
+    Blob := StringAsUtf8Bytes('Polish: zażółć gęślą jaźń');
+    IsChanged := True;
+  end;
   with cities[1] do
   begin
     City := 'Moscow';
     Visited := EncodeDate(2020, 07, 29);
     IsChanged := True;
   end;
+  with cities[3] do
+  begin
+    City := 'Brno';
+    IsChanged := True;
+  end;
   changed := fDataset.SaveData<TCity>(cities);
-  Assert.AreEqual(1, changed);
+  Assert.AreEqual(3, changed);
   fDataset.Locate('Id', 2, []);
   Assert.AreEqual('Moscow', fDataset.FieldByName('city').AsString);
   Assert.AreEqual(EncodeDate(2020, 07, 29), fDataset.FieldByName('visited')
     .AsDateTime, 0.9);
+  fDataset.Locate('Id', 4, []);
+  Assert.AreEqual('Brno', fDataset.FieldByName('city').AsString);
+  fDataset.Locate('Id', 1, []);
+  actual := (fDataset.FieldByName('blob') as TBlobField).Value.AsUtf8String;
+  Assert.AreEqual('Polish: zażółć gęślą jaźń', actual);
 end;
 
 // -----------------------------------------------------------------------

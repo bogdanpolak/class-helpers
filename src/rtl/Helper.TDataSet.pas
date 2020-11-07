@@ -263,7 +263,10 @@ begin
         rttiField := RttiFieldByName(field.FieldName);
         if rttiField<>nil then
         begin
-          value := rttiField.GetValue(aObject).AsVariant;
+          if field is TBlobField then
+            value := rttiField.GetValue(aObject).AsType<TBytes>()
+          else
+            value := rttiField.GetValue(aObject).AsVariant;
           if value <> field.Value then
           begin
             fDataSet.Edit;
