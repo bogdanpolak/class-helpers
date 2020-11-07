@@ -338,7 +338,7 @@ begin
   fDataset.AppendRecord([4, 'Prague', 4, EncodeDate(2013, 06, 21)]);
   fDataset.First;
   cities := fDataset.LoadData<TCity>();
-  with cities[2] do
+  with cities[1] do
   begin
     City := 'Moscow';
     Visited := EncodeDate(2020, 07, 29);

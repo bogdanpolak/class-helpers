@@ -4,6 +4,7 @@ interface
 
 uses
   System.SysUtils,
+  System.StrUtils,
   System.RTTI,
   System.Generics.Collections,
   Data.DB;
@@ -171,12 +172,13 @@ end;
 // TObjectToDataSetMapper
 // ----------------------------------------------------------------------
 
-constructor TObjectToDataSetMapper.Create(const aDataset: TDataSet; const aObject: TObject);
+constructor TObjectToDataSetMapper.Create(const aDataset: TDataSet;
+  const aObject: TObject);
 var
   RttiContext: TRttiContext;
-  idx: Integer;
-  count: Integer;
-  j: Integer;
+  idx: integer;
+  count: integer;
+  j: integer;
 begin
   fDataSet := aDataset;
   fObjectRttiTypeInfo := RttiContext.GetType(aObject.ClassType);
@@ -188,16 +190,16 @@ begin
       [SaveData_ChangedField]));
   fKeyDataFieldNames := [];
   count := 0;
-  for idx := 0 to fDataSet.Fields.Count-1 do
+  for idx := 0 to fDataSet.Fields.count - 1 do
     if (pfInKey in fDataSet.Fields[idx].ProviderFlags) then
       inc(count);
-  if count=0 then
+  if count = 0 then
     raise EDataMapperError.Create
       (Format('Expected primary key to be defined in dataset %s. Define it using TField.ProviderFlags.',
       [aDataset.Name]));
-  SetLength(fKeyDataFieldNames,count);
-  j:=0;
-  for idx := 0 to fDataSet.Fields.Count-1 do
+  SetLength(fKeyDataFieldNames, count);
+  j := 0;
+  for idx := 0 to fDataSet.Fields.count - 1 do
     if (pfInKey in fDataSet.Fields[idx].ProviderFlags) then
     begin
       fKeyDataFieldNames[j] := fDataSet.Fields[idx];
@@ -222,14 +224,61 @@ begin
   Result := nil;
 end;
 
-function TObjectToDataSetMapper.IsObjectChanged(const aObject: TObject): boolean;
+function TObjectToDataSetMapper.IsObjectChanged(const aObject: TObject)
+  : boolean;
 begin
   Result := fIsChangedRttiField.GetValue(aObject).AsBoolean;
 end;
 
 procedure TObjectToDataSetMapper.ObjectToDataSetRow(const aObject: TObject);
+var
+  idx: integer;
+  keyfields: string;
+  values: TArray<Variant>;
+  dbfieldname: string;
+  rttiField: TRttiField;
+  field: TField;
+  value: Variant;
 begin
-
+  //
+  keyfields := '';
+  values := [];
+  for idx := 0 to High(fKeyDataFieldNames) do
+  begin
+    dbfieldname := fKeyDataFieldNames[idx].fieldName;
+    keyfields := IfThen(keyfields = '', dbfieldname, ';' + dbfieldname);
+    rttiField := RttiFieldByName(dbfieldname);
+    if rttiField=nil then
+      raise Exception.Create('Error Message');
+    values := values + [rttiField.GetValue(aObject).AsVariant];
+  end;
+  if fDataSet.Locate(keyfields,values,[]) then
+  begin
+    // UPDATE
+    for idx := 0 to fDataSet.Fields.Count-1 do
+    begin
+      field := fDataSet.Fields[idx];
+      if not(pfInKey in field.ProviderFlags) then
+      begin
+        rttiField := RttiFieldByName(field.FieldName);
+        if rttiField<>nil then
+        begin
+          value := rttiField.GetValue(aObject).AsVariant;
+          if value <> field.Value then
+          begin
+            fDataSet.Edit;
+            field.Value := value;
+          end;
+        end;
+      end;
+    end;
+    if fDataSet.State <> dsBrowse then
+      fDataSet.Post;
+  end
+  else
+  begin
+    // INSERT
+  end;
 end;
 
 // ----------------------------------------------------------------------
@@ -315,7 +364,7 @@ var
   mapper: TObjectToDataSetMapper;
 begin
   Result := 0;
-  if (list = nil) or (list.Count = 0) then
+  if (list = nil) or (list.count = 0) then
     exit;
   mapper := TObjectToDataSetMapper.Create(self, list[0]);
   try
