@@ -328,13 +328,16 @@ end;
 
 type
   TCity = class
+  private
+    [MappedToDBField('Blob')]
+    fBlob: TBytes;
   public
     Id: Integer;
     City: string;
     Rank: Integer;
     Visited: TDateTime;
-    Blob: TBytes;
     IsChanged: boolean;
+    property Blob: TBytes read fBlob write fBlob;
   end;
 
 procedure TestTDataSetHelper.SaveData_WhenLoadAndChangeOneItem();

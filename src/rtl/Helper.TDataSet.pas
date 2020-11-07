@@ -213,6 +213,8 @@ var
   i: integer;
   lowerName: string;
   rttiField: TRttiField;
+  attribute: TCustomAttribute;
+  attrFieldName: string;
 begin
   lowerName := aFieldName.ToLower();
   for i := 0 to High(fRttiFields) do
@@ -220,6 +222,13 @@ begin
     rttiField := fRttiFields[i];
     if rttiField.Name.ToLower = lowerName then
       exit(rttiField);
+    for attribute in rttiField.GetAttributes do
+      if attribute is MappedToDBFieldAttribute then
+      begin
+        attrFieldName := (attribute as MappedToDBFieldAttribute).fieldName;
+        if lowerName = attrFieldName.ToLower() then
+          exit(rttiField);
+      end;
   end;
   Result := nil;
 end;
