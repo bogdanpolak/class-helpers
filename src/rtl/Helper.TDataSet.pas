@@ -71,7 +71,7 @@ type
     procedure AppendRows(aRecordArray: TArray < TArray < Variant >> );
   end;
 
-  EInvalidMapping = class(Exception)
+  EDataMapperError = class(Exception)
   end;
 
   TDataSetToObjectMapper = class
@@ -79,7 +79,24 @@ type
     class function SetObjectField(const aDataset: TDataSet; aFieldName: string;
       const objectField: TRttiField; dest: TObject): boolean; static;
   public
-    class procedure DataSetRowToObject(aDataset: TDataSet; aObject: TObject);
+    class procedure DataSetRowToObject(aDataset: TDataSet;
+      aObject: TObject); static;
+  end;
+
+  TObjectToDataSetMapper = class
+  public const
+    SaveData_ChangedField: string = 'IsChanged';
+  strict private
+    fDataSet: TDataSet;
+    fObjectRttiTypeInfo: TRttiType;
+    fRttiFields: TArray<TRttiField>;
+    fIsChangedRttiField: TRttiField;
+    fKeyDataFieldNames: TArray<TField>;
+    function RttiFieldByName(const aFieldName: string): TRttiField;
+  public
+    constructor Create(const aDataset: TDataSet; const aObject: TObject);
+    function IsObjectChanged(const aObject: TObject): boolean;
+    procedure ObjectToDataSetRow(const aObject: TObject);
   end;
 
 implementation
@@ -142,12 +159,77 @@ begin
       begin
         fieldName := (customAttr as MappedToFieldAttribute).fieldName;
         if not SetObjectField(aDataset, fieldName, rttiField, aObject) then
-          raise EInvalidMapping.Create
+          raise EDataMapperError.Create
             (Format('Invalid mapping defined for field "%s" in class %s',
             [rttiField.Name, rttiType.Name]));
       end;
     end;
   end;
+end;
+
+// ----------------------------------------------------------------------
+// TObjectToDataSetMapper
+// ----------------------------------------------------------------------
+
+constructor TObjectToDataSetMapper.Create(const aDataset: TDataSet; const aObject: TObject);
+var
+  RttiContext: TRttiContext;
+  idx: Integer;
+  count: Integer;
+  j: Integer;
+begin
+  fDataSet := aDataset;
+  fObjectRttiTypeInfo := RttiContext.GetType(aObject.ClassType);
+  fRttiFields := fObjectRttiTypeInfo.GetFields();
+  fIsChangedRttiField := RttiFieldByName(SaveData_ChangedField);
+  if fIsChangedRttiField = nil then
+    raise EDataMapperError.Create
+      (Format('Expected field "%s" not found in object. It is required to save data',
+      [SaveData_ChangedField]));
+  fKeyDataFieldNames := [];
+  count := 0;
+  for idx := 0 to fDataSet.Fields.Count-1 do
+    if (pfInKey in fDataSet.Fields[idx].ProviderFlags) then
+      inc(count);
+  if count=0 then
+    raise EDataMapperError.Create
+      (Format('Expected primary key to be defined in dataset %s. Define it using TField.ProviderFlags.',
+      [aDataset.Name]));
+  SetLength(fKeyDataFieldNames,count);
+  j:=0;
+  for idx := 0 to fDataSet.Fields.Count-1 do
+    if (pfInKey in fDataSet.Fields[idx].ProviderFlags) then
+    begin
+      fKeyDataFieldNames[j] := fDataSet.Fields[idx];
+      inc(j);
+    end;
+end;
+
+function TObjectToDataSetMapper.RttiFieldByName(const aFieldName: string)
+  : TRttiField;
+var
+  i: integer;
+  lowerName: string;
+  rttiField: TRttiField;
+begin
+  lowerName := aFieldName.ToLower();
+  for i := 0 to High(fRttiFields) do
+  begin
+    rttiField := fRttiFields[i];
+    if rttiField.Name.ToLower = lowerName then
+      exit(rttiField);
+  end;
+  Result := nil;
+end;
+
+function TObjectToDataSetMapper.IsObjectChanged(const aObject: TObject): boolean;
+begin
+  Result := fIsChangedRttiField.GetValue(aObject).AsBoolean;
+end;
+
+procedure TObjectToDataSetMapper.ObjectToDataSetRow(const aObject: TObject);
+begin
+
 end;
 
 // ----------------------------------------------------------------------
@@ -230,16 +312,22 @@ end;
 function TDataSetHelper.SaveData<T>(list: TObjectList<T>): integer;
 var
   item: T;
-  rttiType: TRttiType;
-  RttiContext: TRttiContext;
+  mapper: TObjectToDataSetMapper;
 begin
+  Result := 0;
   if (list = nil) or (list.Count = 0) then
     exit;
-  rttiType := RttiContext.GetType(list[0].ClassType);
-  for item in list do
-  begin
+  mapper := TObjectToDataSetMapper.Create(self, list[0]);
+  try
+    for item in list do
+      if mapper.IsObjectChanged(item) then
+      begin
+        mapper.ObjectToDataSetRow(item);
+        Result := Result + 1;
+      end;
+  finally
+    mapper.Free;
   end;
-  Result := 0;
 end;
 
 procedure TDataSetHelper.AppendRows(aRecordArray: TArray < TArray <

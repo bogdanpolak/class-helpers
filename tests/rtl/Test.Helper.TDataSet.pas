@@ -81,6 +81,7 @@ begin
     FieldDefs[0].Required := True;
     FieldDefs[1].Required := True;
     CreateDataSet;
+    FieldByName('id').ProviderFlags := [pfInKey, pfInWhere, pfInUpdate]
   end;
 end;
 
@@ -250,7 +251,7 @@ begin
       finally
         cities.Free;
       end;
-    end, EInvalidMapping);
+    end, EDataMapperError);
 end;
 
 // -----------------------------------------------------------------------
@@ -321,7 +322,7 @@ type
     id: Integer;
     City: string;
     Rank: Integer;
-    visited: TDateTime;
+    Visited: TDateTime;
     IsChanged: boolean;
   end;
 
@@ -332,14 +333,23 @@ var
 begin
   BuildDataSet_VisitedCities;
   fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
+  fDataset.AppendRecord([2, 'Glassgow', 4, EncodeDate(2015, 09, 13)]);
+  fDataset.AppendRecord([3, 'Cracow', 6, EncodeDate(2019, 01, 01)]);
+  fDataset.AppendRecord([4, 'Prague', 4, EncodeDate(2013, 06, 21)]);
   fDataset.First;
   cities := fDataset.LoadData<TCity>();
-  cities[0].City := 'Moscow';
-  cities[0].visited := EncodeDate(2020, 07, 29);
-  cities[0].IsChanged := True;
+  with cities[2] do
+  begin
+    City := 'Moscow';
+    Visited := EncodeDate(2020, 07, 29);
+    IsChanged := True;
+  end;
   changed := fDataset.SaveData<TCity>(cities);
   Assert.AreEqual(1, changed);
-  Assert.AreEqual(cities[0].City, fDataset.FieldByName('city').AsString);
+  fDataset.Locate('Id', 2, []);
+  Assert.AreEqual('Moscow', fDataset.FieldByName('city').AsString);
+  Assert.AreEqual(EncodeDate(2020, 07, 29), fDataset.FieldByName('visited')
+    .AsDateTime, 0.9);
 end;
 
 // -----------------------------------------------------------------------
