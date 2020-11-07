@@ -39,6 +39,7 @@ type
     procedure LoadData_UsingAttributes_WithBlob;
     // --
     procedure SaveData_AllCasesScenario();
+    procedure SaveData_WhenChangedOneObject;
     // --
     procedure AppendRows_CheckCountRows;
     procedure AppendRows_CheckFields;
@@ -327,7 +328,7 @@ end;
 // -----------------------------------------------------------------------
 
 type
-  TCity = class
+  TCity01 = class
   private
     [MappedToDBField('Blob')]
     fBlob: TBytes;
@@ -340,9 +341,30 @@ type
     property Blob: TBytes read fBlob write fBlob;
   end;
 
+procedure TestTDataSetHelper.SaveData_WhenChangedOneObject();
+var
+  cities: TObjectList<TCity01>;
+  changed: Integer;
+begin
+  BuildDataSet_VisitedCities;
+  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
+  cities := TObjectList<TCity01>.Create();
+  cities.Add(TCity01.Create());
+  with cities[0] do
+  begin
+    Id := 1;
+    City := 'Warsaw';
+    IsChanged := True;
+  end;
+  changed := fDataset.SaveData<TCity01>(cities);
+  Assert.AreEqual(1, changed);
+  Assert.AreEqual('Warsaw', fDataset.FieldByName('city').AsString);
+  cities.Free;
+end;
+
 procedure TestTDataSetHelper.SaveData_AllCasesScenario();
 var
-  cities: TObjectList<TCity>;
+  cities: TObjectList<TCity01>;
   changed: Integer;
   actual: string;
 begin
@@ -352,7 +374,7 @@ begin
   fDataset.AppendRecord([3, 'Cracow', 6, EncodeDate(2019, 01, 01)]);
   fDataset.AppendRecord([4, 'Prague', 4, EncodeDate(2013, 06, 21)]);
   fDataset.First;
-  cities := fDataset.LoadData<TCity>();
+  cities := fDataset.LoadData<TCity01>();
   with cities[0] do
   begin
     Blob := StringAsUtf8Bytes('Polish: zażółć gęślą jaźń');
@@ -369,7 +391,7 @@ begin
     City := 'Brno';
     IsChanged := True;
   end;
-  changed := fDataset.SaveData<TCity>(cities);
+  changed := fDataset.SaveData<TCity01>(cities);
   Assert.AreEqual(3, changed);
   fDataset.Locate('Id', 2, []);
   Assert.AreEqual('Moscow', fDataset.FieldByName('city').AsString);
@@ -380,6 +402,7 @@ begin
   fDataset.Locate('Id', 1, []);
   actual := (fDataset.FieldByName('blob') as TBlobField).Value.AsUtf8String;
   Assert.AreEqual('Polish: zażółć gęślą jaźń', actual);
+  cities.Free;
 end;
 
 // -----------------------------------------------------------------------
