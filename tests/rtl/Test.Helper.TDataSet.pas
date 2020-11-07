@@ -38,8 +38,9 @@ type
     procedure LoadData_WithBlob;
     procedure LoadData_UsingAttributes_WithBlob;
     // --
-    procedure SaveData_ExcepyionWhenIsChangedNotExist;
+    procedure SaveData_ExceptionWhenIsChangedNotExist;
     procedure SaveData_WhenChangedOneObject;
+    procedure SaveData_WhenFlagIs_HasBeenModified;
     procedure SaveData_AllCasesScenario();
     // --
     procedure AppendRows_CheckCountRows;
@@ -362,9 +363,10 @@ type
   public
     Id: Integer;
     City: string;
+    HasBeenModified: boolean;
   end;
 
-procedure TestTDataSetHelper.SaveData_ExcepyionWhenIsChangedNotExist();
+procedure TestTDataSetHelper.SaveData_ExceptionWhenIsChangedNotExist();
 var
   cities: TObjectList<TCity02>;
   changed: Integer;
@@ -382,6 +384,20 @@ begin
         cities.Free;
       end;
     end, EDataMapperError);
+end;
+
+procedure TestTDataSetHelper.SaveData_WhenFlagIs_HasBeenModified();
+var
+  cities: TObjectList<TCity02>;
+  changed: Integer;
+begin
+  BuildDataSet_VisitedCities;
+  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
+  cities := fDataset.LoadData<TCity02>();
+  cities[0].City := 'New York';
+  cities[0].HasBeenModified := True;
+  changed := fDataset.SaveData<TCity02>(cities,'HasBeenModified');
+  Assert.AreEqual(1,changed);
 end;
 
 type

@@ -57,7 +57,8 @@ type
     /// <summary>
     ///   TODO: add documentation
     /// </summary>
-    function SaveData<T: class>(list: TObjectList<T>): integer;
+    function SaveData<T: class>(list: TObjectList<T>;
+      const aNameOfChangedFlag: string = 'IsChanged'): integer;
     /// <summary>
     ///   Allows to append multiple row into dataset. Each master item in
     ///   the array is appended as a new row, and each detail item value
@@ -85,9 +86,8 @@ type
   end;
 
   TObjectToDataSetMapper = class
-  public const
-    SaveData_ChangedField: string = 'IsChanged';
   strict private
+    fNameOfChangedFlag: string;
     fDataSet: TDataSet;
     fObjectRttiTypeInfo: TRttiType;
     fRttiFields: TArray<TRttiField>;
@@ -95,7 +95,8 @@ type
     fKeyDataFieldNames: TArray<TField>;
     function RttiFieldByName(const aFieldName: string): TRttiField;
   public
-    constructor Create(const aDataset: TDataSet; const aObject: TObject);
+    constructor Create(const aDataset: TDataSet; const aObject: TObject;
+      const aNameOfChangedFlag: string = 'IsChanged');
     function IsObjectChanged(const aObject: TObject): boolean;
     procedure ObjectToDataSetRow(const aObject: TObject);
   end;
@@ -173,7 +174,7 @@ end;
 // ----------------------------------------------------------------------
 
 constructor TObjectToDataSetMapper.Create(const aDataset: TDataSet;
-  const aObject: TObject);
+  const aObject: TObject; const aNameOfChangedFlag: string = 'IsChanged');
 var
   RttiContext: TRttiContext;
   idx: integer;
@@ -181,13 +182,15 @@ var
   j: integer;
 begin
   fDataSet := aDataset;
+  fNameOfChangedFlag := aNameOfChangedFlag;
+  // --
   fObjectRttiTypeInfo := RttiContext.GetType(aObject.ClassType);
   fRttiFields := fObjectRttiTypeInfo.GetFields();
-  fIsChangedRttiField := RttiFieldByName(SaveData_ChangedField);
+  fIsChangedRttiField := RttiFieldByName(fNameOfChangedFlag);
   if fIsChangedRttiField = nil then
     raise EDataMapperError.Create
       (Format('Expected field "%s" not found in object, is required to save data',
-      [SaveData_ChangedField]));
+      [fNameOfChangedFlag]));
   fKeyDataFieldNames := [];
   count := 0;
   for idx := 0 to fDataSet.Fields.count - 1 do
@@ -213,7 +216,7 @@ var
   i: integer;
   lowerName: string;
   rttiField: TRttiField;
-  attribute: TCustomAttribute;
+  Attribute: TCustomAttribute;
   attrFieldName: string;
 begin
   lowerName := aFieldName.ToLower();
@@ -222,10 +225,10 @@ begin
     rttiField := fRttiFields[i];
     if rttiField.Name.ToLower = lowerName then
       exit(rttiField);
-    for attribute in rttiField.GetAttributes do
-      if attribute is MappedToDBFieldAttribute then
+    for Attribute in rttiField.GetAttributes do
+      if Attribute is MappedToDBFieldAttribute then
       begin
-        attrFieldName := (attribute as MappedToDBFieldAttribute).fieldName;
+        attrFieldName := (Attribute as MappedToDBFieldAttribute).fieldName;
         if lowerName = attrFieldName.ToLower() then
           exit(rttiField);
       end;
@@ -370,7 +373,8 @@ begin
   end;
 end;
 
-function TDataSetHelper.SaveData<T>(list: TObjectList<T>): integer;
+function TDataSetHelper.SaveData<T>(list: TObjectList<T>;
+const aNameOfChangedFlag: string = 'IsChanged'): integer;
 var
   item: T;
   mapper: TObjectToDataSetMapper;
@@ -378,7 +382,7 @@ begin
   Result := 0;
   if (list = nil) or (list.count = 0) then
     exit;
-  mapper := TObjectToDataSetMapper.Create(self, list[0]);
+  mapper := TObjectToDataSetMapper.Create(self, list[0], aNameOfChangedFlag);
   try
     for item in list do
       if mapper.IsObjectChanged(item) then
