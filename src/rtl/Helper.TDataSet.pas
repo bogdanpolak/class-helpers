@@ -186,7 +186,7 @@ begin
   fIsChangedRttiField := RttiFieldByName(SaveData_ChangedField);
   if fIsChangedRttiField = nil then
     raise EDataMapperError.Create
-      (Format('Expected field "%s" not found in object. It is required to save data',
+      (Format('Expected field "%s" not found in object, is required to save data',
       [SaveData_ChangedField]));
   fKeyDataFieldNames := [];
   count := 0;

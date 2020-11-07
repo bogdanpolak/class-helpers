@@ -38,7 +38,7 @@ type
     procedure LoadData_WithBlob;
     procedure LoadData_UsingAttributes_WithBlob;
     // --
-    procedure SaveData_WhenLoadAndChangeOneItem;
+    procedure SaveData_AllCasesScenario();
     // --
     procedure AppendRows_CheckCountRows;
     procedure AppendRows_CheckFields;
@@ -340,7 +340,7 @@ type
     property Blob: TBytes read fBlob write fBlob;
   end;
 
-procedure TestTDataSetHelper.SaveData_WhenLoadAndChangeOneItem();
+procedure TestTDataSetHelper.SaveData_AllCasesScenario();
 var
   cities: TObjectList<TCity>;
   changed: Integer;
