@@ -49,7 +49,7 @@ type
 implementation
 
 uses
-  Attribute.MappedToField;
+  Attribute.MappedToDBField;
 
 // -----------------------------------------------------------------------
 // Setup and TearDown section
@@ -104,7 +104,7 @@ begin
 end;
 
 // -----------------------------------------------------------------------
-// TBytes helepr
+// TBytes helper
 // -----------------------------------------------------------------------
 
 type
@@ -119,6 +119,7 @@ begin
   ss := TStringStream.Create('', TEncoding.UTF8);
   ss.Write(self[0], Length(self));
   Result := ss.DataString;
+  ss.Free;
 end;
 
 // -----------------------------------------------------------------------
@@ -319,10 +320,11 @@ end;
 type
   TCity = class
   public
-    id: Integer;
+    Id: Integer;
     City: string;
     Rank: Integer;
     Visited: TDateTime;
+    Blob: TBytes;
     IsChanged: boolean;
   end;
 

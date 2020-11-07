@@ -11,7 +11,7 @@ uses
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
-  Attribute.MappedToField in '..\..\src\rtl\Attribute.MappedToField.pas',
+  Attribute.MappedToDBField in '..\..\src\rtl\Attribute.MappedToDBField.pas',
   Helper.TDataSet in '..\..\src\rtl\Helper.TDataSet.pas',
   Helper.TDateTime in '..\..\src\rtl\Helper.TDateTime.pas',
   Helper.TJSONObject in '..\..\src\rtl\Helper.TJSONObject.pas',

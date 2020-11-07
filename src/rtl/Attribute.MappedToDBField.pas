@@ -1,4 +1,4 @@
-unit Attribute.MappedToField;
+unit Attribute.MappedToDBField;
 
 interface
 

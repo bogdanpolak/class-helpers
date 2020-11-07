@@ -103,7 +103,7 @@ type
 implementation
 
 uses
-  Attribute.MappedToField;
+  Attribute.MappedToDBField;
 
 // ----------------------------------------------------------------------
 // TDataSetToObjectMapper
