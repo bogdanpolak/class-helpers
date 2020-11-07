@@ -150,7 +150,7 @@ begin
       // Find CustomAttribute defined above the class field
       customAttr := nil;
       for customattribute in rttiField.GetAttributes do
-        if customattribute is MappedToFieldAttribute then
+        if customattribute is MappedToDBFieldAttribute then
         begin
           customAttr := customattribute;
           break;
@@ -158,7 +158,7 @@ begin
       // --------------------------------------------------------
       if customAttr <> nil then
       begin
-        fieldName := (customAttr as MappedToFieldAttribute).fieldName;
+        fieldName := (customAttr as MappedToDBFieldAttribute).fieldName;
         if not SetObjectField(aDataset, fieldName, rttiField, aObject) then
           raise EDataMapperError.Create
             (Format('Invalid mapping defined for field "%s" in class %s',

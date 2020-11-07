@@ -210,13 +210,13 @@ end;
 type
   TMyCity = class
   public
-    [MappedToField('id')]
+    [MappedToDBField('id')]
     cityId: Integer;
-    [MappedToField('city')]
+    [MappedToDBField('city')]
     cityName: string;
-    [MappedToField('rank')]
+    [MappedToDBField('rank')]
     Rank: Integer;
-    [MappedToField('visited')]
+    [MappedToDBField('visited')]
     visitDate: TDateTime;
   end;
 
@@ -241,7 +241,7 @@ end;
 type
   TInvalidCity = class
   public
-    [MappedToField('cityName')]
+    [MappedToDBField('cityName')]
     cityName: string;
   end;
 
@@ -294,9 +294,9 @@ end;
 type
   TBlobCityWithAttributes = class
   private
-    [MappedToField('city')]
+    [MappedToDBField('city')]
     fName: string;
-    [MappedToField('blob')]
+    [MappedToDBField('blob')]
     fBinaryDetails: TBytes;
   public
     property Name: string read fName;

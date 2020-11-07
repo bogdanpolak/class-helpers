@@ -3,7 +3,7 @@ unit Attribute.MappedToDBField;
 interface
 
 type
-  MappedToFieldAttribute = class(TCustomAttribute)
+  MappedToDBFieldAttribute = class(TCustomAttribute)
   private
     fFieldName: string;
   public
@@ -13,7 +13,7 @@ type
 
 implementation
 
-constructor MappedToFieldAttribute.Create(const aFiedldName: string);
+constructor MappedToDBFieldAttribute.Create(const aFiedldName: string);
 begin
   fFieldName := aFiedldName;
 end;
