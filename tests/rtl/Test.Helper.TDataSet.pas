@@ -21,8 +21,7 @@ type
   [TestFixture]
   TestTDataSetHelper = class(TObject)
   private
-    fDataset: TClientDataSet;
-    procedure BuildDataSet_VisitedCities;
+    fOwner: TComponent;
   public
     [Setup]
     procedure Setup;
@@ -62,21 +61,27 @@ uses
 
 procedure TestTDataSetHelper.Setup;
 begin
-  fDataset := TClientDataSet.Create(nil);
+  fOwner := TComponent.Create(nil);
 end;
 
 procedure TestTDataSetHelper.TearDown;
 begin
-  fDataset.Close;
+  fOwner.Free;
 end;
 
 // -----------------------------------------------------------------------
 // Utilities
 // -----------------------------------------------------------------------
 
-procedure TestTDataSetHelper.BuildDataSet_VisitedCities;
+type
+  TVariantArray = array of Variant;
+
+function _BuildDataSet_VisitedCities(fOwner: TComponent): TDataSet;
+var
+  dataset: TClientDataSet;
 begin
-  with fDataset do
+  dataset := TClientDataSet.Create(fOwner);
+  with dataset do
   begin
     FieldDefs.Add('id', ftInteger);
     FieldDefs.Add('city', ftWideString, 30);
@@ -88,7 +93,29 @@ begin
     CreateDataSet;
     FieldByName('id').ProviderFlags := [pfInKey, pfInWhere, pfInUpdate]
   end;
+  Result := dataset;
 end;
+
+function GivenDataSet(fOwner: TComponent; const Data: TArray<TVariantArray>)
+  : TDataSet;
+var
+  idx: Integer;
+  j: Integer;
+begin
+  Result := _BuildDataSet_VisitedCities(fOwner);
+  for idx := 0 to High(Data) do
+  begin
+    Result.Append;
+    for j := 0 to High(Data[idx]) do
+      Result.Fields[j].Value := Data[idx][j];
+    Result.Post;
+  end;
+  Result.First;
+end;
+
+// -----------------------------------------------------------------------
+// Blob Utilities
+// -----------------------------------------------------------------------
 
 procedure WriteStringToBlob(aDataSet: TDataSet; const aFieldName: string;
   const aContent: string);
@@ -142,43 +169,36 @@ end;
 
 procedure TestTDataSetHelper.GetMaxIntegerValue_546;
 var
-  aMaxValue: Integer;
+  dataset: TDataSet;
+  actual: Integer;
 begin
-  // Arrange
-  BuildDataSet_VisitedCities;
-  fDataset.AppendRecord([1, 'Edynburgh', 5]);
-  fDataset.AppendRecord([2, 'Glassgow', 4]);
-  fDataset.AppendRecord([3, 'Cracow', 6]);
-  fDataset.First;
-  // Act
-  aMaxValue := fDataset.GetMaxIntegerValue('rank');
-  // Assert
-  Assert.AreEqual(6, aMaxValue);
+  dataset := GivenDataSet(fOwner, [
+    { } [1, 'Edynburgh', 5],
+    { } [2, 'Glassgow', 4],
+    { } [3, 'Cracow', 6]]);
+  actual := dataset.GetMaxIntegerValue('rank');
+  Assert.AreEqual(6, actual);
 end;
 
 procedure TestTDataSetHelper.ForEachRowVisitedDates;
 var
-  visitedField: TDateTimeField;
-  s: string;
+  dataset: TDataSet;
+  actual: string;
 begin
-  // Arrange
-  BuildDataSet_VisitedCities;
-  // .   GivenDataSetWithFourVisitedCities
-  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
-  fDataset.AppendRecord([2, 'Glassgow', 4, EncodeDate(2015, 09, 13)]);
-  fDataset.AppendRecord([3, 'Cracow', 6, EncodeDate(2019, 01, 01)]);
-  fDataset.AppendRecord([4, 'Prague', 4, EncodeDate(2013, 06, 21)]);
-  visitedField := fDataset.FieldByName('visited') as TDateTimeField;
-  fDataset.First;
-  s := '';
-  // Act
-  fDataset.ForEachRow(
+  dataset := GivenDataSet(fOwner, [
+    { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)],
+    { } [2, 'Glassgow', 4, EncodeDate(2015, 09, 13)],
+    { } [3, 'Cracow', 6, EncodeDate(2019, 01, 01)],
+    { } [4, 'Prague', 4, EncodeDate(2013, 06, 21)]]);
+  actual := '';
+  dataset.ForEachRow(
     procedure
     begin
-      s := s + FormatDateTime('yyyy-mm', visitedField.Value) + ' '
+      actual := actual + FormatDateTime('yyyy-mm',
+        dataset.FieldByName('visited').AsDateTime) + ' '
     end);
   // Assert
-  Assert.AreEqual('2018-05 2015-09 2019-01 2013-06 ', s);
+  Assert.AreEqual('2018-05 2015-09 2019-01 2013-06 ', actual);
 end;
 
 // -----------------------------------------------------------------------
@@ -196,13 +216,13 @@ type
 
 procedure TestTDataSetHelper.LoadData_OneCity;
 var
+  dataset: TDataSet;
   cities: TObjectList<TCityForDataset>;
 begin
-  BuildDataSet_VisitedCities;
-  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
-  fDataset.First;
+  dataset := GivenDataSet(fOwner, [
+  { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]]);
 
-  cities := fDataset.LoadData<TCityForDataset>();
+  cities := dataset.LoadData<TCityForDataset>();
 
   Assert.AreEqual(1, cities.Count);
   Assert.AreEqual(1, cities[0].id);
@@ -214,14 +234,14 @@ end;
 
 procedure TestTDataSetHelper.LoadData_OneCity_WithNulls;
 var
+  dataset: TDataSet;
   cities: TObjectList<TCityForDataset>;
   cityEdi: TCityForDataset;
 begin
-  BuildDataSet_VisitedCities;
-  fDataset.AppendRecord([1, 'Edinburgh', Null, Null]);
-  fDataset.First;
+  dataset := GivenDataSet(fOwner, [
+  { } [1, 'Edinburgh', Null, Null]]);
 
-  cities := fDataset.LoadData<TCityForDataset>();
+  cities := dataset.LoadData<TCityForDataset>();
   cityEdi := cities[0];
 
   Assert.AreEqual(1, cities.Count);
@@ -247,13 +267,13 @@ type
 
 procedure TestTDataSetHelper.LoadData_OneCity_Mapped;
 var
+  dataset: TDataSet;
   cities: TObjectList<TMyCity>;
 begin
-  BuildDataSet_VisitedCities;
-  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
-  fDataset.First;
+  dataset := GivenDataSet(fOwner, [
+  { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]]);
 
-  cities := fDataset.LoadData<TMyCity>();
+  cities := dataset.LoadData<TMyCity>();
 
   Assert.AreEqual(1, cities.Count);
   Assert.AreEqual(1, cities[0].cityId, '(assert: CityId)');
@@ -272,17 +292,17 @@ type
 
 procedure TestTDataSetHelper.LoadData_OneCity_InvalidMapping;
 var
+  dataset: TDataSet;
   cities: TObjectList<TInvalidCity>;
 begin
-  BuildDataSet_VisitedCities;
-  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
-  fDataset.First;
+  dataset := GivenDataSet(fOwner, [
+  { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]]);
 
   Assert.WillRaise(
     procedure
     begin
       try
-        cities := fDataset.LoadData<TInvalidCity>();
+        cities := dataset.LoadData<TInvalidCity>();
       finally
         cities.Free;
       end;
@@ -303,13 +323,15 @@ type
 
 procedure TestTDataSetHelper.LoadData_WithBlob();
 var
+  dataset: TDataSet;
   citiesWithBlob: TObjectList<TBlobCity>;
 begin
-  BuildDataSet_VisitedCities;
-  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
-  WriteStringToBlob(fDataset, 'blob', 'Sample: русский алфавит');
-  fDataset.First;
-  citiesWithBlob := fDataset.LoadData<TBlobCity>();
+  dataset := GivenDataSet(fOwner, [
+  { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]]);
+  WriteStringToBlob(dataset, 'blob', 'Sample: русский алфавит');
+
+  citiesWithBlob := dataset.LoadData<TBlobCity>();
+
   Assert.AreEqual(1, citiesWithBlob.Count);
   Assert.AreEqual('Sample: русский алфавит',
     citiesWithBlob[0].blob.AsUtf8String);
@@ -330,15 +352,18 @@ type
 
 procedure TestTDataSetHelper.LoadData_UsingAttributes_WithBlob();
 var
+  dataset: TDataSet;
   cities: TObjectList<TBlobCityWithAttributes>;
 begin
-  BuildDataSet_VisitedCities;
-  fDataset.AppendRecord([1, 'Moscow', 7, EncodeDate(2015, 07, 11)]);
-  WriteStringToBlob(fDataset, 'blob', 'Russian: русский алфавит');
-  fDataset.AppendRecord([1, 'Warsaw', 6, EncodeDate(2011, 10, 02)]);
-  WriteStringToBlob(fDataset, 'blob', 'Polish: zażółć gęślą jaźń');
-  fDataset.First;
-  cities := fDataset.LoadData<TBlobCityWithAttributes>();
+  dataset := GivenDataSet(fOwner, [
+  { } [1, 'Moscow', 7, EncodeDate(2015, 07, 11)],
+  { } [2, 'Warsaw', 6, EncodeDate(2011, 10, 02)]]);
+  WriteStringToBlob(dataset, 'blob', 'Russian: русский алфавит');
+  dataset.Next;
+  WriteStringToBlob(dataset, 'blob', 'Polish: zażółć gęślą jaźń');
+
+  cities := dataset.LoadData<TBlobCityWithAttributes>();
+
   Assert.AreEqual(2, cities.Count);
   Assert.AreEqual('Russian: русский алфавит',
     cities[0].BinaryDetails.AsUtf8String);
@@ -354,54 +379,53 @@ end;
 type
   TCity01 = class
   public
-    Id: Integer;
+    id: Integer;
     City: string;
     IsChanged: boolean;
   end;
 
 procedure TestTDataSetHelper.SaveData_WhenChangedOneObject();
 var
+  dataset: TDataSet;
   cities: TObjectList<TCity01>;
   changed: Integer;
 begin
-  BuildDataSet_VisitedCities;
-  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
-  cities := TObjectList<TCity01>.Create();
-  cities.Add(TCity01.Create());
-  with cities[0] do
-  begin
-    Id := 1;
-    City := 'Warsaw';
-    IsChanged := True;
-  end;
-  changed := fDataset.SaveData<TCity01>(cities);
+  dataset := GivenDataSet(fOwner, [
+  { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]]);
+  cities := dataset.LoadData<TCity01>();
+  cities[0].City := 'Warsaw';
+  cities[0].IsChanged := True;
+
+  changed := dataset.SaveData<TCity01>(cities);
+
   Assert.AreEqual(1, changed);
-  Assert.AreEqual('Warsaw', fDataset.FieldByName('city').AsString);
+  Assert.AreEqual('Warsaw', dataset.FieldByName('city').AsString);
   cities.Free;
 end;
 
 type
   TCity02 = class
   public
-    Id: Integer;
+    id: Integer;
     City: string;
     HasBeenModified: boolean;
   end;
 
 procedure TestTDataSetHelper.SaveData_ExceptionWhenIsChangedNotExist();
 var
+  dataset: TDataSet;
   cities: TObjectList<TCity02>;
   changed: Integer;
 begin
-  BuildDataSet_VisitedCities;
-  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
-  cities := fDataset.LoadData<TCity02>();
-  cities[0].City := 'New York';
+  dataset := GivenDataSet(fOwner, [
+  { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]]);
+  cities := dataset.LoadData<TCity02>();
+
   Assert.WillRaise(
     procedure
     begin
       try
-        changed := fDataset.SaveData<TCity02>(cities);
+        changed := dataset.SaveData<TCity02>(cities);
       finally
         cities.Free;
       end;
@@ -410,16 +434,19 @@ end;
 
 procedure TestTDataSetHelper.SaveData_WhenFlagIs_HasBeenModified();
 var
+  dataset: TDataSet;
   cities: TObjectList<TCity02>;
   changed: Integer;
 begin
-  BuildDataSet_VisitedCities;
-  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
-  cities := fDataset.LoadData<TCity02>();
+  dataset := GivenDataSet(fOwner, [
+  { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]]);
+  cities := dataset.LoadData<TCity02>();
   cities[0].City := 'New York';
   cities[0].HasBeenModified := True;
-  changed := fDataset.SaveData<TCity02>(cities,'HasBeenModified');
-  Assert.AreEqual(1,changed);
+
+  changed := dataset.SaveData<TCity02>(cities, 'HasBeenModified');
+
+  Assert.AreEqual(1, changed);
 end;
 
 type
@@ -438,26 +465,24 @@ type
 
 procedure TestTDataSetHelper.SaveData_AllCasesScenario();
 var
+  dataset: TDataSet;
   cities: TObjectList<TCity03>;
   changed: Integer;
   actual: string;
 begin
-  BuildDataSet_VisitedCities;
-  fDataset.AppendRecord([1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]);
-  fDataset.AppendRecord([2, 'Glassgow', 4, EncodeDate(2015, 09, 13)]);
-  fDataset.AppendRecord([3, 'Cracow', 6, EncodeDate(2019, 01, 01)]);
-  fDataset.AppendRecord([4, 'Prague', 4, EncodeDate(2013, 06, 21)]);
-  fDataset.First;
-  cities := fDataset.LoadData<TCity03>();
+  dataset := GivenDataSet(fOwner, [[1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)
+    ], [2, 'Glassgow', 4, EncodeDate(2015, 09, 13)], [3, 'Cracow', 6,
+    EncodeDate(2019, 01, 01)], [4, 'Prague', 4, EncodeDate(2013, 06, 21)]]);
+  cities := dataset.LoadData<TCity03>();
   with cities[0] do
   begin
-    Blob := StringAsUtf8Bytes('Polish: zażółć gęślą jaźń');
+    blob := StringAsUtf8Bytes('Polish: zażółć gęślą jaźń');
     IsChanged := True;
   end;
   with cities[1] do
   begin
     City := 'Moscow';
-    Visited := EncodeDate(2020, 07, 29);
+    visited := EncodeDate(2020, 07, 29);
     IsChanged := True;
   end;
   with cities[3] do
@@ -465,16 +490,18 @@ begin
     City := 'Brno';
     IsChanged := True;
   end;
-  changed := fDataset.SaveData<TCity03>(cities);
+
+  changed := dataset.SaveData<TCity03>(cities);
+
   Assert.AreEqual(3, changed);
-  fDataset.Locate('Id', 2, []);
-  Assert.AreEqual('Moscow', fDataset.FieldByName('city').AsString);
-  Assert.AreEqual(EncodeDate(2020, 07, 29), fDataset.FieldByName('visited')
+  dataset.Locate('Id', 2, []);
+  Assert.AreEqual('Moscow', dataset.FieldByName('city').AsString);
+  Assert.AreEqual(EncodeDate(2020, 07, 29), dataset.FieldByName('visited')
     .AsDateTime, 0.9);
-  fDataset.Locate('Id', 4, []);
-  Assert.AreEqual('Brno', fDataset.FieldByName('city').AsString);
-  fDataset.Locate('Id', 1, []);
-  actual := (fDataset.FieldByName('blob') as TBlobField).Value.AsUtf8String;
+  dataset.Locate('Id', 4, []);
+  Assert.AreEqual('Brno', dataset.FieldByName('city').AsString);
+  dataset.Locate('Id', 1, []);
+  actual := (dataset.FieldByName('blob') as TBlobField).Value.AsUtf8String;
   Assert.AreEqual('Polish: zażółć gęślą jaźń', actual);
   cities.Free;
 end;
@@ -484,50 +511,64 @@ end;
 // -----------------------------------------------------------------------
 
 procedure TestTDataSetHelper.AppendRows_CheckCountRows;
+var
+  dataset: TDataSet;
 begin
-  BuildDataSet_VisitedCities;
+  dataset := GivenDataSet(fOwner, []);
 
-  fDataset.AppendRows([
+  dataset.AppendRows([
   { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)],
   { } [2, 'Glassgow', 4, EncodeDate(2015, 09, 13)],
   { } [3, 'Cracow', 6, EncodeDate(2019, 01, 01)],
   { } [4, 'Prague', 4, EncodeDate(2013, 06, 21)]]);
 
-  Assert.AreEqual(4, fDataset.RecNo);
+  Assert.AreEqual(4, dataset.RecNo);
 end;
 
 procedure TestTDataSetHelper.AppendRows_CheckFields;
+var
+  dataset: TDataSet;
 begin
-  BuildDataSet_VisitedCities;
+  dataset := GivenDataSet(fOwner, []);
 
-  fDataset.AppendRows([[1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]]);
+  dataset.AppendRows([
+  { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]]);
 
-  Assert.AreEqual('Edinburgh', fDataset.FieldByName('City').AsString);
-  Assert.AreEqual(5, fDataset.FieldByName('rank').AsInteger);
-  Assert.AreEqual(EncodeDate(2018, 5, 28), fDataset.FieldByName('visited')
+  Assert.AreEqual('Edinburgh', dataset.FieldByName('City').AsString);
+  Assert.AreEqual(5, dataset.FieldByName('rank').AsInteger);
+  Assert.AreEqual(EncodeDate(2018, 5, 28), dataset.FieldByName('visited')
     .AsDateTime);
 end;
 
 procedure TestTDataSetHelper.AppendRows_WillRise_InvalidNumericValue;
+var
+  dataset: TDataSet;
 begin
-  BuildDataSet_VisitedCities;
+  dataset := GivenDataSet(fOwner, []);
 
   Assert.WillRaise(
     procedure
     begin
-      fDataset.AppendRows([[1, 'A', 5], [2, 'B', 'invalid numebr'],
-        [3, 'C', 6]]);
+      dataset.AppendRows([
+      { } [1, 'A', 5],
+      { } [2, 'B', 'invalid numebr'],
+      { } [3, 'C', 6]]);
     end, EDatabaseError);
 end;
 
 procedure TestTDataSetHelper.AppendRows_WillRise_MissingRequired;
+var
+  dataset: TDataSet;
 begin
-  BuildDataSet_VisitedCities;
+  dataset := GivenDataSet(fOwner, []);
 
   Assert.WillRaise(
     procedure
     begin
-      fDataset.AppendRows([[1, 'A', 5], [2], [3, 'C', 6]]);
+      dataset.AppendRows([
+      { } [1, 'A', 5],
+      { } [2],
+      { } [3, 'C', 6]]);
     end, EDatabaseError);
 end;
 
