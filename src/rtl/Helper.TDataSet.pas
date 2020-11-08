@@ -6,6 +6,7 @@ uses
   System.SysUtils,
   System.StrUtils,
   System.RTTI,
+  System.Variants,
   System.Generics.Collections,
   Data.DB;
 
@@ -250,7 +251,7 @@ var
   dbfieldname: string;
   rttiField: TRttiField;
   field: TField;
-  Value: Variant;
+  value: Variant;
 begin
   //
   keyfields := '';
@@ -258,13 +259,17 @@ begin
   for idx := 0 to High(fKeyDataFieldNames) do
   begin
     dbfieldname := fKeyDataFieldNames[idx].fieldName;
-    keyfields := IfThen(keyfields = '', dbfieldname, ';' + dbfieldname);
     rttiField := RttiFieldByName(dbfieldname);
     if rttiField = nil then
       raise Exception.Create('Error Message');
-    values := values + [rttiField.GetValue(aObject).AsVariant];
+    value := rttiField.GetValue(aObject).AsVariant;
+    if value <> Null and value <> Unassigned then
+    begin
+      keyfields := IfThen(keyfields = '', dbfieldname, ';' + dbfieldname);
+      values := values + [value];
+    end;
   end;
-  if fDataSet.Locate(keyfields, values, []) then
+  if (Length(values)>0) and fDataSet.Locate(keyfields, values, []) then
   begin
     // UPDATE
     for idx := 0 to fDataSet.Fields.count - 1 do

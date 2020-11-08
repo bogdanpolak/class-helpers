@@ -44,6 +44,7 @@ type
     procedure SaveData_WhenFlagIs_HasBeenModified;
     procedure SaveData_AllCasesScenario();
     procedure SaveData_InsertOneCity;
+    procedure SaveData_InsertOneCity_WithAutoInc;
     // --
     procedure AppendRows_CheckCountRows;
     procedure AppendRows_CheckFields;
@@ -119,6 +120,40 @@ begin
       + Format(' (%.1f)', [dataset.FieldByName('rank').AsFloat])
       .Replace(',', '.');
   end;
+end;
+
+// -----------------------------------------------------------------------
+// DataSetNotifyEvent - converting TProc<TObject> to TDataSetNotifyEvent
+// -----------------------------------------------------------------------
+
+type
+  TDataSetNotifyEventWrapper = class(TComponent)
+  private
+    fProc: TProc<TDataSet>;
+  public
+    function SetProc(aProc: TProc<TDataSet>): TDataSetNotifyEventWrapper;
+  published
+    procedure FakeEvent(aDataSet: TDataSet);
+  end;
+
+function TDataSetNotifyEventWrapper.SetProc(aProc: TProc<TDataSet>)
+  : TDataSetNotifyEventWrapper;
+begin
+  self.fProc := aProc;
+  Result := self;
+end;
+
+procedure TDataSetNotifyEventWrapper.FakeEvent(aDataSet: TDataSet);
+begin
+  System.Assert(Assigned(fProc));
+  fProc(aDataSet);
+end;
+
+function DataSetNotifyEvent(aDataSet: TDataSet; aProc: TProc<TDataSet>)
+  : TDataSetNotifyEvent;
+begin
+  Result := TDataSetNotifyEventWrapper.Create(aDataSet).SetProc(aProc)
+    .FakeEvent;
 end;
 
 // -----------------------------------------------------------------------
@@ -447,13 +482,14 @@ type
     [MappedToDBField('Blob')]
     fBlob: TBytes;
   public
-    id: Integer;
+    id: Variant;
     City: string;
     Rank: Double;
     visited: TDateTime;
     IsChanged: boolean;
     property blob: TBytes read fBlob write fBlob;
-    constructor Create(aId: Integer; const aCity: string);
+    constructor Create(aId: Integer; const aCity: string); overload;
+    constructor Create(const aCity: string); overload;
     function ChangeCity(aCityName: string): TCity;
     function SetVisited(aVisited: TDateTime; aRank: Double): TCity;
     function SetBlob(const aBlob: TBytes): TCity;
@@ -462,6 +498,12 @@ type
 constructor TCity.Create(aId: Integer; const aCity: string);
 begin
   self.id := aId;
+  self.City := aCity;
+  IsChanged := True;
+end;
+
+constructor TCity.Create(const aCity: string);
+begin
   self.City := aCity;
   IsChanged := True;
 end;
@@ -531,6 +573,26 @@ begin
   dataset.SaveData<TCity>(cities);
 
   Assert.AreEqual(1, dataset.RecordCount);
+  cities.Free;
+end;
+
+procedure TestTDataSetHelper.SaveData_InsertOneCity_WithAutoInc();
+var
+  dataset: TDataSet;
+  cities: TObjectList<TCity>;
+begin
+  dataset := GivenDataSet(fOwner, []);
+  dataset.BeforePost := DataSetNotifyEvent(dataset,
+    procedure(aDataSet: TDataSet)
+    begin
+      aDataSet.FieldByName('id').AsInteger := 99;
+    end);
+  cities := TObjectList<TCity>.Create();
+  cities.Add(TCity.Create('Warsaw'));
+
+  dataset.SaveData<TCity>(cities);
+
+  Assert.AreEqual(99, dataset.FieldByName('id').AsInteger);
   cities.Free;
 end;
 
