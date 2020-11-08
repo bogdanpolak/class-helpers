@@ -76,9 +76,12 @@ end;
 type
   TVariantArray = array of Variant;
 
-function _BuildDataSet_VisitedCities(fOwner: TComponent): TDataSet;
+function GivenDataSet(fOwner: TComponent; const Data: TArray<TVariantArray>)
+  : TDataSet;
 var
   dataset: TClientDataSet;
+  idx: Integer;
+  j: Integer;
 begin
   dataset := TClientDataSet.Create(fOwner);
   with dataset do
@@ -93,47 +96,20 @@ begin
     CreateDataSet;
     FieldByName('id').ProviderFlags := [pfInKey, pfInWhere, pfInUpdate]
   end;
-  Result := dataset;
-end;
-
-function GivenDataSet(fOwner: TComponent; const Data: TArray<TVariantArray>)
-  : TDataSet;
-var
-  idx: Integer;
-  j: Integer;
-begin
-  Result := _BuildDataSet_VisitedCities(fOwner);
   for idx := 0 to High(Data) do
   begin
-    Result.Append;
+    dataset.Append;
     for j := 0 to High(Data[idx]) do
-      Result.Fields[j].Value := Data[idx][j];
-    Result.Post;
+      dataset.Fields[j].Value := Data[idx][j];
+    dataset.Post;
   end;
-  Result.First;
+  dataset.First;
+  Result := dataset;
 end;
 
 // -----------------------------------------------------------------------
 // Blob Utilities
 // -----------------------------------------------------------------------
-
-procedure WriteStringToBlob(aDataSet: TDataSet; const aFieldName: string;
-  const aContent: string);
-var
-  ss: TStringStream;
-  isBrowse: boolean;
-begin
-  ss := TStringStream.Create(aContent, TEncoding.UTF8);
-  try
-    isBrowse := (aDataSet.State = dsBrowse);
-    aDataSet.Edit;
-    (aDataSet.FieldByName(aFieldName) as TBlobField).Value := ss.Bytes;
-    if isBrowse then
-      aDataSet.Post;
-  finally
-    ss.Free;
-  end;
-end;
 
 function StringAsUtf8Bytes(const s: string): TBytes;
 var
@@ -323,12 +299,13 @@ type
 
 procedure TestTDataSetHelper.LoadData_WithBlob();
 var
+  bytesRussian: TBytes;
   dataset: TDataSet;
   citiesWithBlob: TObjectList<TBlobCity>;
 begin
+  bytesRussian := StringAsUtf8Bytes('Sample: русский алфавит');
   dataset := GivenDataSet(fOwner, [
-  { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]]);
-  WriteStringToBlob(dataset, 'blob', 'Sample: русский алфавит');
+  { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28), bytesRussian]]);
 
   citiesWithBlob := dataset.LoadData<TBlobCity>();
 
@@ -356,11 +333,10 @@ var
   cities: TObjectList<TBlobCityWithAttributes>;
 begin
   dataset := GivenDataSet(fOwner, [
-  { } [1, 'Moscow', 7, EncodeDate(2015, 07, 11)],
-  { } [2, 'Warsaw', 6, EncodeDate(2011, 10, 02)]]);
-  WriteStringToBlob(dataset, 'blob', 'Russian: русский алфавит');
-  dataset.Next;
-  WriteStringToBlob(dataset, 'blob', 'Polish: zażółć gęślą jaźń');
+  { } [1, 'Moscow', 7, EncodeDate(2015, 07, 11),
+    StringAsUtf8Bytes('Russian: русский алфавит')],
+  { } [2, 'Warsaw', 6, EncodeDate(2011, 10, 02),
+    StringAsUtf8Bytes('Polish: zażółć gęślą jaźń')]]);
 
   cities := dataset.LoadData<TBlobCityWithAttributes>();
 
@@ -550,9 +526,9 @@ begin
     procedure
     begin
       dataset.AppendRows([
-      { } [1, 'A', 5],
-      { } [2, 'B', 'invalid numebr'],
-      { } [3, 'C', 6]]);
+        { } [1, 'A', 5],
+        { } [2, 'B', 'invalid numebr'],
+        { } [3, 'C', 6]]);
     end, EDatabaseError);
 end;
 
@@ -566,9 +542,9 @@ begin
     procedure
     begin
       dataset.AppendRows([
-      { } [1, 'A', 5],
-      { } [2],
-      { } [3, 'C', 6]]);
+        { } [1, 'A', 5],
+        { } [2],
+        { } [3, 'C', 6]]);
     end, EDatabaseError);
 end;
 
