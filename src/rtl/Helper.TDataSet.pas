@@ -293,6 +293,26 @@ begin
   else
   begin
     // INSERT
+    for idx := 0 to fDataSet.Fields.count - 1 do
+    begin
+      field := fDataSet.Fields[idx];
+      rttiField := RttiFieldByName(field.fieldName);
+      if rttiField <> nil then
+      begin
+        if field is TBlobField then
+          Value := rttiField.GetValue(aObject).AsType<TBytes>()
+        else
+          Value := rttiField.GetValue(aObject).AsVariant;
+        if Value <> field.Value then
+        begin
+          if fDataSet.State <> dsInsert then
+            fDataSet.Append;
+          field.Value := Value;
+        end;
+      end;
+    end;
+    if fDataSet.State <> dsBrowse then
+      fDataSet.Post;
   end;
 end;
 

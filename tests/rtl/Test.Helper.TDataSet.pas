@@ -43,6 +43,7 @@ type
     procedure SaveData_WhenChangedOneObject;
     procedure SaveData_WhenFlagIs_HasBeenModified;
     procedure SaveData_AllCasesScenario();
+    procedure SaveData_InsertOneCity;
     // --
     procedure AppendRows_CheckCountRows;
     procedure AppendRows_CheckFields;
@@ -515,6 +516,21 @@ begin
   dataset.Locate('Id', 1, []);
   Assert.AreEqual('Polish: zażółć gęślą jaźń',
     (dataset.FieldByName('blob') as TBlobField).Value.AsUtf8String);
+  cities.Free;
+end;
+
+procedure TestTDataSetHelper.SaveData_InsertOneCity();
+var
+  dataset: TDataSet;
+  cities: TObjectList<TCity>;
+begin
+  dataset := GivenDataSet(fOwner, []);
+  cities := TObjectList<TCity>.Create();
+  cities.Add(TCity.Create(1, 'Warsaw'));
+
+  dataset.SaveData<TCity>(cities);
+
+  Assert.AreEqual(1, dataset.RecordCount);
   cities.Free;
 end;
 
