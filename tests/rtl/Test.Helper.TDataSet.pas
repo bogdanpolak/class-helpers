@@ -88,7 +88,7 @@ begin
   begin
     FieldDefs.Add('id', ftInteger);
     FieldDefs.Add('city', ftWideString, 30);
-    FieldDefs.Add('rank', ftInteger);
+    FieldDefs.Add('rank', ftFloat);
     FieldDefs.Add('visited', ftDateTime);
     FieldDefs.Add('blob', ftBlob);
     FieldDefs[0].Required := True;
@@ -105,6 +105,19 @@ begin
   end;
   dataset.First;
   Result := dataset;
+end;
+
+function DataSetRecordToString(const dataset: TDataSet; aId: Integer): String;
+begin
+  if not dataset.Locate('Id', aId, []) then
+    Result := Format('Data record with Id: %d not found in dataset', [aId])
+  else
+  begin
+    Result := Format('[%d] %s - %s', [aId, dataset.FieldByName('city').AsString,
+      FormatDateTime('yyyy-mm-dd', dataset.FieldByName('visited').AsDateTime)])
+      + Format(' (%.1f)', [dataset.FieldByName('rank').AsFloat])
+      .Replace(',', '.');
+  end;
 end;
 
 // -----------------------------------------------------------------------
@@ -236,7 +249,7 @@ type
     [MappedToDBField('city')]
     cityName: string;
     [MappedToDBField('rank')]
-    Rank: Integer;
+    Rank: Double;
     [MappedToDBField('visited')]
     visitDate: TDateTime;
   end;
@@ -247,14 +260,14 @@ var
   cities: TObjectList<TMyCity>;
 begin
   dataset := GivenDataSet(fOwner, [
-  { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]]);
+  { } [1, 'Edinburgh', 5.0, EncodeDate(2018, 05, 28)]]);
 
   cities := dataset.LoadData<TMyCity>();
 
   Assert.AreEqual(1, cities.Count);
   Assert.AreEqual(1, cities[0].cityId, '(assert: CityId)');
   Assert.AreEqual('Edinburgh', cities[0].cityName);
-  Assert.AreEqual(5, cities[0].Rank);
+  Assert.AreEqual(5.0, cities[0].Rank, 0.09);
   Assert.AreEqual(EncodeDate(2018, 05, 28), cities[0].visitDate);
   cities.Free;
 end;
@@ -353,7 +366,7 @@ end;
 // -----------------------------------------------------------------------
 
 type
-  TCity01 = class
+  TBasicCity = class
   public
     id: Integer;
     City: string;
@@ -363,16 +376,16 @@ type
 procedure TestTDataSetHelper.SaveData_WhenChangedOneObject();
 var
   dataset: TDataSet;
-  cities: TObjectList<TCity01>;
+  cities: TObjectList<TBasicCity>;
   changed: Integer;
 begin
   dataset := GivenDataSet(fOwner, [
   { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]]);
-  cities := dataset.LoadData<TCity01>();
+  cities := dataset.LoadData<TBasicCity>();
   cities[0].City := 'Warsaw';
   cities[0].IsChanged := True;
 
-  changed := dataset.SaveData<TCity01>(cities);
+  changed := dataset.SaveData<TBasicCity>(cities);
 
   Assert.AreEqual(1, changed);
   Assert.AreEqual('Warsaw', dataset.FieldByName('city').AsString);
@@ -380,7 +393,7 @@ begin
 end;
 
 type
-  TCity02 = class
+  TSpecialCity = class
   public
     id: Integer;
     City: string;
@@ -390,18 +403,18 @@ type
 procedure TestTDataSetHelper.SaveData_ExceptionWhenIsChangedNotExist();
 var
   dataset: TDataSet;
-  cities: TObjectList<TCity02>;
+  cities: TObjectList<TSpecialCity>;
   changed: Integer;
 begin
   dataset := GivenDataSet(fOwner, [
   { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]]);
-  cities := dataset.LoadData<TCity02>();
+  cities := dataset.LoadData<TSpecialCity>();
 
   Assert.WillRaise(
     procedure
     begin
       try
-        changed := dataset.SaveData<TCity02>(cities);
+        changed := dataset.SaveData<TSpecialCity>(cities);
       finally
         cities.Free;
       end;
@@ -411,74 +424,97 @@ end;
 procedure TestTDataSetHelper.SaveData_WhenFlagIs_HasBeenModified();
 var
   dataset: TDataSet;
-  cities: TObjectList<TCity02>;
+  cities: TObjectList<TSpecialCity>;
   changed: Integer;
 begin
   dataset := GivenDataSet(fOwner, [
   { } [1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)]]);
-  cities := dataset.LoadData<TCity02>();
+  cities := dataset.LoadData<TSpecialCity>();
   cities[0].City := 'New York';
   cities[0].HasBeenModified := True;
 
-  changed := dataset.SaveData<TCity02>(cities, 'HasBeenModified');
+  changed := dataset.SaveData<TSpecialCity>(cities, 'HasBeenModified');
 
   Assert.AreEqual(1, changed);
 end;
 
+{ TCity }
+
 type
-  TCity03 = class
+  TCity = class
   private
     [MappedToDBField('Blob')]
     fBlob: TBytes;
   public
-    Id: Integer;
+    id: Integer;
     City: string;
-    Rank: Integer;
-    Visited: TDateTime;
+    Rank: Double;
+    visited: TDateTime;
     IsChanged: boolean;
-    property Blob: TBytes read fBlob write fBlob;
+    property blob: TBytes read fBlob write fBlob;
+    constructor Create(aId: Integer; const aCity: string);
+    function ChangeCity(aCityName: string): TCity;
+    function SetVisited(aVisited: TDateTime; aRank: Double): TCity;
+    function SetBlob(const aBlob: TBytes): TCity;
   end;
+
+constructor TCity.Create(aId: Integer; const aCity: string);
+begin
+  self.id := aId;
+  self.City := aCity;
+  IsChanged := True;
+end;
+
+function TCity.ChangeCity(aCityName: string): TCity;
+begin
+  self.City := aCityName;
+  IsChanged := True;
+  Result := self;
+end;
+
+function TCity.SetVisited(aVisited: TDateTime; aRank: Double): TCity;
+begin
+  self.visited := aVisited;
+  self.Rank := aRank;
+  IsChanged := True;
+  Result := self;
+end;
+
+function TCity.SetBlob(const aBlob: TBytes): TCity;
+begin
+  self.blob := aBlob;
+  IsChanged := True;
+  Result := self;
+end;
+
+{ ---- }
 
 procedure TestTDataSetHelper.SaveData_AllCasesScenario();
 var
   dataset: TDataSet;
-  cities: TObjectList<TCity03>;
-  changed: Integer;
-  actual: string;
+  cities: TObjectList<TCity>;
+  changedRows: Integer;
 begin
-  dataset := GivenDataSet(fOwner, [[1, 'Edinburgh', 5, EncodeDate(2018, 05, 28)
-    ], [2, 'Glassgow', 4, EncodeDate(2015, 09, 13)], [3, 'Cracow', 6,
-    EncodeDate(2019, 01, 01)], [4, 'Prague', 4, EncodeDate(2013, 06, 21)]]);
-  cities := dataset.LoadData<TCity03>();
-  with cities[0] do
-  begin
-    blob := StringAsUtf8Bytes('Polish: zażółć gęślą jaźń');
-    IsChanged := True;
-  end;
-  with cities[1] do
-  begin
-    City := 'Moscow';
-    visited := EncodeDate(2020, 07, 29);
-    IsChanged := True;
-  end;
-  with cities[3] do
-  begin
-    City := 'Brno';
-    IsChanged := True;
-  end;
+  dataset := GivenDataSet(fOwner, [
+  { } [1, 'Edinburgh', 5.5, EncodeDate(2018, 05, 28)],
+  { } [2, 'Glassgow', 3.5, EncodeDate(2015, 09, 13)],
+  { } [3, 'Cracow', 6, EncodeDate(2019, 01, 01)],
+  { } [4, 'Prague', Null, Null]]);
+  cities := dataset.LoadData<TCity>();
+  cities[0].SetBlob(StringAsUtf8Bytes('Polish: zażółć gęślą jaźń'));
+  cities[1].ChangeCity('Moscow').SetVisited(EncodeDate(2020, 07, 29), 5.7);
+  cities[3].SetVisited(EncodeDate(2020, 10, 29), 5.3);
 
-  changed := dataset.SaveData<TCity03>(cities);
+  changedRows := dataset.SaveData<TCity>(cities);
 
-  Assert.AreEqual(3, changed);
-  dataset.Locate('Id', 2, []);
-  Assert.AreEqual('Moscow', dataset.FieldByName('city').AsString);
-  Assert.AreEqual(EncodeDate(2020, 07, 29), dataset.FieldByName('visited')
-    .AsDateTime, 0.9);
-  dataset.Locate('Id', 4, []);
-  Assert.AreEqual('Brno', dataset.FieldByName('city').AsString);
+  Assert.AreEqual(3, changedRows);
+  Assert.AreEqual('[2] Moscow - 2020-07-29 (5.7)',
+    DataSetRecordToString(dataset, 2));
+  Assert.AreEqual('[4] Prague - 2020-10-29 (5.3)',
+    DataSetRecordToString(dataset, 4));
   dataset.Locate('Id', 1, []);
-  actual := (dataset.FieldByName('blob') as TBlobField).Value.AsUtf8String;
-  Assert.AreEqual('Polish: zażółć gęślą jaźń', actual);
+  Assert.AreEqual('Polish: zażółć gęślą jaźń',
+    (dataset.FieldByName('blob') as TBlobField).Value.AsUtf8String);
   cities.Free;
 end;
 
