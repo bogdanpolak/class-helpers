@@ -42,9 +42,11 @@ type
     procedure SaveData_ExceptionWhenIsChangedNotExist;
     procedure SaveData_WhenChangedOneObject;
     procedure SaveData_WhenFlagIs_HasBeenModified;
-    procedure SaveData_AllCasesScenario();
+    procedure SaveData_MultipleChanges();
     procedure SaveData_InsertOneCity;
+    procedure SaveData_AutoDetectNull;
     procedure SaveData_InsertOneCity_WithAutoInc;
+    procedure SaveData_MultipleInsertsAndUpdates;
     // --
     procedure AppendRows_CheckCountRows;
     procedure AppendRows_CheckFields;
@@ -115,10 +117,12 @@ begin
     Result := Format('Data record with Id: %d not found in dataset', [aId])
   else
   begin
-    Result := Format('[%d] %s - %s', [aId, dataset.FieldByName('city').AsString,
-      FormatDateTime('yyyy-mm-dd', dataset.FieldByName('visited').AsDateTime)])
-      + Format(' (%.1f)', [dataset.FieldByName('rank').AsFloat])
-      .Replace(',', '.');
+    Result := Format('[%d] %s', [aId, dataset.FieldByName('city').AsString]);
+    if not dataset.FieldByName('visited').IsNull then
+      Result := Result + Format(' - %s',
+        [FormatDateTime('yyyy-mm-dd', dataset.FieldByName('visited').AsDateTime)
+        ]) + Format(' (%.1f)', [dataset.FieldByName('rank').AsFloat])
+        .Replace(',', '.');
   end;
 end;
 
@@ -481,6 +485,7 @@ type
   private
     [MappedToDBField('Blob')]
     fBlob: TBytes;
+    procedure Init(const aCity: string);
   public
     id: Variant;
     City: string;
@@ -495,17 +500,23 @@ type
     function SetBlob(const aBlob: TBytes): TCity;
   end;
 
+procedure TCity.Init(const aCity: string);
+begin
+  self.City := aCity;
+  self.visited := 0; // null
+  self.Rank := -1; // null
+  IsChanged := True;
+end;
+
 constructor TCity.Create(aId: Integer; const aCity: string);
 begin
   self.id := aId;
-  self.City := aCity;
-  IsChanged := True;
+  Init(aCity);
 end;
 
 constructor TCity.Create(const aCity: string);
 begin
-  self.City := aCity;
-  IsChanged := True;
+  Init(aCity);
 end;
 
 function TCity.ChangeCity(aCityName: string): TCity;
@@ -530,9 +541,19 @@ begin
   Result := self;
 end;
 
+function FindCity(const cities: TObjectList<TCity>; aCityName: string): TCity;
+var
+  City: TCity;
+begin
+  for City in cities do
+    if City.City = aCityName then
+      exit(City);
+  Result := nil;
+end;
+
 { ---- }
 
-procedure TestTDataSetHelper.SaveData_AllCasesScenario();
+procedure TestTDataSetHelper.SaveData_MultipleChanges();
 var
   dataset: TDataSet;
   cities: TObjectList<TCity>;
@@ -576,6 +597,42 @@ begin
   cities.Free;
 end;
 
+procedure TestTDataSetHelper.SaveData_AutoDetectNull();
+var
+  dataset: TDataSet;
+  cities: TObjectList<TCity>;
+  errmsg: string;
+begin
+  dataset := GivenDataSet(fOwner, [
+  { } [1, 'Edinburgh', 5.5, EncodeDate(2018, 05, 28)],
+  { } [2, 'Warsaw']]);
+  cities := dataset.LoadData<TCity>();
+  cities.Add(TCity.Create(3, 'Cracow'));
+  FindCity(cities,'Edinburgh').SetVisited(0,-1);
+
+  dataset.SaveData<TCity>(cities);
+
+  errmsg := 'Field "%s" expected to be NULL for city "%s"';
+  dataset.First;
+  Assert.IsTrue(dataset.FieldByName('visited').IsNull, Format(errmsg,[
+    'visited',dataset.FieldByName('city').Value]));
+  Assert.IsTrue(dataset.FieldByName('rank').IsNull, Format(errmsg,[
+    'rank',dataset.FieldByName('city').Value]));
+
+  dataset.Next;
+  Assert.IsTrue(dataset.FieldByName('visited').IsNull, Format(errmsg,[
+    'visited',dataset.FieldByName('city').Value]));
+  Assert.IsTrue(dataset.FieldByName('rank').IsNull, Format(errmsg,[
+    'rank',dataset.FieldByName('city').Value]));
+
+  dataset.Next;
+  Assert.IsTrue(dataset.FieldByName('visited').IsNull, Format(errmsg,[
+    'visited',dataset.FieldByName('city').Value]));
+  Assert.IsTrue(dataset.FieldByName('rank').IsNull, Format(errmsg,[
+    'rank',dataset.FieldByName('city').Value]));
+  cities.Free;
+end;
+
 procedure TestTDataSetHelper.SaveData_InsertOneCity_WithAutoInc();
 var
   dataset: TDataSet;
@@ -593,6 +650,44 @@ begin
   dataset.SaveData<TCity>(cities);
 
   Assert.AreEqual(99, dataset.FieldByName('id').AsInteger);
+  cities.Free;
+end;
+
+procedure TestTDataSetHelper.SaveData_MultipleInsertsAndUpdates();
+var
+  dataset: TDataSet;
+  cities: TObjectList<TCity>;
+  datasetID: TField;
+  maxID: Integer;
+begin
+  dataset := GivenDataSet(fOwner, [
+  { } [1, 'Edinburgh', 5.5, EncodeDate(2018, 05, 28)],
+  { } [2, 'Glassgow', 3.5, EncodeDate(2015, 09, 13)],
+  { } [5, 'Cracow', Null, Null],
+  { } [7, 'Prague', Null, Null]]);
+  maxID := 7;
+  datasetID := dataset.FieldByName('id');
+  dataset.BeforePost := DataSetNotifyEvent(dataset,
+    procedure(aDataSet: TDataSet)
+    begin
+      if (datasetID.IsNull) or (datasetID.AsInteger <= 0) then
+      begin
+        maxID := maxID + 1;
+        aDataSet.FieldByName('id').AsInteger := maxID;
+      end;
+    end);
+  cities := dataset.LoadData<TCity>();
+  FindCity(cities, 'Cracow').SetVisited(EncodeDate(2020, 7, 22), 6.0);
+  FindCity(cities, 'Prague').SetVisited(EncodeDate(2020, 10, 15), 5.5);
+  cities.Add(TCity.Create('Warsaw'));
+
+  dataset.SaveData<TCity>(cities);
+
+  Assert.AreEqual('[5] Cracow - 2020-07-22 (6.0)',
+    DataSetRecordToString(dataset, 5));
+  Assert.AreEqual('[7] Prague - 2020-10-15 (5.5)',
+    DataSetRecordToString(dataset, 7));
+  Assert.AreEqual('[8] Warsaw', DataSetRecordToString(dataset, 8));
   cities.Free;
 end;
 

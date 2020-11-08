@@ -89,6 +89,7 @@ type
   TObjectToDataSetMapper = class
   strict private
     fNameOfChangedFlag: string;
+    fAutoDetectNull: boolean;
     fDataSet: TDataSet;
     fObjectRttiTypeInfo: TRttiType;
     fRttiFields: TArray<TRttiField>;
@@ -97,7 +98,7 @@ type
     function RttiFieldByName(const aFieldName: string): TRttiField;
   public
     constructor Create(const aDataset: TDataSet; const aObject: TObject;
-      const aNameOfChangedFlag: string = 'IsChanged');
+      const aAutoDetectNull: boolean; const aNameOfChangedFlag: string);
     function IsObjectChanged(const aObject: TObject): boolean;
     procedure ObjectToDataSetRow(const aObject: TObject);
   end;
@@ -175,15 +176,17 @@ end;
 // ----------------------------------------------------------------------
 
 constructor TObjectToDataSetMapper.Create(const aDataset: TDataSet;
-  const aObject: TObject; const aNameOfChangedFlag: string = 'IsChanged');
+  const aObject: TObject; const aAutoDetectNull: boolean;
+  const aNameOfChangedFlag: string);
 var
   RttiContext: TRttiContext;
-  idx: integer;
   count: integer;
+  idx: integer;
   j: integer;
 begin
   fDataSet := aDataset;
-  fNameOfChangedFlag := aNameOfChangedFlag;
+  fAutoDetectNull := aAutoDetectNull;
+  fNameOfChangedFlag := aNameOfChangedFlag; // 'IsChanged'
   // --
   fObjectRttiTypeInfo := RttiContext.GetType(aObject.ClassType);
   fRttiFields := fObjectRttiTypeInfo.GetFields();
@@ -251,7 +254,7 @@ var
   dbfieldname: string;
   rttiField: TRttiField;
   field: TField;
-  value: Variant;
+  Value: Variant;
 begin
   //
   keyfields := '';
@@ -262,14 +265,14 @@ begin
     rttiField := RttiFieldByName(dbfieldname);
     if rttiField = nil then
       raise Exception.Create('Error Message');
-    value := rttiField.GetValue(aObject).AsVariant;
-    if value <> Null and value <> Unassigned then
+    Value := rttiField.GetValue(aObject).AsVariant;
+    if Value <> Null and Value <> Unassigned then
     begin
       keyfields := IfThen(keyfields = '', dbfieldname, ';' + dbfieldname);
-      values := values + [value];
+      values := values + [Value];
     end;
   end;
-  if (Length(values)>0) and fDataSet.Locate(keyfields, values, []) then
+  if (Length(values) > 0) and fDataSet.Locate(keyfields, values, []) then
   begin
     // UPDATE
     for idx := 0 to fDataSet.Fields.count - 1 do
@@ -283,7 +286,18 @@ begin
           if field is TBlobField then
             Value := rttiField.GetValue(aObject).AsType<TBytes>()
           else
+          begin
             Value := rttiField.GetValue(aObject).AsVariant;
+            if fAutoDetectNull and not(field.Required) then
+            begin
+              case field.DataType of
+                ftDate, ftTime, ftDateTime:
+                  if Value <= 0 then Value := Null;
+                 ftSmallint, ftInteger, ftWord, ftAutoInc, ftFloat, ftCurrency, ftBCD:
+                  if Value < 0 then Value := Null;
+              end;
+            end;
+          end;
           if Value <> field.Value then
           begin
             fDataSet.Edit;
@@ -307,7 +321,18 @@ begin
         if field is TBlobField then
           Value := rttiField.GetValue(aObject).AsType<TBytes>()
         else
+        begin
           Value := rttiField.GetValue(aObject).AsVariant;
+          if fAutoDetectNull and not(field.Required) then
+          begin
+            case field.DataType of
+              ftDate, ftTime, ftDateTime:
+                if Value <= 0 then Value := Null;
+               ftSmallint, ftInteger, ftWord, ftAutoInc, ftFloat, ftCurrency, ftBCD:
+                if Value < 0 then Value := Null;
+            end;
+          end;
+        end;
         if Value <> field.Value then
         begin
           if fDataSet.State <> dsInsert then
@@ -403,11 +428,14 @@ const aNameOfChangedFlag: string = 'IsChanged'): integer;
 var
   item: T;
   mapper: TObjectToDataSetMapper;
+  autodetectNulls: Boolean;
 begin
   Result := 0;
   if (list = nil) or (list.count = 0) then
     exit;
-  mapper := TObjectToDataSetMapper.Create(self, list[0], aNameOfChangedFlag);
+  autodetectNulls := true;
+  mapper := TObjectToDataSetMapper.Create(self, list[0], autodetectNulls,
+    aNameOfChangedFlag);
   try
     for item in list do
       if mapper.IsObjectChanged(item) then
