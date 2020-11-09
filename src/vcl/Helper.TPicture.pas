@@ -5,6 +5,7 @@ interface
 uses
   System.SysUtils,
   System.Classes,
+  Data.DB,
   Vcl.Imaging.pngimage,
   Vcl.Imaging.jpeg,
   Vcl.Graphics;
@@ -15,15 +16,19 @@ type
     Version = '1.7';
   public
     /// <summary>
-    ///  Identifes binary signature of the image format creates TGraphics
-    ///  descending impage object and assign it to Picture. Supports JPEG
-    ///  and PNG images.
+    ///   Identifes binary signature of the image format creates TGraphics
+    ///   descending impage object and assign it to Picture. Supports JPEG
+    ///   and PNG images.
     /// </summary>
     /// <exception cref="EPictureReadError">
     ///   Exception <b>EPictureReadError</b> will be raise when image's
     ///   header is not recognized (not JPEG or PNG)
     /// </exception>
     procedure AssignBytes(const aBytes: TBytes);
+    /// <summary>
+    ///   TODO
+    /// </summary>
+    procedure AssignBlobField(const aField: TField);
   end;
 
   EPictureReadError = class(Exception);
@@ -34,12 +39,21 @@ function BytesAreEqual(const aData: TBytes; const aSignature: TBytes): boolean;
 var
   i: Integer;
 begin
-  if (Length(aData)<Length(aSignature)) then
+  if (Length(aData) < Length(aSignature)) then
     exit(False);
-  for i := 0 to Length(aSignature)-1 do
-    if aData[i]<>aSignature[i] then
+  for i := 0 to Length(aSignature) - 1 do
+    if aData[i] <> aSignature[i] then
       exit(False);
   Result := True;
+end;
+
+procedure TPictureHelper.AssignBlobField(const aField: TField);
+begin
+  Assert(aField <> nil, 'Provided field is NULL');
+  if not(aField is TBlobField) then
+    raise EPictureReadError.Create(Format('Database field %s',
+      [aField.FieldName]));
+  AssignBytes(aField.AsBytes);
 end;
 
 procedure TPictureHelper.AssignBytes(const aBytes: TBytes);
@@ -50,7 +64,7 @@ var
   isPng: boolean;
   ms: TMemoryStream;
   png: TPngImage;
-  isJpeg: Boolean;
+  isJpeg: boolean;
   jpeg: TJPEGImage;
 begin
   isPng := BytesAreEqual(aBytes, PNG_SIGNATURE);
@@ -59,9 +73,9 @@ begin
     raise EPictureReadError.Create
       ('Unsupported format: expected JPEG or PNG image');
   ms := TMemoryStream.Create();
-  ms.Write(aBytes,Length(aBytes));
-  ms.Position := 0;
   try
+    ms.Write(aBytes, Length(aBytes));
+    ms.Position := 0;
     if isPng then
     begin
       png := TPngImage.Create;

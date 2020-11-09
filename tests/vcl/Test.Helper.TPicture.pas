@@ -8,7 +8,8 @@ uses
   System.SysUtils,
   System.IOUtils,
   System.NetEncoding,
-  Vcl.Controls,
+  data.DB,
+  Datasnap.DBClient,
   Vcl.Graphics,
   Vcl.Imaging.jpeg,
   Vcl.Imaging.pngimage,
@@ -22,6 +23,7 @@ type
   [TestFixture]
   TestTPictureHelper = class(TObject)
   private
+    fOwner: TComponent;
     fPicture: TPicture;
   public
     [Setup]
@@ -31,6 +33,8 @@ type
   published
     procedure AssignBytes_PNG;
     procedure AssignBytes_JPEG;
+    // --
+    procedure AssignBlobField_PNG;
   end;
 {$M-}
 
@@ -235,16 +239,51 @@ end;
 
 procedure TestTPictureHelper.Setup;
 begin
+  fOwner := TComponent.Create(nil);
   fPicture := TPicture.Create;
 end;
 
 procedure TestTPictureHelper.TearDown;
 begin
   fPicture.Free;
+  fOwner.Free;
 end;
 
 // -----------------------------------------------------------------------
-// Tests
+// Utilites
+// -----------------------------------------------------------------------
+
+type
+  TVariantArray = array of Variant;
+
+function GivenDataSet(fOwner: TComponent; const data: TArray<TVariantArray>)
+  : TDataSet;
+var
+  dataset: TClientDataSet;
+  idx: Integer;
+  j: Integer;
+begin
+  dataset := TClientDataSet.Create(fOwner);
+  with dataset do
+  begin
+    FieldDefs.Add('id', ftInteger);
+    FieldDefs.Add('title', ftWideString, 50);
+    FieldDefs.Add('image', ftBlob);
+    CreateDataSet;
+  end;
+  for idx := 0 to High(data) do
+  begin
+    dataset.Append;
+    for j := 0 to High(data[idx]) do
+      dataset.Fields[j].Value := data[idx][j];
+    dataset.Post;
+  end;
+  dataset.First;
+  Result := dataset;
+end;
+
+// -----------------------------------------------------------------------
+// Tests - AssignBytes
 // -----------------------------------------------------------------------
 
 procedure TestTPictureHelper.AssignBytes_PNG;
@@ -269,6 +308,24 @@ begin
 
   Assert.IsTrue(fPicture.Graphic is TJPEGImage, 'Expected JPEG graphic');
   Assert.AreEqual(220, (fPicture.Graphic as TJPEGImage).Height);
+end;
+
+// -----------------------------------------------------------------------
+// Tests - TField
+// -----------------------------------------------------------------------
+
+procedure TestTPictureHelper.AssignBlobField_PNG;
+var
+  imagebytes: TBytes;
+  dataset: TDataSet;
+begin
+  dataset := GivenDataSet(fOwner, [
+    { } [1, 'delphipl.png', GivenBytes(PNG_DelphiPL_Base64)]]);
+
+  fPicture.AssignBlobField(dataset.FieldByName('image'));
+
+  Assert.IsTrue(fPicture.Graphic is TPngImage, 'Expected PNG graphic');
+  Assert.AreEqual(74, (fPicture.Graphic as TPngImage).Height);
 end;
 
 initialization
