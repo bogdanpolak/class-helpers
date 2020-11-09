@@ -30,6 +30,7 @@ type
     procedure TearDown;
   published
     procedure AssignBytes_PNG;
+    procedure AssignBytes_JPEG;
   end;
 {$M-}
 
@@ -256,6 +257,18 @@ begin
 
   Assert.IsTrue(fPicture.Graphic is TPNGImage, 'Expected PNG graphic');
   Assert.AreEqual(74, (fPicture.Graphic as TPNGImage).Height);
+end;
+
+procedure TestTPictureHelper.AssignBytes_JPEG;
+var
+  bytes: TBytes;
+begin
+  bytes := GivenBytes(JPEG_SmartbearLogo_Base64);
+
+  fPicture.AssignBytes(bytes);
+
+  Assert.IsTrue(fPicture.Graphic is TJPEGImage, 'Expected JPEG graphic');
+  Assert.AreEqual(220, (fPicture.Graphic as TJPEGImage).Height);
 end;
 
 initialization

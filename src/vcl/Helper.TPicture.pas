@@ -6,6 +6,7 @@ uses
   System.SysUtils,
   System.Classes,
   Vcl.Imaging.pngimage,
+  Vcl.Imaging.jpeg,
   Vcl.Graphics;
 
 type
@@ -35,20 +36,24 @@ end;
 procedure TPictureHelper.AssignBytes(const aBytes: TBytes);
 const
   PNG_SIGNATURE: TBytes = [$89, $50, $4E, $47, $0D, $0A, $1A, $0A];
+  JPEG_SIGNATURE: TBytes = [$FF, $D8, $FF, $E0];
 var
-  ispng: boolean;
+  isPng: boolean;
   ms: TMemoryStream;
   png: TPngImage;
+  isJpeg: Boolean;
+  jpeg: TJPEGImage;
 begin
-  ispng := BytesAreEqual(aBytes, PNG_SIGNATURE);
-  if not(ispng) then
+  isPng := BytesAreEqual(aBytes, PNG_SIGNATURE);
+  isJpeg := BytesAreEqual(aBytes, JPEG_SIGNATURE);
+  if not(isPng) and not(isJpeg) then
     raise EPictureReadError.Create
       ('Unsupported format: expected JPEG or PNG image');
   ms := TMemoryStream.Create();
   ms.Write(aBytes,Length(aBytes));
   ms.Position := 0;
   try
-    if ispng then
+    if isPng then
     begin
       png := TPngImage.Create;
       try
@@ -56,6 +61,16 @@ begin
         self.Graphic := png;
       finally
         png.Free;
+      end;
+    end
+    else if isJpeg then
+    begin
+      jpeg := TJPEGImage.Create;
+      try
+        jpeg.LoadFromStream(ms);
+        self.Graphic := jpeg;
+      finally
+        jpeg.Free;
       end;
     end
   finally
