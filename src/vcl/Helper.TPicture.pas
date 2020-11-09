@@ -67,7 +67,7 @@ const
   PNG_SIGNATURE: TBytes = [$89, $50, $4E, $47, $0D, $0A, $1A, $0A];
   JPEG_SIGNATURE: TBytes = [$FF, $D8, $FF, $E0];
   GIF_SIGNATURE: TBytes = [$47, $49, $46, $38, $39, $61]; // GIF89a
-  BMP_SIGNATURE: TBytes = [$42,$4D];  // BM
+  BMP_SIGNATURE: TBytes = [$42, $4D]; // BM
 var
   currentPos: Int64;
   countBytesToRead: Integer;

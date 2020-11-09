@@ -299,10 +299,9 @@ const
     'RySmgQ0GBm/WZ++JMJnKYgBqAX9WB7XIFUyjAGWMEdxnYS3xYd5iFaAuE8GzGDJlEPnIYD' +
     'cmiIkBiJkhEQADs=';
 {$ENDREGION}
-
-// -----------------------------------------------------------------------
-// Setup and TearDown section
-// -----------------------------------------------------------------------
+  // -----------------------------------------------------------------------
+  // Setup and TearDown section
+  // -----------------------------------------------------------------------
 
 procedure TestTPictureHelper.Setup;
 begin
@@ -327,7 +326,7 @@ var
 begin
   bytes := TBase64Encoding.Base64.DecodeStringToBytes(base64data);
   ms := TMemoryStream.Create();
-  ms.Write(bytes,Length(bytes));
+  ms.Write(bytes, Length(bytes));
   ms.Position := 0;
   Result := ms;
 end;
@@ -421,8 +420,8 @@ begin
 
   fPicture.AssignBytes(bytes);
 
-  Assert.IsTrue(fPicture.Graphic is TPNGImage, 'Expected PNG graphic');
-  Assert.AreEqual(74, (fPicture.Graphic as TPNGImage).Height);
+  Assert.IsTrue(fPicture.Graphic is TPngImage, 'Expected PNG graphic');
+  Assert.AreEqual(74, (fPicture.Graphic as TPngImage).Height);
 end;
 
 // -----------------------------------------------------------------------
@@ -431,7 +430,6 @@ end;
 
 procedure TestTPictureHelper.AssignBlobField_PNG;
 var
-  imagebytes: TBytes;
   dataset: TDataSet;
 begin
   dataset := GivenDataSet(fOwner, [
