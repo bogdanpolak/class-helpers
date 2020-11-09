@@ -31,8 +31,10 @@ type
     [TearDown]
     procedure TearDown;
   published
+    procedure AssignStream_JPEG;
+    procedure AssignStream_PNG;
+    // --
     procedure AssignBytes_PNG;
-    procedure AssignBytes_JPEG;
     // --
     procedure AssignBlobField_PNG;
   end;
@@ -253,6 +255,23 @@ end;
 // Utilites
 // -----------------------------------------------------------------------
 
+function GivenStream(const base64data: string): TStream;
+var
+  bytes: TBytes;
+  ms: TMemoryStream;
+begin
+  bytes := TBase64Encoding.Base64.DecodeStringToBytes(base64data);
+  ms := TMemoryStream.Create();
+  ms.Write(bytes,Length(bytes));
+  ms.Position := 0;
+  Result := ms;
+end;
+
+function GivenBytes(const base64data: string): TBytes;
+begin
+  Result := TBase64Encoding.Base64.DecodeStringToBytes(base64data);
+end;
+
 type
   TVariantArray = array of Variant;
 
@@ -283,6 +302,36 @@ begin
 end;
 
 // -----------------------------------------------------------------------
+// Tests - AssignStream
+// -----------------------------------------------------------------------
+
+procedure TestTPictureHelper.AssignStream_JPEG;
+var
+  stream: TStream;
+begin
+  stream := GivenStream(JPEG_SmartbearLogo_Base64);
+
+  fPicture.AssignStream(stream);
+  stream.Free;
+
+  Assert.IsTrue(fPicture.Graphic is TJPEGImage, 'Expected JPEG graphic');
+  Assert.AreEqual(220, (fPicture.Graphic as TJPEGImage).Height);
+end;
+
+procedure TestTPictureHelper.AssignStream_PNG;
+var
+  stream: TStream;
+begin
+  stream := GivenStream(PNG_DelphiPL_Base64);
+
+  fPicture.AssignStream(stream);
+  stream.Free;
+
+  Assert.IsTrue(fPicture.Graphic is TPngImage, 'Expected PNG graphic');
+  Assert.AreEqual(74, (fPicture.Graphic as TPngImage).Height);
+end;
+
+// -----------------------------------------------------------------------
 // Tests - AssignBytes
 // -----------------------------------------------------------------------
 
@@ -296,18 +345,6 @@ begin
 
   Assert.IsTrue(fPicture.Graphic is TPNGImage, 'Expected PNG graphic');
   Assert.AreEqual(74, (fPicture.Graphic as TPNGImage).Height);
-end;
-
-procedure TestTPictureHelper.AssignBytes_JPEG;
-var
-  bytes: TBytes;
-begin
-  bytes := GivenBytes(JPEG_SmartbearLogo_Base64);
-
-  fPicture.AssignBytes(bytes);
-
-  Assert.IsTrue(fPicture.Graphic is TJPEGImage, 'Expected JPEG graphic');
-  Assert.AreEqual(220, (fPicture.Graphic as TJPEGImage).Height);
 end;
 
 // -----------------------------------------------------------------------
