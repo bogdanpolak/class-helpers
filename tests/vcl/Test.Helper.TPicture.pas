@@ -13,6 +13,7 @@ uses
   Vcl.Graphics,
   Vcl.Imaging.jpeg,
   Vcl.Imaging.pngimage,
+  Vcl.Imaging.GIFImg,
   {}
   Helper.TPicture;
 
@@ -33,6 +34,7 @@ type
   published
     procedure AssignStream_JPEG;
     procedure AssignStream_PNG;
+    procedure AssignStream_GIF;
     // --
     procedure AssignBytes_PNG;
     // --
@@ -48,8 +50,8 @@ implementation
 
 const
   PNG_DelphiPL_Base64 =
-{$REGION}
     'iVBORw0KGgoAAAANSUhEUgAAAEAAAABKCAMAAAA8LKKKAAADAFBMVEXuAhnCeXvq6OjvEB' +
+{$REGION}
     '/c19f31db1xsj////9+fn58PDxuLr74+TlDBTMvb3fo6XWCQ61np/Sj5HETVCSNzmvGBzO' +
     'ICSYWVmgeHkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' +
     'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' +
@@ -95,8 +97,8 @@ const
     'jllf8AX6eJFWaDbXYAAAAASUVORK5CYII=';
 {$ENDREGION}
   JPEG_SmartbearLogo_Base64 =
-{$REGION}
     '/9j/4AAQSkZJRgABAQEAAQABAAD/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/hAzVodH' +
+{$REGION}
     'RwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0i' +
     'VzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYm' +
     'U6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDIxIDc5LjE1NDkx' +
@@ -229,11 +231,74 @@ const
     'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' +
     'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/9k=';
 {$ENDREGION}
-
-function GivenBytes(const base64data: string): TBytes;
-begin
-  Result := TBase64Encoding.Base64.DecodeStringToBytes(base64data);
-end;
+  GIF_GithubLogo_Base64 =
+    'R0lGODlheAB4APcAAAAAAAAAMwAAZgAAmQAAzAAA/wArAAArMwArZgArmQArzAAr/wBVAA' +
+{$REGION}
+    'BVMwBVZgBVmQBVzABV/wCAAACAMwCAZgCAmQCAzACA/wCqAACqMwCqZgCqmQCqzACq/wDV' +
+    'AADVMwDVZgDVmQDVzADV/wD/AAD/MwD/ZgD/mQD/zAD//zMAADMAMzMAZjMAmTMAzDMA/z' +
+    'MrADMrMzMrZjMrmTMrzDMr/zNVADNVMzNVZjNVmTNVzDNV/zOAADOAMzOAZjOAmTOAzDOA' +
+    '/zOqADOqMzOqZjOqmTOqzDOq/zPVADPVMzPVZjPVmTPVzDPV/zP/ADP/MzP/ZjP/mTP/zD' +
+    'P//2YAAGYAM2YAZmYAmWYAzGYA/2YrAGYrM2YrZmYrmWYrzGYr/2ZVAGZVM2ZVZmZVmWZV' +
+    'zGZV/2aAAGaAM2aAZmaAmWaAzGaA/2aqAGaqM2aqZmaqmWaqzGaq/2bVAGbVM2bVZmbVmW' +
+    'bVzGbV/2b/AGb/M2b/Zmb/mWb/zGb//5kAAJkAM5kAZpkAmZkAzJkA/5krAJkrM5krZpkr' +
+    'mZkrzJkr/5lVAJlVM5lVZplVmZlVzJlV/5mAAJmAM5mAZpmAmZmAzJmA/5mqAJmqM5mqZp' +
+    'mqmZmqzJmq/5nVAJnVM5nVZpnVmZnVzJnV/5n/AJn/M5n/Zpn/mZn/zJn//8wAAMwAM8wA' +
+    'ZswAmcwAzMwA/8wrAMwrM8wrZswrmcwrzMwr/8xVAMxVM8xVZsxVmcxVzMxV/8yAAMyAM8' +
+    'yAZsyAmcyAzMyA/8yqAMyqM8yqZsyqmcyqzMyq/8zVAMzVM8zVZszVmczVzMzV/8z/AMz/' +
+    'M8z/Zsz/mcz/zMz///8AAP8AM/8AZv8Amf8AzP8A//8rAP8rM/8rZv8rmf8rzP8r//9VAP' +
+    '9VM/9VZv9Vmf9VzP9V//+AAP+AM/+AZv+Amf+AzP+A//+qAP+qM/+qZv+qmf+qzP+q///V' +
+    'AP/VM//VZv/Vmf/VzP/V////AP//M///Zv//mf//zP///wAAAAAAAAAAAAAAACH5BAEAAP' +
+    'wALAAAAAB4AHgAAAj/APcJHEiwoMGDCBMqXMiwocOHECNGJJYJjZgbMWIA0LhxY4wbYiRl' +
+    'IhZNosmTKCEqmyRGowEAKgKoODBThYEVN3OuAHAAAIAVN0amHEpU4qQbPgG8xLniAIwAMD' +
+    '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' +
+    'cmiIkBiJkhEQADs=';
+{$ENDREGION}
 
 // -----------------------------------------------------------------------
 // Setup and TearDown section
@@ -312,10 +377,10 @@ begin
   stream := GivenStream(JPEG_SmartbearLogo_Base64);
 
   fPicture.AssignStream(stream);
-  stream.Free;
 
   Assert.IsTrue(fPicture.Graphic is TJPEGImage, 'Expected JPEG graphic');
   Assert.AreEqual(220, (fPicture.Graphic as TJPEGImage).Height);
+  stream.Free;
 end;
 
 procedure TestTPictureHelper.AssignStream_PNG;
@@ -325,10 +390,23 @@ begin
   stream := GivenStream(PNG_DelphiPL_Base64);
 
   fPicture.AssignStream(stream);
-  stream.Free;
 
   Assert.IsTrue(fPicture.Graphic is TPngImage, 'Expected PNG graphic');
   Assert.AreEqual(74, (fPicture.Graphic as TPngImage).Height);
+  stream.Free;
+end;
+
+procedure TestTPictureHelper.AssignStream_GIF;
+var
+  stream: TStream;
+begin
+  stream := GivenStream(GIF_GithubLogo_Base64);
+
+  fPicture.AssignStream(stream);
+
+  Assert.IsTrue(fPicture.Graphic is TGIFImage, 'Expected GIF graphic');
+  Assert.AreEqual(120, (fPicture.Graphic as TGIFImage).Height);
+  stream.Free;
 end;
 
 // -----------------------------------------------------------------------

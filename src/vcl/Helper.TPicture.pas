@@ -9,6 +9,7 @@ uses
   Data.DB,
   Vcl.Imaging.pngimage,
   Vcl.Imaging.jpeg,
+  Vcl.Imaging.GIFImg,
   Vcl.Graphics;
 
 type
@@ -19,21 +20,21 @@ type
     /// <summary>
     ///   Recogonize binary header of the image inside stream "aStream" and
     ///   creates adequate TGraphics descending image object inside TPicture.
-    ///   Method supports JPEG and PNG images.
+    ///   Method supports JPEG, PNG and GIF images.
     /// </summary>
     /// <exception cref="EPictureReadError">
     ///   Exception <b>EPictureReadError</b> will be raise when stream
-    ///   header is not recognized image format (not JPEG or PNG)
+    ///   header is not recognized image format (supported: JPEG, PNG and GIF)
     /// </exception>
     procedure AssignStream(const aStream: TStream);
     /// <summary>
     ///   Identifes binary signature of the image format creates TGraphics
-    ///   descending impage object and assign it to Picture. Supports JPEG
-    ///   and PNG images.
+    ///   descending impage object and assign it to Picture. Supports JPEG,
+    ///   PNG and GIF images.
     /// </summary>
     /// <exception cref="EPictureReadError">
     ///   Exception <b>EPictureReadError</b> will be raise when image's
-    ///   header is not recognized (not JPEG or PNG)
+    ///   header is not recognized image format (supported: JPEG, PNG and GIF)
     /// </exception>
     procedure AssignBytes(const aBytes: TBytes);
     /// <summary>
@@ -65,8 +66,9 @@ function RecognizeGraphicFormat(const aStream: TStream): TGraphicFormat;
 const
   PNG_SIGNATURE: TBytes = [$89, $50, $4E, $47, $0D, $0A, $1A, $0A];
   JPEG_SIGNATURE: TBytes = [$FF, $D8, $FF, $E0];
+  GIF_SIGNATURE: TBytes = [$47, $49, $46, $38, $39, $61]; // GIF89a
+  BMP_SIGNATURE: TBytes = [$42,$4D];  // BM
 var
-  i: Integer;
   currentPos: Int64;
   countBytesToRead: Integer;
   bytes: TBytes;
@@ -80,6 +82,10 @@ begin
       Result := gfJpeg
     else if AreBytesEqual(bytes, PNG_SIGNATURE) then
       Result := gfPng
+    else if AreBytesEqual(bytes, GIF_SIGNATURE) then
+      Result := gfGif
+    else if AreBytesEqual(bytes, BMP_SIGNATURE) then
+      Result := gfBmp
     else
       Result := gfUnkonwn;
   finally
@@ -92,6 +98,7 @@ var
   graphicFormat: TGraphicFormat;
   png: TPngImage;
   jpeg: TJPEGImage;
+  gif: TGIFImage;
 begin
   graphicFormat := RecognizeGraphicFormat(aStream);
   if graphicFormat = gfPng then
@@ -112,6 +119,16 @@ begin
       self.Graphic := jpeg;
     finally
       jpeg.Free;
+    end;
+  end
+  else if graphicFormat = gfGif then
+  begin
+    gif := TGIFImage.Create;
+    try
+      gif.LoadFromStream(aStream);
+      self.Graphic := gif;
+    finally
+      gif.Free;
     end;
   end
   else
