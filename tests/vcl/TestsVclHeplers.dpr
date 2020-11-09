@@ -16,7 +16,9 @@ uses
   Helper.TStringGrid in '..\..\src\vcl\Helper.TStringGrid.pas',
   Test.Helper.TStringGrid in 'Test.Helper.TStringGrid.pas',
   Test.Helper.TDBGrid in 'Test.Helper.TDBGrid.pas',
-  Test.Helper.TWinControl in 'Test.Helper.TWinControl.pas';
+  Test.Helper.TWinControl in 'Test.Helper.TWinControl.pas',
+  Helper.TPicture in '..\..\src\vcl\Helper.TPicture.pas',
+  Test.Helper.TPicture in 'Test.Helper.TPicture.pas';
 
 var
   runner : ITestRunner;
