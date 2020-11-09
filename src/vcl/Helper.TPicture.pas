@@ -14,6 +14,15 @@ type
   private const
     Version = '1.7';
   public
+    /// <summary>
+    ///  Identifes binary signature of the image format creates TGraphics
+    ///  descending impage object and assign it to Picture. Supports JPEG
+    ///  and PNG images.
+    /// </summary>
+    /// <exception cref="EPictureReadError">
+    ///   Exception <b>EPictureReadError</b> will be raise when image's
+    ///   header is not recognized (not JPEG or PNG)
+    /// </exception>
     procedure AssignBytes(const aBytes: TBytes);
   end;
 
