@@ -36,19 +36,34 @@ From the very beginning (Delphi 2006) till Delphi Berlin / 10.1 version there wa
 
 ## Helpers in this repo
 
-| Expanded class | Helper methods description |
+**RTL Helpers:**
+
+| Unit | Helper description |
 | --- | --- |
-| TApplication | Sample helper containing experimental method `InDeveloperMode`. |
-| TByte | Allows to manipulates arrays of bytes: size, load & save, getter & setters |
-| TDataSet | Methods like: `WhileNotEof` - iterating through dataset or LoadData - loads data into the object list |
-| TDateTime | Methods that allow easily manipulate date and time (from unit: System.DateUtils) |
+| [Helper.TBytes](./doc/Helper.TBytes.md) | Allows to manipulates arrays of bytes: size, load & save, getter & setters |
+| Helper.TDataSet | Additional TDataSet functionality like: iterating through dataset or LoadData / SaveData - allows to map a list of objects to the dataset |
+| Helper.TDateTime | Methods that allow easily manipulate date and time |
+| Helper.TField | Allows to load Base64 data into Blob Field or verifying signature of the stored data |
+| Helper.TJSONObject | Methods reading data or storing in the JSON DOM structure, like IsValidIsoDate(fieldName) |
+| Helper.TStream | Methods which facilitate reading and writing data to streams |
+
+**VCL Helpers:**
+
+| Expanded class | Helper description |
+| --- | --- |
+| TApplication | Sample helper containing experimental method like: `InDeveloperMode`. |
 | TDBGrid | Methods manipulating DBGrid columns, like: AutoSizeColumns - automatically arranging with of each column |
-| TField | Allows to load Base64 data into Blob Field or verifying signature of the stored data |
-| TJSONObject | Methods reading data or storing in the JSON DOM structure, like IsValidIsoDate(fieldName) |
 | TForm | Methods managing timers: SetInterval and SetTimeout |
-| TStream | Methods which facilitate reading and writing data to streams |
-| TStringGrid | Filling and configuring String Grid control: loading data, setting columns. clearing |
+| TPicture | Allow to assign TBytes and TBlobField to TPicture with automatic image format recognition |
+| TStringGrid | Filling and configuring String Grid control: loading data, setting columns width, clearing content of cell or row |
 | TWinControl | Utility methods for searching child controls by type or by name. Visible for all TWinControl descendants: TForm, TPanel, etc.  |
+
+**Other Helpers:**
+
+| Expanded class | Helper description |
+| --- | --- |
+| Helper.TFDConnection |  |
+| Helper.TFDCustomManager |  |
 
 Helper naming convention is to add suffix `Helper` to the name of the expanded class, what means that class helper for `TDataSet` will has a name `TDataSetHelper`. 
 
