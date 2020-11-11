@@ -34,18 +34,57 @@ type
     procedure LoadFromFile(const aFileName: string);
     procedure SaveToStream(const aStream: TStream);
     procedure SaveToFile(const aFileName: string);
+    /// <summary>
+    ///   Encodes provided string "aBase64Str" to array of bytes using
+    ///   Base64 encoding algorithm and stores it
+    /// </summary>
     procedure InitialiseFromBase64String(const aBase64Str: String);
     // ---------------------
     // Data getters
     // ---------------------
+    /// <summary>
+    ///   Reads block of bytes starting at "aIndex" position with lenght
+    ///   "aLenght" (defualt: 100 bytes or less if array size is smaller)
+    ///   and converts readed block to continous hex string (byte after
+    ///   byte without any separates), eg: "A513F081DD7389"
+    /// </summary>
     function GetSectorAsHex(aIndex: Integer = 0;
       aLength: Integer = 100): string;
+    /// <summary>
+    ///   Reads block of bytes starting at "aIndex" position with lenght
+    ///   "aLenght" (defualt: 100 bytes or less if array size is smaller)
+    ///   then converts each readed byte into Unicode character and return
+    ///    result as string with all converted charactes
+    /// </summary>
     function GetSectorAsString(aIndex: Integer = 0;
       aLength: Integer = 100): string;
+    /// <summary>
+    ///    Reads two bytes at position "aIndex" position and converts then
+    ///    into "word" number (0..65535) with little-endian order (first
+    ///    byte is less significant)
+    /// </summary>
     function GetWord(aIndex: Integer = 0): Word;
+    /// <summary>
+    ///    Reads two bytes at position "aIndex" position and converts then
+    ///    into "word" number (0..65535) using big-endian order (first
+    ///    byte is more significant)
+    /// </summary>
     function GetReverseWord(aIndex: Integer = 0): Word;
+    /// <summary>
+    ///    Reads four bytes at position "aIndex" position and converts then
+    ///    into "longword" number using little-endian order
+    /// </summary>
     function GetLongWord(aIndex: Integer = 0): LongWord;
+    /// <summary>
+    ///    Reads four bytes at position "aIndex" position and converts then
+    ///    into "longword" number using big-endian order
+    /// </summary>
     function GetReverseLongWord(aIndex: Integer = 0): LongWord;
+    /// <summary>
+    ///   returns sub-block of bytes starting at "aIndex" position with
+    ///   lenght "aLenght" (if source array is smaller returns only available
+    ///   portion of bytes
+    /// </summary>
     function SubBytes(aIndex, aLength: Integer): TBytes;
     // ---------------------
     // Compare
