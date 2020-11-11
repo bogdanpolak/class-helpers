@@ -16,7 +16,7 @@ type
 
   TFieldHelper = class helper for TField
   private const
-    Version = '1.7';
+    Version = '1.8';
   private
     procedure AssertIsBlobField;
     procedure AssertNotNull;

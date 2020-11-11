@@ -9,47 +9,126 @@ uses
 type
   TBytesHelper = record helper for TBytes
   private const
-    Version = '1.7';
+    Version = '1.8';
   private
   public
     // ---------------------
     // Size:
+    // ---------------------
+    /// <summary>
+    ///   Returns size of byte array
+    /// </summary>
     function GetSize: Integer;
+    /// <summary>
+    ///   Changes size of byte array to "aSize" bytes
+    /// </summary>
     procedure SetSize(aSize: Integer);
+    /// <summary>
+    ///   allows to get or set size of byte array
+    /// </summary>
     property Size: Integer read GetSize write SetSize;
     // ---------------------
     // InitialiseFrom / Load / Save
+    // ---------------------
     procedure LoadFromStream(const aStream: TStream);
     procedure LoadFromFile(const aFileName: string);
     procedure SaveToStream(const aStream: TStream);
     procedure SaveToFile(const aFileName: string);
+    /// <summary>
+    ///   Encodes provided string "aBase64Str" to array of bytes using
+    ///   Base64 encoding algorithm and stores it
+    /// </summary>
     procedure InitialiseFromBase64String(const aBase64Str: String);
     // ---------------------
     // Data getters
+    // ---------------------
+    /// <summary>
+    ///   Reads block of bytes starting at "aIndex" position with length
+    ///   "aLength" (default: 100 bytes or less if array size is smaller)
+    ///   and converts read block to a text of a hex values separated with
+    ///   spaces, eg: "A5 13 F0 81 DD 73 89"
+    /// </summary>
     function GetSectorAsHex(aIndex: Integer = 0;
       aLength: Integer = 100): string;
+    /// <summary>
+    ///   Reads block of bytes starting at "aIndex" position with length
+    ///   "aLength" (defualt: 100 bytes or less if array size is smaller)
+    ///   then converts each readed byte into Unicode character and return
+    ///    result as string with all converted characters
+    /// </summary>
     function GetSectorAsString(aIndex: Integer = 0;
       aLength: Integer = 100): string;
+    /// <summary>
+    ///    Reads two bytes at position "aIndex" position and converts them
+    ///    into "word" number (0..65535) with little-endian order (first
+    ///    byte is less significant)
+    /// </summary>
     function GetWord(aIndex: Integer = 0): Word;
+    /// <summary>
+    ///    Reads two bytes at position "aIndex" position and converts them
+    ///    into "word" number (0..65535) using big-endian order (first
+    ///    byte is more significant)
+    /// </summary>
     function GetReverseWord(aIndex: Integer = 0): Word;
+    /// <summary>
+    ///    Reads four bytes at position "aIndex" position and converts them
+    ///    into "longword" number using little-endian order
+    /// </summary>
     function GetLongWord(aIndex: Integer = 0): LongWord;
+    /// <summary>
+    ///    Reads four bytes at position "aIndex" position and converts them
+    ///    into "longword" number using big-endian order
+    /// </summary>
     function GetReverseLongWord(aIndex: Integer = 0): LongWord;
+    /// <summary>
+    ///   Returns sub-block of bytes starting at "aIndex" position with
+    ///   length "aLength" (if source array is smaller returns only available
+    ///   portion of bytes
+    /// </summary>
     function SubBytes(aIndex, aLength: Integer): TBytes;
     // ---------------------
-    // Comparers
+    // Compare
+    // ---------------------
     function IsEqual(const aBytes: TBytes): boolean;
     // ---------------------
     // Utils
-    function CreatesStream: TMemoryStream;
+    // ---------------------
+    /// <summary>
+    ///   Creates new TMemoryStream object and stores byte array. Method is
+    ///   not taking ownership of the stream memory and code which is calling
+    ///   that method should "Free" returned stream memory.
+    /// </summary>
+    function CreateStream: TMemoryStream;
+    /// <summary>
+    ///   Converts byte's array to string encoded with Base64 algorithm
+    /// </summary>
     function GenerateBase64Code(aLineLength: Integer = 68): string;
+    /// <summary>
+    ///   Calculates check sum of the byte's array using CRC32 algorithm
+    /// </summary>
     function GetSectorCRC32(aIndex: Integer; aLength: Integer): LongWord;
+    // ---------------------
+    // Compress
+    // ---------------------
+    /// <summary>
+    ///   Decompress content od the stream "aComressedStream" and
+    ///   stores result using ZLib library. Stream has to contain
+    ///   vaild ZIP compressed data.
+    /// </summary>
+    procedure DecompressFromStream(aCompressedStream: TStream);
+    /// <summary>
+    ///   Compress byte's array using ZLib library (ZIP format) and
+    //    as saves results in "aStream" stream.
+    /// </summary>
+    procedure CompressToStream(aStream: TStream);
   end;
 
 implementation
 
 uses
   System.NetEncoding,
-  System.Math;
+  System.Math,
+  System.ZLib;
 
 // -----------------------------------------------------------------------
 // Size
@@ -194,14 +273,12 @@ end;
 
 // -----------------------------------------------------------------------
 // Utils:
-//  * CreatesStream - Creates TMemoryStream and files it with bytes
+//  * CreateStream - Creates TMemoryStream and files it with bytes
 //  * GenerateBase64Code - Fake code generator
 //  * GetSectorCRC32 - Calc Checksums
 // -----------------------------------------------------------------------
 
-function TBytesHelper.CreatesStream: TMemoryStream;
-var
-  aPos: Int64;
+function TBytesHelper.CreateStream: TMemoryStream;
 begin
   Result := TMemoryStream.Create;
   Result.Write(Self[0], Length(Self));
@@ -278,6 +355,47 @@ begin
     Result := (Result shr 8) xor
     { } crc32tab[Self[LongWord(aIndex) + i] xor byte(Result and $000000FF)];
   Result := not Result;
+end;
+
+// ---------------------
+// Compress
+procedure TBytesHelper.DecompressFromStream(aCompressedStream: TStream);
+var
+  decompressionStream: TZDecompressionStream;
+  ms: TMemoryStream;
+begin
+  decompressionStream := TZDecompressionStream.Create(aCompressedStream);
+  try
+    ms := TMemoryStream.Create;
+    try
+      ms.CopyFrom(decompressionStream, 0);
+      self.LoadFromStream(ms);
+    finally
+      ms.Free;
+    end;
+  finally
+    decompressionStream.Free;
+  end;
+end;
+
+procedure TBytesHelper.CompressToStream(aStream: TStream);
+var
+  ms: TMemoryStream;
+  compressionStream: TZCompressionStream;
+begin
+  ms := TMemoryStream.Create;
+  try
+    self.SaveToStream(ms);
+    ms.Position := 0;
+    compressionStream := TZCompressionStream.Create(aStream);
+    try
+      compressionStream.CopyFrom(ms, 0);
+    finally
+      compressionStream.Free;
+    end;
+  finally
+    ms.Free;
+  end;
 end;
 
 end.

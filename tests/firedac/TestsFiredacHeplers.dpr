@@ -1,4 +1,4 @@
-program TestsHeplers;
+program TestsFiredacHeplers;
 
 {$IFNDEF TESTINSIGHT}
 {$APPTYPE CONSOLE}
@@ -11,26 +11,10 @@ uses
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
-  Helper.TApplication in '..\src\Helper.TApplication.pas',
-  Helper.TDataSet in '..\src\Helper.TDataSet.pas',
-  Helper.TDateTime in '..\src\Helper.TDateTime.pas',
-  Helper.TDBGrid in '..\src\Helper.TDBGrid.pas',
-  Helper.TJSONObject in '..\src\Helper.TJSONObject.pas',
-  Helper.TWinControl in '..\src\Helper.TWinControl.pas',
-  Helper.TStringGrid in '..\src\Helper.TStringGrid.pas',
-  Test.Helper.TDateTime in 'Test.Helper.TDateTime.pas',
-  Test.Helper.TWinControl in 'Test.Helper.TWinControl.pas',
-  Test.Helper.TStringGrid in 'Test.Helper.TStringGrid.pas',
-  Test.Helper.TDataSet in 'Test.Helper.TDataSet.pas',
-  Test.Helper.TJSONObject in 'Test.Helper.TJSONObject.pas',
-  Test.Helper.TDBGrid in 'Test.Helper.TDBGrid.pas',
-  Attribute.MappedToField in '..\src\Attribute.MappedToField.pas',
-  Helper.TBytes in '..\src\Helper.TBytes.pas',
-  Test.Helper.TBytes in 'Test.Helper.TBytes.pas',
-  Test.Helper.TStream in 'Test.Helper.TStream.pas',
-  Helper.TStream in '..\src\Helper.TStream.pas',
-  Test.Helper.TField in 'Test.Helper.TField.pas',
-  Helper.TField in '..\src\Helper.TField.pas';
+  Helper.TFDConnection in '..\..\src\firedac\Helper.TFDConnection.pas',
+  Helper.TFDCustomManager in '..\..\src\firedac\Helper.TFDCustomManager.pas',
+  Test.Helper.TFDConnection in 'Test.Helper.TFDConnection.pas',
+  Test.Helper.TFDCustomManager in 'Test.Helper.TFDCustomManager.pas';
 
 var
   runner : ITestRunner;

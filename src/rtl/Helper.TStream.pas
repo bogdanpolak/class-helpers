@@ -11,7 +11,7 @@ type
 
   TStreamHelper = class helper for TStream
   private const
-    Version = '1.7';
+    Version = '1.8';
   private
   public
     /// <summary>
