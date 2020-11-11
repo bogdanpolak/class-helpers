@@ -50,7 +50,7 @@ type
     procedure IsEqual_False_OneDiffrent;
     procedure IsEqual_False_ThreeItemAndOneDiffrent;
     // -----
-    procedure CreatesStream;
+    procedure CreateStream;
     procedure GenerateBase64Code_ElevnBytes;
     procedure GenerateBase64Code_MoreLines;
     procedure GenerateBase64Code_NarrowLines;
@@ -265,7 +265,7 @@ procedure TestTBytesHelper.GetLongWord;
 var
   actual: Cardinal;
 begin
-  fBytes := [255, 2, 0, 0, 0, 255];
+  fBytes := [0, ,0, 2, 0, 0, 0, 255];
   actual := fBytes.GetLongWord(1);
   Assert.AreEqual(2, actual);
 end;
@@ -344,13 +344,13 @@ end;
 // Tests TBytes - Utils
 // -----------------------------------------------------------------------
 
-procedure TestTBytesHelper.CreatesStream;
+procedure TestTBytesHelper.CreateStream;
 var
   aMemoryStream: TMemoryStream;
   actual: string;
 begin
   fBytes := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-  aMemoryStream := fBytes.CreatesStream;
+  aMemoryStream := fBytes.CreateStream;
   actual := StreamToHexString(aMemoryStream);
   aMemoryStream.Free;
   Assert.AreEqual('01 02 03 04 05 06 07 08 09 0A 0B', actual);
