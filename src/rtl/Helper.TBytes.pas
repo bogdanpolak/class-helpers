@@ -81,7 +81,7 @@ type
     /// </summary>
     function GetReverseLongWord(aIndex: Integer = 0): LongWord;
     /// <summary>
-    ///   returns sub-block of bytes starting at "aIndex" position with
+    ///   Returns sub-block of bytes starting at "aIndex" position with
     ///   lenght "aLenght" (if source array is smaller returns only available
     ///   portion of bytes
     /// </summary>
@@ -93,13 +93,33 @@ type
     // ---------------------
     // Utils
     // ---------------------
+    /// <summary>
+    ///   Creates new TMemoryStream object and stores byte array. Method is
+    ///   not taking ownership of the stream memory and code which is calling
+    ///   that method should "Free" returned stream memory.
+    /// </summary>
     function CreatesStream: TMemoryStream;
+    /// <summary>
+    ///   Converts byte's array to string encoded with Base64 alghoritm
+    /// </summary>
     function GenerateBase64Code(aLineLength: Integer = 68): string;
+    /// <summary>
+    ///   Calculates check sum of the byte's array using CRC32 alghoritm
+    /// </summary>
     function GetSectorCRC32(aIndex: Integer; aLength: Integer): LongWord;
     // ---------------------
     // Compress
     // ---------------------
+    /// <summary>
+    ///   Decopmress content od the stream "aComressedStream" and
+    ///   stores result using ZLib library. Stream has to contain
+    ///   vaild ZIP compressed data.
+    /// </summary>
     procedure DecompressFromStream(aComressedStream: TStream);
+    /// <summary>
+    ///   Compress byte's array using ZLib library (ZIP format) and
+    //    as saves results in "aStream" stream.
+    /// </summary>
     procedure CompressToStream(aStream: TStream);
   end;
 
