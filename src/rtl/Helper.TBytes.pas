@@ -14,11 +14,22 @@ type
   public
     // ---------------------
     // Size:
+    // ---------------------
+    /// <summary>
+    ///   Returns size of byte array
+    /// </summary>
     function GetSize: Integer;
+    /// <summary>
+    ///   Changes size of byte array to "aSize" bytes
+    /// </summary>
     procedure SetSize(aSize: Integer);
+    /// <summary>
+    ///   allows to get or set size of byte array
+    /// </summary>
     property Size: Integer read GetSize write SetSize;
     // ---------------------
     // InitialiseFrom / Load / Save
+    // ---------------------
     procedure LoadFromStream(const aStream: TStream);
     procedure LoadFromFile(const aFileName: string);
     procedure SaveToStream(const aStream: TStream);
@@ -26,6 +37,7 @@ type
     procedure InitialiseFromBase64String(const aBase64Str: String);
     // ---------------------
     // Data getters
+    // ---------------------
     function GetSectorAsHex(aIndex: Integer = 0;
       aLength: Integer = 100): string;
     function GetSectorAsString(aIndex: Integer = 0;
@@ -37,14 +49,17 @@ type
     function SubBytes(aIndex, aLength: Integer): TBytes;
     // ---------------------
     // Compare
+    // ---------------------
     function IsEqual(const aBytes: TBytes): boolean;
     // ---------------------
     // Utils
+    // ---------------------
     function CreatesStream: TMemoryStream;
     function GenerateBase64Code(aLineLength: Integer = 68): string;
     function GetSectorCRC32(aIndex: Integer; aLength: Integer): LongWord;
     // ---------------------
     // Compress
+    // ---------------------
     procedure DecompressFromStream(aComressedStream: TStream);
     procedure CompressToStream(aStream: TStream);
   end;
