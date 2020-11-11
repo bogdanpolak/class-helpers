@@ -1,4 +1,4 @@
-unit Helper.TFDConnection;
+﻿unit Helper.TFDConnection;
 
 interface
 
@@ -9,7 +9,7 @@ uses
 type
   TFDConnectionHelper = class helper for TFDConnection
   private const
-    Version = '1.7';
+    Version = '1.8';
   public
     /// <summary>
     ///   Setts FireDAC connection definion using fluent method, which

@@ -8,7 +8,7 @@ uses
 type
   TFDCustomManagerHelper = class helper for TFDCustomManager
   private const
-    Version = '1.7';
+    Version = '1.8';
   public
     /// <summary>
     ///   Reads list of registered FireDAC connection definitions

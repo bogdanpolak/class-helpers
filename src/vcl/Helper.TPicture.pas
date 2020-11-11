@@ -1,4 +1,4 @@
-unit Helper.TPicture;
+﻿unit Helper.TPicture;
 
 interface
 
@@ -15,7 +15,7 @@ uses
 type
   TPictureHelper = class helper for TPicture
   private const
-    Version = '1.7';
+    Version = '1.8';
   public
     /// <summary>
     ///   Recogonize binary header of the image inside stream "aStream" and

@@ -21,7 +21,7 @@ type
 
   TFormHelper = class helper for TForm
   private const
-    Version = '1.7';
+    Version = '1.8';
   private
     class var fTimers: TArray<TTimerRecord>;
     class var fTimerCount: integer;

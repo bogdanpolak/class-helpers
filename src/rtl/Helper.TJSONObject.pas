@@ -10,7 +10,7 @@ uses
 type
   TJSONObjectHelper = class helper for TJSONObject
   private const
-    Version = '1.7';
+    Version = '1.8';
   public
     /// <summary>
     ///   Checks is JSON object has field (key) provided through parameter and its value is not NULL
