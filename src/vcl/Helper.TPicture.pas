@@ -20,7 +20,8 @@ type
     /// <summary>
     ///   Recogonize binary header of the image inside stream "aStream" and
     ///   creates adequate TGraphics descending image object inside TPicture.
-    ///   Method supports JPEG, PNG and GIF images.
+    ///   Method supports JPEG, PNG and GIF images. In Delphi 10 Seattle and
+    ///   recent versions please use "TPicture.LoadFromStream" instead.
     /// </summary>
     /// <exception cref="EPictureReadError">
     ///   Exception <b>EPictureReadError</b> will be raise when stream
@@ -140,7 +141,13 @@ procedure TPictureHelper.AssignBlobField(const aField: TField);
 begin
   Assert(aField <> nil, 'Provided field is NULL');
   if aField is TBlobField then
-    self.AssignStream(aField.DataSet.CreateBlobStream(aField, bmRead))
+  begin
+{$IF CompilerVersion >= 30.0}
+    LoadFromStream(aField.DataSet.CreateBlobStream(aField, bmRead));
+{$ELSE}
+    AssignStream(aField.DataSet.CreateBlobStream(aField, bmRead));
+{$ENDIF}
+  end
   else
     raise EPictureReadError.Create(Format('Database field %s',
       [aField.FieldName]));
@@ -154,7 +161,11 @@ begin
   try
     ms.Write(aBytes, Length(aBytes));
     ms.Position := 0;
+{$IF CompilerVersion >= 30.0}
+    LoadFromStream(ms);
+{$ELSE}
     AssignStream(ms);
+{$ENDIF}
   finally
     ms.Free;
   end;
