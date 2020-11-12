@@ -1,6 +1,6 @@
 ﻿# Repository of VCL and RTL Class Helpers
 
-![ Delphi Support ](https://img.shields.io/badge/Delphi%20Support-%2010%20..%2010.3%20Rio-blue.svg)
+![ Delphi Support ](https://img.shields.io/badge/Delphi%20Support-%20XE4%20..%2010.4-blue.svg)
 ![ version ](https://img.shields.io/badge/version-%201.8-yellow.svg)
 
 
