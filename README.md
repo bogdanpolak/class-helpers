@@ -1,40 +1,213 @@
-﻿# Repository of VCL and RTL Class Helpers
+﻿# Delphi Class Helpers - VCL RTL and FireDAC
 
-![ Delphi Support ](https://img.shields.io/badge/Delphi%20Support-%20XE4%20..%2010.4-blue.svg)
+![ Delphi Support ](https://img.shields.io/badge/Delphi%20Support-%20XE4%20..%2011.2-blue.svg)
 ![ version ](https://img.shields.io/badge/version-%201.8-yellow.svg)
 
+# Delphi Class Helpers
 
-## Why use Class Helpers?
+Make Delphi code more readable using class helpers:
 
-### 1. Safe cleaning technique
-
-The huge amount of VCL (FMX) code can be cleared using class helpers, which are actually an easy refactoring technique with low risk for complex projects. Using this method, teams can start upgrading their legacy projects even without unit tests safety net. Moreover the verification of newly created helpers can be easily done with unit tests. This approach allow to teach developers how to write unit tests in a correct way (learn in practice F.I.R.S.T principles or other). Teams can also easily apply TDD development process (write tests first and then implement functionality) in a fun and non-invasive way.
-
-Sometimes class helpers could be also dangerous if they are used improperly. For this reason it is required to apply a little more disciplined development and delivery process, suggestions connected with that area are covered in the following sections. 
-
-Class helpers benefits:
-
-- **Extract global functions** - global functions and utility methods wrote straight in forms (modules) can be extracted and reuse, also they can grouped together in separated containers based on subject class, finally they can be covered with unit tests
-- **Reduce size of events** - size of code in events (forms, frames and data modules) can be significantly decreased, which helps to improve code readability, especially when valuable business code is  mixed together with visualization or with component processing
-- **Improve utility code readability** - it is available by removing one of the function parameter which is a call subject (see bellow "Subject first" sample), together with that small improvements we are able to remove flags from calls, use more meaningful names, compress conditional sequences, make complex things simpler and safer
-- **Introduce TDD approach**. - class helpers should be autonomous and not dependent on project's business code, thanks of that are  easy to cover with unit tests, then can be expanded using TDD development (red-green-refactor) which is really helpful here
-
-Sample code - Subject first: first line is classic call and second is written using class helper *(which one is more readable?)*:
-
+Classic call:
 ```pas
-// classic call:
-StoreDataset (rsChanged, 1, mysqlDataSet, true);
-
-// improved class:
-mysqlDataSet.StoreRows_ThenUpdateData_StopAfterFirstError(rsChanged);
+StoreDataset (1, mysqlDataSet, true);
+```
+More readable call:
+```pas
+mysqlDataSet.StoreSelected_StopAfterFirstError(
+   function():boolean
+   begin
+     Result := mysqlDataSet.FieldByName('Status').Value = '1'
+   end), fDataStorer);
 ```
 
-### 2. Private fields/methods lock-pick (now not available)
+# Sample helpers
 
-From the very beginning (Delphi 2006) till Delphi Berlin / 10.1 version there was quite popular class helper bug, which allows to access private fields and private methods using helpers. Because of this bug many developers identified this interesting language extension with such hack. The misuse of class helpers has caused that value of this super powerful solution is underestimated. 
+**TBytes Helper** - Generate numbers, ZLib compress, Base64 encode, Calc CRC32
+
+```pas
+uses
+  Helpers.TBytes;
+
+type
+  TUploadImageCommand = record
+    Image: string;
+    ControlSum: integer;
+  end;
+
+procedure SendCommandToRestServer(const aCommand: TUploadImageCommand); 
+begin
+  writeln('Use RestClient or IdHttpClient to send POST request');
+  writeln('POST /rest/upload-image/ TUploadImageCommand');
+  writeln('TUploadImageCommand:');
+  writeln('    ControlSum = ', aCommand.ControlSum);
+  writeln('    Image Length = ', Length(aCommand.Image));
+  writeln('    Image = ', aCommand.Image);
+end;
+
+var
+  bytes: TBytes;
+  idx: integer;
+  memoryStream: TMemoryStream;
+  command := TUploadImageCommand;
+begin
+  bytes.Size := 1000;
+  for idx := 0 to bytes.Size-1 do
+    bytes[idx] := idx div 10;
+  memoryStream := TMemoryStream.Create();
+  bytes := CompressToStream(memoryStream);
+  command.Image := bytes.GenerateBase64Code();
+  command.ControlSum := bytes.GetSectorCRC32(0, bytes.Size);
+  SendCommandToRestServer(command);
+end.
+```
+
+**TBytes Helper**:  Store and Load TBytes from Stream or File. Load and verify PNG image
+
+```pas
+uses
+  Helpers.TBytes;
+
+var
+  bytes: TBytes;
+  idx: integer;
+  memoryStream: TMemoryStream;
+  command := TUploadImageCommand;
+begin
+  bytes.InitialiseFromBase64String('U2FtcGxlIHRleHQ=');
+  bytes.SaveToFile('notes.txt'); // save: Sample text
+  memoryStream:= bytes.CreateStream();
+  // memoryStream.Size = 11
+  memoryStream.Free;
+  // -----------------
+  s :=  bytes.GetSectorAsString(0, 6);  // ASCII only text
+  bytes := [0, 0, 15, 16, $A0, 255, 0, 0, 0, 0, 1];
+  if bytes.GetSectorAsHex(2, 4) = '0F 10 A0 FF' then
+  begin
+    memoryStream := TMemoryStream.Create();
+    memoryStream.LoadFromFile('small.png');
+    memoryStream.Position := 0;
+    signature.LoadFromStream(memoryStream,8);
+    if (signature.GetSectorAsHex = '89 50 4E 47 0D 0A 1A 0A') and
+       (signature.GetSectorAsString(1, 3) = 'PNG') then
+    begin
+      memoryStream.Position := 0;
+      pngImage := TPngImage.Create;
+      pngImage.LoadFromStream(memoryStream);
+      // Image1.Picture := pngImage;
+      pngImage.Free;
+    end;
+    memoryStream.Free;
+  end;
+end;
+```
+
+**TDateTime Helper**: Informations about TDateTime
+
+```pas
+uses
+  Helpers.TDateTime;
+
+var
+  date: TDateTime;
+begin
+  date := EncodeDate(1989, 06, 04);
+  writeln(date.AsYear);  // 1989
+  writeln(date.AsMonth);  // 06
+  writeln(date);  //  06/04/1989
+  writeln(EncodeDate(2017, 10, 24).DayOfWeek);  // 3
+  writeln(date.IncMonth(5).ToString('yyyy-mm-dd');  //  1989-11-04
+  writeln(date.AsStringDateISO);  //  1989-06-04
+  date := EncodeDate(2019, 10, 24) + EncodeTime(18,45,12,0);
+  writeln(date.AsStringDateISO);  //  2019-10-24T18:45:12.000Z
+end.
+```
+
+**TDataSet Helper**: ForEachRow, LoadData<>, SaveData<>
+
+```pas
+uses
+  Helpers.TDataSet;
+
+type
+  TCity = class
+  public
+    id: Integer;
+    City: string;
+    Rank: Variant;
+    visited: Variant;
+  end;
+  
+var
+  dataset: TDataSet;
+  cityNames: TArray<string>;
+  idx: integer;
+  cities: TObjectList<TCityForDataset>;
+begin
+  dataset := GivenDataSet(fOwner, [
+    { } [1, 'Edinburgh', 5.5, EncodeDate(2018, 05, 28)],
+    { } [2, 'Glassgow', 4.5, EncodeDate(2015, 09, 13)],
+    { } [3, 'Cracow', 6.0, EncodeDate(2019, 01, 01)],
+    { } [4, 'Prague', 4.9, EncodeDate(2013, 06, 21)]]);
+  SetLength(cityNames, dataset.RecordCount);
+  idx := 0;
+  dataset.ForEachRow(
+    procedure
+    begin
+      cityNames[idx] := dataset.FieldByName('city').AsString;
+      inc(idx);
+    end);
+  writeln(string.Join(', ', citiecityNamess));
+
+  cities := dataset.LoadData<TCityForDataset>();
+  witeln(cities.Count);  // 4
+  witeln(cities[0].City);  // Edinburgh
+  witeln(cities[3].Rank); //  4.9
+
+  cities[2].Rank := 5.8;
+  cities[2].visited := EncodeDate(2020, 7, 22);
+  cities.Add(TCity.Create());
+  cities[4].id := 5;
+  cities[4].City := 'Warsaw';
+  dataset.SaveData<TCity>(cities);
+  // SaveData updated Cracow record and added Warsaw
+end
+```
 
 
-## Helpers in this repo
+**TStringGrid Helper**: Fill and Resize TStringGrid
+
+
+```pas
+// StringGrid1: TStringGrid;
+// StringGrid2: TStringGrid;
+
+procedure TForm1.Button1Click(Sender: TObject);
+var
+  structure, rows: string;
+begin
+  StringGrid1.ColCount := 4;
+  StringGrid1.RowCount := 3;
+  StringGrid1.ColsWidth([40, 100, 90, 110, 80]);
+  StringGrid1.FillCells([
+    ['1', 'Jonh Black', 'U21', '34'], 
+    ['2', 'Bogdan Polak', 'N47', '28']]);
+
+  structure := 
+    '{"column": "no", "caption": "No.", "width": 30}, ' +
+    '{"column": "mesure", "caption": "Mesure description", "width": 200}, ' +
+    '{"column": "value", "caption": "Value", "width": 60}';
+  rows := 
+    '{"no": 1, "mesure": "Number of DI Containers", "value": 120},' +
+    '{"no": 2, "mesure": "Maximum ctor injection",  "value": 56}'; 
+  data
+  jsData := TJSONObject.ParseJSONValue(Format(
+    '{"structure": [%s],  "data": [%s]}', [structure, rows])
+    ) as TJSONObject; 
+  StringGrid2.FillWithJson(jsData);
+end;
+```
+
+# Available Helpers
 
 **RTL Helpers:**
 
@@ -72,7 +245,7 @@ Each helper is stored in a separate file and unit its name is `Helper.<ExpanedCl
 All helper units are stored in the `src` subfolder -  [go to that location](src/).
 
 
-## Helpers Sample Projects
+# Helpers Demo Projects
 
 1) Class Helper Playground - sample project
    - Location: `examples/01-playground/` - [go to that location](examples/01-playground/)
@@ -87,9 +260,33 @@ All helper units are stored in the `src` subfolder -  [go to that location](src/
    - Project name: `HelpersMiniDemo.dpr`
    - Simple project presenting `Helper.TForm.pas` and usage of timer a helper methods
 
-## Unit testing
 
-One of the important purposes of using class helpers is to learn how to write unit tests. This repository contains a sample DUnitX test project for the included helpers. I encourage to start analyzing this collection from opening and executing this project. Unit test sets can be easily expanded to provide better (tighter) test coverage. To have better unit testing experience I suggest to install the best TDD Delphi IDE extension: **TestInsight** - very productive platform of working with unit test project. Glory to its author - Stefan Glienke!. Link to the TestInsight repo: [go to the Bitbucket site](https://bitbucket.org/sglienke/testinsight/wiki/Home)
+# Why Class Helpers?
+
+### 1. Safe cleaning technique
+
+The huge amount of VCL (FMX) code can be cleared using class helpers, which are actually an easy refactoring technique with low risk for complex projects. Using this method, teams can start upgrading their legacy projects even without unit tests safety net. Moreover the verification of newly created helpers can be easily done with unit tests. This approach allow to teach developers how to write unit tests in a correct way (learn in practice F.I.R.S.T principles or other). Teams can also easily apply TDD development process (write tests first and then implement functionality) in a fun and non-invasive way.
+
+Sometimes class helpers could be also dangerous if they are used improperly. For this reason it is required to apply a little more disciplined development and delivery process, suggestions connected with that area are covered in the following sections. 
+
+Class helpers benefits:
+
+- **Extract global functions** - global functions and utility methods wrote straight in forms (modules) can be extracted and reuse, also they can grouped together in separated containers based on subject class, finally they can be covered with unit tests
+- **Reduce size of events** - size of code in events (forms, frames and data modules) can be significantly decreased, which helps to improve code readability, especially when valuable business code is  mixed together with visualization or with component processing
+- **Improve utility code readability** - it is available by removing one of the function parameter which is a call subject (see bellow "Subject first" sample), together with that small improvements we are able to remove flags from calls, use more meaningful names, compress conditional sequences, make complex things simpler and safer
+- **Introduce TDD approach**. - class helpers should be autonomous and not dependent on project's business code, thanks of that are  easy to cover with unit tests, then can be expanded using TDD development (red-green-refactor) which is really helpful here
+
+### 2. Private fields/methods lock-pick (now not available)
+
+From the very beginning (Delphi 2006) till Delphi Berlin / 10.1 version there was quite popular class helper bug, which allows to access private fields and private methods using helpers. Because of this bug many developers identified this interesting language extension with such hack. The misuse of class helpers has caused that value of this super powerful solution is underestimated. 
+
+
+# TDD and Unit testing
+
+One of the important purposes of using class helpers is ability of extract useful and reusable code, and then cover them with unit tests. Developers can even easily employ TDD, test driven approach in which first we need to write unit tests and then implement logic
+
+
+That repository is demonstrating how to practice TDD approach. Each class and record helper has DUnitX test. Unit test sets can be easily expanded to provide better test coverage. To have better unit testing experience it's recommended to install the best TDD Delphi IDE extension **TestInsight** - free and a very productive platform created by Stefan Glienke. Glory to the author! Link to the TestInsight repo: [go to the Bitbucket site](https://bitbucket.org/sglienke/testinsight/wiki/Home)
 
 Sample unit test can be found in `tests` repository folder - [go to that location](tests/)
 
@@ -104,6 +301,8 @@ begin
   Assert.AreEqual(80, fGrid.ColWidths[4]);
 end;
 ```
+
+## Class Helpers in Delphi
 
 
 ## Good practices
