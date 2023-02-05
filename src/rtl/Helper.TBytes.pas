@@ -30,7 +30,7 @@ type
     // ---------------------
     // InitialiseFrom / Load / Save
     // ---------------------
-    procedure LoadFromStream(const aStream: TStream);
+    procedure LoadFromStream(const aStream: TStream; const aLength: integer);
     procedure LoadFromFile(const aFileName: string);
     procedure SaveToStream(const aStream: TStream);
     procedure SaveToFile(const aFileName: string);
@@ -106,7 +106,7 @@ type
     /// <summary>
     ///   Calculates check sum of the byte's array using CRC32 algorithm
     /// </summary>
-    function GetSectorCRC32(aIndex: Integer; aLength: Integer): LongWord;
+    function GetSectorCRC32(aIndex: Integer = 0; aLength: Integer = 0): LongWord;
     // ---------------------
     // Compress
     // ---------------------
@@ -306,7 +306,7 @@ begin
   Result := 'aBytes.InitialiseFromBase64String(' + sDecodedLines + ');';
 end;
 
-function TBytesHelper.GetSectorCRC32(aIndex: Integer; aLength: Integer)
+function TBytesHelper.GetSectorCRC32(aIndex: Integer = 0; aLength: Integer = 0)
   : LongWord;
 const
   crc32tab: array [0 .. 255] of LongWord = ($00000000, $77073096, $EE0E612C,
@@ -351,6 +351,15 @@ var
   i: LongWord;
 begin
   Result := $FFFFFFFF;
+  if (aLength <= 0) or (aIndex < 0) or ((aIndex = 0) and (aLength > Length(Self))) then
+  begin
+    aIndex := 0;
+    aLength := Length(Self);
+  end
+  else if aIndex + aLength > Length(Self) then
+  begin
+    aLength := Length(Self) - aIndex;
+  end;
   for i := 0 to aLength - 1 do
     Result := (Result shr 8) xor
     { } crc32tab[Self[LongWord(aIndex) + i] xor byte(Result and $000000FF)];
