@@ -1,6 +1,6 @@
 ﻿# Delphi Class Helpers - VCL RTL and FireDAC
 
-![ Delphi Support ](https://img.shields.io/badge/Delphi%20Support-%20XE4%20..%2010.4-blue.svg)
+![ Delphi Support ](https://img.shields.io/badge/Delphi%20Support-%20XE4%20..%2011.2-blue.svg)
 ![ version ](https://img.shields.io/badge/version-%201.8-yellow.svg)
 
 # Delphi Class Helpers
