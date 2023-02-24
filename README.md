@@ -56,7 +56,7 @@ begin
   memoryStream := TMemoryStream.Create();
   bytes := CompressToStream(memoryStream);
   command.Image := bytes.GenerateBase64Code();
-  command.ControlSum := bytes.GetSectorCRC32(0, bytes.Size);
+  command.ControlSum := bytes.CalculateCRC32();
   SendCommandToRestServer(command);
 end.
 ```

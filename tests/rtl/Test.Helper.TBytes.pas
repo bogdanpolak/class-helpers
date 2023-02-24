@@ -54,7 +54,10 @@ type
     procedure GenerateBase64Code_ElevnBytes;
     procedure GenerateBase64Code_MoreLines;
     procedure GenerateBase64Code_NarrowLines;
-    procedure GetSectorCRC32;
+    // -----
+    procedure CalculateCRC32_Portion;
+    procedure CalculateCRC32_All;
+    procedure CalculateCRC32_Empty;
     // -----
     procedure DecompressFromStream;
     procedure CompressToStream;
@@ -265,7 +268,7 @@ procedure TestTBytesHelper.GetLongWord;
 var
   actual: Cardinal;
 begin
-  fBytes := [0, ,0, 2, 0, 0, 0, 255];
+  fBytes := [0, 2, 0, 0, 0, 255];
   actual := fBytes.GetLongWord(1);
   Assert.AreEqual(2, actual);
 end;
@@ -394,15 +397,22 @@ begin
     { } '''cYGRobHB0e'');', actual);
 end;
 
-procedure TestTBytesHelper.GetSectorCRC32;
-var
-  actual: Cardinal;
-  expectedCRC32: Cardinal;
+procedure TestTBytesHelper.CalculateCRC32_All;
+begin
+  fBytes.FromAscii('Bogdan Polak.');
+  Assert.AreEqual($1D92163C, fBytes.CalculateCRC32());
+end;
+
+procedure TestTBytesHelper.CalculateCRC32_Portion;
 begin
   fBytes := [0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57, 0, 0];
-  expectedCRC32 := $CBF43926;
-  actual := fBytes.GetSectorCRC32(2, 9);
-  Assert.AreEqual(expectedCRC32, actual);
+  Assert.AreEqual($CBF43926, fBytes.CalculateCRC32(2, 9));
+end;
+
+procedure TestTBytesHelper.CalculateCRC32_Empty;
+begin
+  fBytes := [];
+  Assert.AreEqual(0, fBytes.CalculateCRC32());
 end;
 
 // -----------------------------------------------------------------------
@@ -423,7 +433,9 @@ const
     'per inceptos himenaeos. Aenean dignissim dapibus libero et fringilla. ' +
     'Donec ultrices sem eget porttitor sodales.';
 
-procedure LoadStreamFromBase64(stream: TStream; const aBase64String: string);
+procedure LoadStreamFromBase64(
+  stream: TStream;
+  const aBase64String: string);
 var
   data: TArray<byte>;
 begin
