@@ -120,16 +120,23 @@ begin
 ```
 function CreateStream: TMemoryStream;
 function GenerateBase64Code(aLineLength: Integer = 68): string;
-function GetSectorCRC32(aIndex: Integer; aLength: Integer): LongWord;
+function CalculateCRC32(aIndex: Integer = 0; aLength: Integer = -1): LongWord;
+procedure FromAscii(const aText: string);
 ```
 
 * Function `CreateStream` creates new TMemoryStream object and stores byte array. Method is not taking ownership of the stream memory and code which is calling that method should "Free" returned stream memory,
 * Function `GenerateBase64Code` converts a byte's array to a text string encoded using the Base64 algorithm,
-* Function `GetSectorCRC32` calculates check sum of the byte's array using the CRC32 algorithm.
+* Function `CalculateCRC32` calculates check sum of the byte's array using the CRC32 algorithm. By default it calcualtes check sum of the whole byte array, but parameters allows to provide range of bytes starting from the index `aIndex` and/or using `aLength` bytes.
+* Function `FromAscii` is initalizing size and content of the byte array from the string which has contain only ASCII characters: #0 .. #128
 
 Sample:
 ```
-  // TODO: Add sample
+  fBytes.FromAscii('Bogdan Polak.');
+  writeln(IntToHex(fBytes.CalculateCRC32())); // '5ECDA8F5'
+  writeln(fBytes.GenerateBase64Code());  // 'AEJvZ2RhbiBQb2xhaw=='
+  ms := fBytes.CreateStream(); // ms: TMemoryStream
+  writeln(PAnsiChar(ms.Memory)+12)^); // '.'
+  ms.Free;
 ```
 
 ## ZLib compression

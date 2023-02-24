@@ -10,80 +10,84 @@ type
   TBytesHelper = record helper for TBytes
   private const
     Version = '1.8';
-  private
   public
     // ---------------------
     // Size:
     // ---------------------
     /// <summary>
-    ///   Returns size of byte array
+    /// Returns size of byte array
     /// </summary>
     function GetSize: Integer;
     /// <summary>
-    ///   Changes size of byte array to "aSize" bytes
+    /// Changes size of byte array to "aSize" bytes
     /// </summary>
     procedure SetSize(aSize: Integer);
     /// <summary>
-    ///   allows to get or set size of byte array
+    /// allows to get or set size of byte array
     /// </summary>
     property Size: Integer read GetSize write SetSize;
     // ---------------------
     // InitialiseFrom / Load / Save
     // ---------------------
-    procedure LoadFromStream(const aStream: TStream; const aLength: integer);
+    procedure LoadFromStream(const aStream: TStream); overload;
+    procedure LoadFromStream(
+      const aStream: TStream;
+      const aLength: Integer); overload;
     procedure LoadFromFile(const aFileName: string);
     procedure SaveToStream(const aStream: TStream);
     procedure SaveToFile(const aFileName: string);
     /// <summary>
-    ///   Encodes provided string "aBase64Str" to array of bytes using
-    ///   Base64 encoding algorithm and stores it
+    /// Encodes provided string "aBase64Str" to array of bytes using
+    /// Base64 encoding algorithm and stores it
     /// </summary>
     procedure InitialiseFromBase64String(const aBase64Str: String);
     // ---------------------
     // Data getters
     // ---------------------
     /// <summary>
-    ///   Reads block of bytes starting at "aIndex" position with length
-    ///   "aLength" (default: 100 bytes or less if array size is smaller)
-    ///   and converts read block to a text of a hex values separated with
-    ///   spaces, eg: "A5 13 F0 81 DD 73 89"
+    /// Reads block of bytes starting at "aIndex" position with length
+    /// "aLength" (default: 100 bytes or less if array size is smaller)
+    /// and converts read block to a text of a hex values separated with
+    /// spaces, eg: "A5 13 F0 81 DD 73 89"
     /// </summary>
-    function GetSectorAsHex(aIndex: Integer = 0;
+    function GetSectorAsHex(
+      aIndex: Integer = 0;
       aLength: Integer = 100): string;
     /// <summary>
-    ///   Reads block of bytes starting at "aIndex" position with length
-    ///   "aLength" (defualt: 100 bytes or less if array size is smaller)
-    ///   then converts each readed byte into Unicode character and return
-    ///    result as string with all converted characters
+    /// Reads block of bytes starting at "aIndex" position with length
+    /// "aLength" (defualt: 100 bytes or less if array size is smaller)
+    /// then converts each readed byte into Unicode character and return
+    /// result as string with all converted characters
     /// </summary>
-    function GetSectorAsString(aIndex: Integer = 0;
+    function GetSectorAsString(
+      aIndex: Integer = 0;
       aLength: Integer = 100): string;
     /// <summary>
-    ///    Reads two bytes at position "aIndex" position and converts them
-    ///    into "word" number (0..65535) with little-endian order (first
-    ///    byte is less significant)
+    /// Reads two bytes at position "aIndex" position and converts them
+    /// into "word" number (0..65535) with little-endian order (first
+    /// byte is less significant)
     /// </summary>
     function GetWord(aIndex: Integer = 0): Word;
     /// <summary>
-    ///    Reads two bytes at position "aIndex" position and converts them
-    ///    into "word" number (0..65535) using big-endian order (first
-    ///    byte is more significant)
+    /// Reads two bytes at position "aIndex" position and converts them
+    /// into "word" number (0..65535) using big-endian order (first
+    /// byte is more significant)
     /// </summary>
     function GetReverseWord(aIndex: Integer = 0): Word;
     /// <summary>
-    ///    Reads four bytes at position "aIndex" position and converts them
-    ///    into "longword" number using little-endian order
+    /// Reads four bytes at position "aIndex" position and converts them
+    /// into "longword" number using little-endian order
     /// </summary>
     function GetLongWord(aIndex: Integer = 0): LongWord;
     /// <summary>
-    ///    Reads four bytes at position "aIndex" position and converts them
-    ///    into "longword" number using big-endian order
+    /// Reads four bytes at position "aIndex" position and converts them
+    /// into "longword" number using big-endian order
     /// </summary>
     function GetReverseLongWord(aIndex: Integer = 0): LongWord;
     /// <summary>
-    ///   Returns sub-block of bytes starting at "aIndex" position with
-    ///   length "aLength" (if source array is smaller returns only available
-    ///   portion of bytes
+    /// Returns sub-block of bytes starting at "aIndex" position with
+    /// length "aLength" (if source array is smaller returns only available
+    /// portion of bytes
     /// </summary>
     function SubBytes(aIndex, aLength: Integer): TBytes;
     // ---------------------
@@ -94,33 +98,43 @@ type
     // Utils
     // ---------------------
     /// <summary>
-    ///   Creates new TMemoryStream object and stores byte array. Method is
-    ///   not taking ownership of the stream memory and code which is calling
-    ///   that method should "Free" returned stream memory.
+    /// Creates new TMemoryStream object and stores byte array. Method is
+    /// not taking ownership of the stream memory and code which is calling
+    /// that method should "Free" returned stream memory.
     /// </summary>
     function CreateStream: TMemoryStream;
     /// <summary>
-    ///   Converts byte's array to string encoded with Base64 algorithm
+    /// Converts byte's array to string encoded with Base64 algorithm
     /// </summary>
     function GenerateBase64Code(aLineLength: Integer = 68): string;
     /// <summary>
-    ///   Calculates check sum of the byte's array using CRC32 algorithm
+    /// Calculates check sum of the byte's array using CRC32 algorithm.
+    /// Can calculate checksum fot the whole array or for selected block,
+    /// starting from index and/or limited by lenght
     /// </summary>
-    function GetSectorCRC32(aIndex: Integer = 0; aLength: Integer = 0): LongWord;
+    function CalculateCRC32(
+      aIndex: Integer = 0;
+      aLength: Integer = -1): LongWord;
+    /// <summary>
+    /// Initilaze byte array from the string which have to contain
+    /// only ASCII character #0 .. #128
+    /// </summary>
+    procedure FromAscii(const aText: string);
     // ---------------------
     // Compress
     // ---------------------
     /// <summary>
-    ///   Decompress content od the stream "aComressedStream" and
-    ///   stores result using ZLib library. Stream has to contain
-    ///   vaild ZIP compressed data.
+    /// Decompress content od the stream "aComressedStream" and
+    /// stores result using ZLib library. Stream has to contain
+    /// vaild ZIP compressed data.
     /// </summary>
     procedure DecompressFromStream(aCompressedStream: TStream);
     /// <summary>
-    ///   Compress byte's array using ZLib library (ZIP format) and
-    //    as saves results in "aStream" stream.
+    /// Compress byte's array using ZLib library (ZIP format) and
+    // as saves results in "aStream" stream.
     /// </summary>
     procedure CompressToStream(aStream: TStream);
+  private
   end;
 
 implementation
@@ -166,6 +180,18 @@ begin
   end;
 end;
 
+procedure TBytesHelper.LoadFromStream(
+  const aStream: TStream;
+  const aLength: Integer);
+var
+  len: Integer;
+begin
+  len := IfThen(aStream.Position + aLength < aStream.Size, aLength,
+    aStream.Size - aStream.Position);
+  SetLength(Self, len);
+  aStream.Read(Self[0], len);
+end;
+
 procedure TBytesHelper.LoadFromStream(const aStream: TStream);
 begin
   aStream.Position := 0;
@@ -194,7 +220,8 @@ end;
 // Data getters
 // -----------------------------------------------------------------------
 
-function TBytesHelper.GetSectorAsHex(aIndex: Integer = 0;
+function TBytesHelper.GetSectorAsHex(
+  aIndex: Integer = 0;
   aLength: Integer = 100): string;
 var
   len: Integer;
@@ -208,7 +235,8 @@ begin
       Result := Result + ' ' + IntToHex(Self[aIndex + i]);
 end;
 
-function TBytesHelper.GetSectorAsString(aIndex: Integer = 0;
+function TBytesHelper.GetSectorAsString(
+  aIndex: Integer = 0;
   aLength: Integer = 100): string;
 var
   len: Integer;
@@ -245,7 +273,9 @@ begin
     LongWord(Self[aIndex + 3]);
 end;
 
-function TBytesHelper.SubBytes(aIndex: Integer;  aLength: Integer): TBytes;
+function TBytesHelper.SubBytes(
+  aIndex: Integer;
+  aLength: Integer): TBytes;
 begin
   if aIndex + aLength > Length(Self) then
     aLength := Length(Self) - aIndex;
@@ -273,9 +303,9 @@ end;
 
 // -----------------------------------------------------------------------
 // Utils:
-//  * CreateStream - Creates TMemoryStream and files it with bytes
-//  * GenerateBase64Code - Fake code generator
-//  * GetSectorCRC32 - Calc Checksums
+// * CreateStream - Creates TMemoryStream and files it with bytes
+// * GenerateBase64Code - Fake code generator
+// * GetSectorCRC32 - Calc Checksums
 // -----------------------------------------------------------------------
 
 function TBytesHelper.CreateStream: TMemoryStream;
@@ -306,8 +336,18 @@ begin
   Result := 'aBytes.InitialiseFromBase64String(' + sDecodedLines + ');';
 end;
 
-function TBytesHelper.GetSectorCRC32(aIndex: Integer = 0; aLength: Integer = 0)
-  : LongWord;
+procedure TBytesHelper.FromAscii(const aText: string);
+var
+  idx: Integer;
+begin
+  SetLength(Self, aText.Length);
+  for idx := 0 to aText.Length - 1 do
+    Self[idx] := ord(aText[idx+1]);
+end;
+
+function TBytesHelper.CalculateCRC32(
+  aIndex: Integer = 0;
+  aLength: Integer = -1): LongWord;
 const
   crc32tab: array [0 .. 255] of LongWord = ($00000000, $77073096, $EE0E612C,
     $990951BA, $076DC419, $706AF48F, $E963A535, $9E6495A3, $0EDB8832, $79DCB8A4,
@@ -351,18 +391,20 @@ var
   i: LongWord;
 begin
   Result := $FFFFFFFF;
-  if (aLength <= 0) or (aIndex < 0) or ((aIndex = 0) and (aLength > Length(Self))) then
-  begin
+  if (aIndex < 0) then
     aIndex := 0;
+  if aLength <= 0 then
     aLength := Length(Self);
-  end
-  else if aIndex + aLength > Length(Self) then
+  if aIndex + aLength > Length(Self) then
   begin
     aLength := Length(Self) - aIndex;
   end;
-  for i := 0 to aLength - 1 do
-    Result := (Result shr 8) xor
-    { } crc32tab[Self[LongWord(aIndex) + i] xor byte(Result and $000000FF)];
+  if aLength > 0 then
+  begin
+    for i := 0 to aLength - 1 do
+      Result := (Result shr 8) xor
+      { } crc32tab[Self[LongWord(aIndex) + i] xor byte(Result and $000000FF)];
+  end;
   Result := not Result;
 end;
 
@@ -378,7 +420,7 @@ begin
     ms := TMemoryStream.Create;
     try
       ms.CopyFrom(decompressionStream, 0);
-      self.LoadFromStream(ms);
+      Self.LoadFromStream(ms);
     finally
       ms.Free;
     end;
@@ -394,7 +436,7 @@ var
 begin
   ms := TMemoryStream.Create;
   try
-    self.SaveToStream(ms);
+    Self.SaveToStream(ms);
     ms.Position := 0;
     compressionStream := TZCompressionStream.Create(aStream);
     try
