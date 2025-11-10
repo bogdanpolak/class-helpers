@@ -8,10 +8,10 @@ uses
 type
   TFDCustomManagerHelper = class helper for TFDCustomManager
   private const
-    Version = '1.8';
+    Version = '1.9';
   public
     /// <summary>
-    ///   Reads list of registered FireDAC connection definitions
+    /// Reads list of registered FireDAC connection definitions
     /// </summary>
     function GetConnectionDefNames: TArray<string>;
   end;
@@ -23,7 +23,7 @@ var
   i: Integer;
 begin
   SetLength(Result, Self.ConnectionDefs.Count);
-  for i := 0 to Self.ConnectionDefs.Count-1 do
+  for i := 0 to Self.ConnectionDefs.Count - 1 do
     Result[i] := Self.ConnectionDefs.Items[i].Name;
 end;
 

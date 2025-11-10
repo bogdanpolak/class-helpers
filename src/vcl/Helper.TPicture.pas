@@ -15,31 +15,31 @@ uses
 type
   TPictureHelper = class helper for TPicture
   private const
-    Version = '1.8';
+    Version = '1.9';
   public
     /// <summary>
-    ///   Recogonize binary header of the image inside stream "aStream" and
-    ///   creates adequate TGraphics descending image object inside TPicture.
-    ///   Method supports JPEG, PNG and GIF images. In Delphi 10 Seattle and
-    ///   recent versions please use "TPicture.LoadFromStream" instead.
+    /// Recogonize binary header of the image inside stream "aStream" and
+    /// creates adequate TGraphics descending image object inside TPicture.
+    /// Method supports JPEG, PNG and GIF images. In Delphi 10 Seattle and
+    /// recent versions please use "TPicture.LoadFromStream" instead.
     /// </summary>
     /// <exception cref="EPictureReadError">
-    ///   Exception <b>EPictureReadError</b> will be raise when stream
-    ///   header is not recognized image format (supported: JPEG, PNG and GIF)
+    /// Exception <b>EPictureReadError</b> will be raise when stream
+    /// header is not recognized image format (supported: JPEG, PNG and GIF)
     /// </exception>
     procedure AssignStream(const aStream: TStream);
     /// <summary>
-    ///   Identifes binary signature of the image format creates TGraphics
-    ///   descending impage object and assign it to Picture. Supports JPEG,
-    ///   PNG and GIF images.
+    /// Identifes binary signature of the image format creates TGraphics
+    /// descending impage object and assign it to Picture. Supports JPEG,
+    /// PNG and GIF images.
     /// </summary>
     /// <exception cref="EPictureReadError">
-    ///   Exception <b>EPictureReadError</b> will be raise when image's
-    ///   header is not recognized image format (supported: JPEG, PNG and GIF)
+    /// Exception <b>EPictureReadError</b> will be raise when image's
+    /// header is not recognized image format (supported: JPEG, PNG and GIF)
     /// </exception>
     procedure AssignBytes(const aBytes: TBytes);
     /// <summary>
-    ///   TODO
+    /// TODO
     /// </summary>
     procedure AssignBlobField(const aField: TField);
   end;

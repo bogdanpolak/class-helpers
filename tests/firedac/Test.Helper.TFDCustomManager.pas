@@ -7,6 +7,8 @@ uses
   System.Classes,
   System.SysUtils,
   System.IOUtils,
+  Tools.DatabaseGenerator,
+  FireDAC.ConsoleUI.Wait,
 
   Helper.TFDCustomManager;
 
@@ -45,7 +47,8 @@ var
 begin
   connectionNames := FDManager.GetConnectionDefNames();
   connectionNamesAsString := String.Join(', ', connectionNames);
-  Assert.IsTrue(IsItemOnTheArray('SQLite_Demo', connectionNames),
+  Assert.IsTrue(IsItemOnTheArray(TDatabaseGenerator.MyConnectionName,
+    connectionNames),
     'Expected definition "SQLite_Demo" to be registered in FireDAC Manager');
 end;
 

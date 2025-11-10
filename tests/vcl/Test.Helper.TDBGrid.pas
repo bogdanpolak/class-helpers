@@ -6,6 +6,7 @@ uses
   DUnitX.TestFramework,
   System.Classes,
   System.SysUtils,
+  System.Math,
   System.JSON,
   Vcl.Controls,
   Vcl.Forms,
@@ -128,7 +129,8 @@ begin
 
   fDBGrid.AutoSizeColumns();
 
-  Assert.AreEqual(57{px}, fDBGrid.Columns.Items[1].Width);
+  var actualWidth := IfThen(fDBGrid.Font.Name = 'Segoe UI', 64, 57);
+  Assert.AreEqual(actualWidth, fDBGrid.Columns.Items[1].Width);
 end;
 
 procedure TestTDBGridHelper.AutoSizeColumns_KeepsSameRowPosition;
@@ -159,8 +161,9 @@ begin
 
   fDBGrid.AutoSizeColumns();
 
+  var actualWidth := IfThen(fDBGrid.Font.Name = 'Segoe UI', 48, 49);
   // 49{px} = fForm.Canvas.TextWidth ('£125.99' + fDBGrid.SufixForAdditionalColumnWidth);
-  Assert.AreEqual(49{px}, fDBGrid.Columns.Items[4].Width);
+  Assert.AreEqual(actualWidth, fDBGrid.Columns.Items[4].Width);
 end;
 
 // -----------------------------------------------------------------------

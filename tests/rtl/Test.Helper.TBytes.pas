@@ -73,6 +73,8 @@ uses
 function GivenMemoryStream(const aBytes: TBytes): TMemoryStream;
 begin
   Result := TMemoryStream.Create;
+  if (aBytes=nil) or (Length(aBytes)=0) then
+    exit;
   Result.Write(aBytes[0], Length(aBytes));
   Result.Position := 0;
 end;
@@ -265,7 +267,7 @@ procedure TestTBytesHelper.GetLongWord;
 var
   actual: Cardinal;
 begin
-  fBytes := [0, ,0, 2, 0, 0, 0, 255];
+  fBytes := [0, 2, 0, 0, 0, 255];
   actual := fBytes.GetLongWord(1);
   Assert.AreEqual(2, actual);
 end;
@@ -423,7 +425,9 @@ const
     'per inceptos himenaeos. Aenean dignissim dapibus libero et fringilla. ' +
     'Donec ultrices sem eget porttitor sodales.';
 
-procedure LoadStreamFromBase64(stream: TStream; const aBase64String: string);
+procedure LoadStreamFromBase64(
+  stream: TStream;
+  const aBase64String: string);
 var
   data: TArray<byte>;
 begin

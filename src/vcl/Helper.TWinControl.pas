@@ -10,7 +10,7 @@ uses
 type
   TWinControlHelper = class helper for TWinControl
   private const
-    Version = '1.8';
+    Version = '1.9';
   private
   public
     function FindChildControlByType(aClass: TClass): TControl;
