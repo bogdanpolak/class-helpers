@@ -9,22 +9,22 @@ uses
 type
   TBytesHelper = record helper for TBytes
   private const
-    Version = '1.8';
+    Version = '1.9';
   private
   public
     // ---------------------
     // Size:
     // ---------------------
     /// <summary>
-    ///   Returns size of byte array
+    /// Returns size of byte array
     /// </summary>
     function GetSize: Integer;
     /// <summary>
-    ///   Changes size of byte array to "aSize" bytes
+    /// Changes size of byte array to "aSize" bytes
     /// </summary>
     procedure SetSize(aSize: Integer);
     /// <summary>
-    ///   allows to get or set size of byte array
+    /// allows to get or set size of byte array
     /// </summary>
     property Size: Integer read GetSize write SetSize;
     // ---------------------
@@ -35,55 +35,55 @@ type
     procedure SaveToStream(const aStream: TStream);
     procedure SaveToFile(const aFileName: string);
     /// <summary>
-    ///   Encodes provided string "aBase64Str" to array of bytes using
-    ///   Base64 encoding algorithm and stores it
+    /// Encodes provided string "aBase64Str" to array of bytes using
+    /// Base64 encoding algorithm and stores it
     /// </summary>
     procedure InitialiseFromBase64String(const aBase64Str: String);
     // ---------------------
     // Data getters
     // ---------------------
     /// <summary>
-    ///   Reads block of bytes starting at "aIndex" position with length
-    ///   "aLength" (default: 100 bytes or less if array size is smaller)
-    ///   and converts read block to a text of a hex values separated with
-    ///   spaces, eg: "A5 13 F0 81 DD 73 89"
+    /// Reads block of bytes starting at "aIndex" position with length
+    /// "aLength" (default: 100 bytes or less if array size is smaller)
+    /// and converts read block to a text of a hex values separated with
+    /// spaces, eg: "A5 13 F0 81 DD 73 89"
     /// </summary>
     function GetSectorAsHex(aIndex: Integer = 0;
       aLength: Integer = 100): string;
     /// <summary>
-    ///   Reads block of bytes starting at "aIndex" position with length
-    ///   "aLength" (defualt: 100 bytes or less if array size is smaller)
-    ///   then converts each readed byte into Unicode character and return
-    ///    result as string with all converted characters
+    /// Reads block of bytes starting at "aIndex" position with length
+    /// "aLength" (defualt: 100 bytes or less if array size is smaller)
+    /// then converts each readed byte into Unicode character and return
+    /// result as string with all converted characters
     /// </summary>
     function GetSectorAsString(aIndex: Integer = 0;
       aLength: Integer = 100): string;
     /// <summary>
-    ///    Reads two bytes at position "aIndex" position and converts them
-    ///    into "word" number (0..65535) with little-endian order (first
-    ///    byte is less significant)
+    /// Reads two bytes at position "aIndex" position and converts them
+    /// into "word" number (0..65535) with little-endian order (first
+    /// byte is less significant)
     /// </summary>
     function GetWord(aIndex: Integer = 0): Word;
     /// <summary>
-    ///    Reads two bytes at position "aIndex" position and converts them
-    ///    into "word" number (0..65535) using big-endian order (first
-    ///    byte is more significant)
+    /// Reads two bytes at position "aIndex" position and converts them
+    /// into "word" number (0..65535) using big-endian order (first
+    /// byte is more significant)
     /// </summary>
     function GetReverseWord(aIndex: Integer = 0): Word;
     /// <summary>
-    ///    Reads four bytes at position "aIndex" position and converts them
-    ///    into "longword" number using little-endian order
+    /// Reads four bytes at position "aIndex" position and converts them
+    /// into "longword" number using little-endian order
     /// </summary>
     function GetLongWord(aIndex: Integer = 0): LongWord;
     /// <summary>
-    ///    Reads four bytes at position "aIndex" position and converts them
-    ///    into "longword" number using big-endian order
+    /// Reads four bytes at position "aIndex" position and converts them
+    /// into "longword" number using big-endian order
     /// </summary>
     function GetReverseLongWord(aIndex: Integer = 0): LongWord;
     /// <summary>
-    ///   Returns sub-block of bytes starting at "aIndex" position with
-    ///   length "aLength" (if source array is smaller returns only available
-    ///   portion of bytes
+    /// Returns sub-block of bytes starting at "aIndex" position with
+    /// length "aLength" (if source array is smaller returns only available
+    /// portion of bytes
     /// </summary>
     function SubBytes(aIndex, aLength: Integer): TBytes;
     // ---------------------
@@ -94,31 +94,31 @@ type
     // Utils
     // ---------------------
     /// <summary>
-    ///   Creates new TMemoryStream object and stores byte array. Method is
-    ///   not taking ownership of the stream memory and code which is calling
-    ///   that method should "Free" returned stream memory.
+    /// Creates new TMemoryStream object and stores byte array. Method is
+    /// not taking ownership of the stream memory and code which is calling
+    /// that method should "Free" returned stream memory.
     /// </summary>
     function CreateStream: TMemoryStream;
     /// <summary>
-    ///   Converts byte's array to string encoded with Base64 algorithm
+    /// Converts byte's array to string encoded with Base64 algorithm
     /// </summary>
     function GenerateBase64Code(aLineLength: Integer = 68): string;
     /// <summary>
-    ///   Calculates check sum of the byte's array using CRC32 algorithm
+    /// Calculates check sum of the byte's array using CRC32 algorithm
     /// </summary>
     function GetSectorCRC32(aIndex: Integer; aLength: Integer): LongWord;
     // ---------------------
     // Compress
     // ---------------------
     /// <summary>
-    ///   Decompress content od the stream "aComressedStream" and
-    ///   stores result using ZLib library. Stream has to contain
-    ///   vaild ZIP compressed data.
+    /// Decompress content od the stream "aComressedStream" and
+    /// stores result using ZLib library. Stream has to contain
+    /// vaild ZIP compressed data.
     /// </summary>
     procedure DecompressFromStream(aCompressedStream: TStream);
     /// <summary>
-    ///   Compress byte's array using ZLib library (ZIP format) and
-    //    as saves results in "aStream" stream.
+    /// Compress byte's array using ZLib library (ZIP format) and
+    // as saves results in "aStream" stream.
     /// </summary>
     procedure CompressToStream(aStream: TStream);
   end;
@@ -245,7 +245,7 @@ begin
     LongWord(Self[aIndex + 3]);
 end;
 
-function TBytesHelper.SubBytes(aIndex: Integer;  aLength: Integer): TBytes;
+function TBytesHelper.SubBytes(aIndex: Integer; aLength: Integer): TBytes;
 begin
   if aIndex + aLength > Length(Self) then
     aLength := Length(Self) - aIndex;
@@ -273,9 +273,9 @@ end;
 
 // -----------------------------------------------------------------------
 // Utils:
-//  * CreateStream - Creates TMemoryStream and files it with bytes
-//  * GenerateBase64Code - Fake code generator
-//  * GetSectorCRC32 - Calc Checksums
+// * CreateStream - Creates TMemoryStream and files it with bytes
+// * GenerateBase64Code - Fake code generator
+// * GetSectorCRC32 - Calc Checksums
 // -----------------------------------------------------------------------
 
 function TBytesHelper.CreateStream: TMemoryStream;
@@ -369,7 +369,7 @@ begin
     ms := TMemoryStream.Create;
     try
       ms.CopyFrom(decompressionStream, 0);
-      self.LoadFromStream(ms);
+      Self.LoadFromStream(ms);
     finally
       ms.Free;
     end;
@@ -385,7 +385,7 @@ var
 begin
   ms := TMemoryStream.Create;
   try
-    self.SaveToStream(ms);
+    Self.SaveToStream(ms);
     ms.Position := 0;
     compressionStream := TZCompressionStream.Create(aStream);
     try

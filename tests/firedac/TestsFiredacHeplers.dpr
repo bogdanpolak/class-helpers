@@ -14,7 +14,8 @@ uses
   Helper.TFDConnection in '..\..\src\firedac\Helper.TFDConnection.pas',
   Helper.TFDCustomManager in '..\..\src\firedac\Helper.TFDCustomManager.pas',
   Test.Helper.TFDConnection in 'Test.Helper.TFDConnection.pas',
-  Test.Helper.TFDCustomManager in 'Test.Helper.TFDCustomManager.pas';
+  Test.Helper.TFDCustomManager in 'Test.Helper.TFDCustomManager.pas',
+  Tools.DatabaseGenerator in 'Tools.DatabaseGenerator.pas';
 
 var
   runner : ITestRunner;
@@ -22,6 +23,7 @@ var
   logger : ITestLogger;
   nunitLogger : ITestLogger;
 begin
+  TDatabaseGenerator.Run();
 {$IFDEF TESTINSIGHT}
   TestInsight.DUnitX.RunRegisteredTests;
   exit;

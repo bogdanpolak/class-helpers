@@ -105,3 +105,4 @@ TestInsightSettings.ini
 src-concept-helpers
 *Icon.ico
 dunitx-results.xml
+tests/database

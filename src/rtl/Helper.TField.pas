@@ -9,37 +9,37 @@ uses
 
 type
   /// <summary>
-  ///   Recognizable BLOB data formats: Images (PNG, JPEG, GIF, BMP) ...
+  /// Recognizable BLOB data formats: Images (PNG, JPEG, GIF, BMP) ...
   /// </summary>
-  ///  <see cref="TFieldHelper.GetBlobFormat"/>
+  /// <see cref="TFieldHelper.GetBlobFormat"/>
   TBlobFormat = (bfUnknown, bfImagePNG, bfImageJPEG, bfImageGIF, bfImageBMP);
 
   TFieldHelper = class helper for TField
   private const
-    Version = '1.8';
+    Version = '1.9';
   private
     procedure AssertIsBlobField;
     procedure AssertNotNull;
   public
     /// <summary>
-    ///   Stored BLOB data in the field. Provided parameter has to be a valid
-    ///   Base64 format string.
+    /// Stored BLOB data in the field. Provided parameter has to be a valid
+    /// Base64 format string.
     /// </summary>
     /// <exception cref="EDatabaseError">
-    ///   Exception <b>EDatabaseError</b> is thrown when field in not TBlobField
+    /// Exception <b>EDatabaseError</b> is thrown when field in not TBlobField
     /// </exception>
     function SetBlobFromBase64String(const aBase64Str: String): TBlobField;
     /// <summary>
-    ///   Loads 8 bytes signature of BLOB data and checks for knowns data
-    ///   formats, like images: PNG, JPEG.
+    /// Loads 8 bytes signature of BLOB data and checks for knowns data
+    /// formats, like images: PNG, JPEG.
     /// </summary>
     /// <returns cref="TBlobFormat">
-    ///   Enumereted type <b>TBlobFormat</b> informs about recognized format of
-    ///   then BLOB content.
+    /// Enumereted type <b>TBlobFormat</b> informs about recognized format of
+    /// then BLOB content.
     /// </returns>
     /// <exception cref="EDatabaseError">
-    ///   Exception <b>EDatabaseError</b> is thrown when field in not
-    ///   a TBlobField or has NULL value.
+    /// Exception <b>EDatabaseError</b> is thrown when field in not
+    /// a TBlobField or has NULL value.
     /// </exception>
     function GetBlobFormat: TBlobFormat;
   end;

@@ -5,7 +5,7 @@ interface
 type
   TDateTimeHelper = record helper for TDateTime
   private const
-    Version = '1.8';
+    Version = '1.9';
   private
   public
     function AsYear: word;
@@ -24,37 +24,37 @@ type
     function DaysInMonth: word;
     function IncMonth(incerment: integer): TDateTime;
     /// <summary>
-    ///   Returns first day in current month
+    /// Returns first day in current month
     /// </summary>
     function FirstDayInMonth: TDateTime;
     /// <summary>
-    ///   Returns last day in current month
+    /// Returns last day in current month
     /// </summary>
     function LastDayInMonth: TDateTime;
     /// <summary>
-    ///   Returns info to render Calendar = DayOfTheWeek for LastDayInMonth
+    /// Returns info to render Calendar = DayOfTheWeek for LastDayInMonth
     /// </summary>
     function DayOfWeekFirstDayInMonth: word;
     /// <summary>
-    ///   Returns info to render Calendar = DayOfTheWeek for FirstDayInMonth
+    /// Returns info to render Calendar = DayOfTheWeek for FirstDayInMonth
     /// </summary>
     function DayOfWeekLastDayInMonth: word;
     /// <summary>
-    ///   Returns numbers of weeks included starting week and last week in
-    ///   month (even if first and last are started partly only)
+    /// Returns numbers of weeks included starting week and last week in
+    /// month (even if first and last are started partly only)
     /// </summary>
     function NumberOfWeeksInMonth: word;
     /// <summary>
-    ///   Returns numbers of current date and time in ISO format. If there
-    ///  is only date part defined then it return only date as ISO
+    /// Returns numbers of current date and time in ISO format. If there
+    /// is only date part defined then it return only date as ISO
     /// </summary>
     function AsStringDateISO: string;
     /// <summary>
-    ///   Set current date and time from ISO format string. Supported are
-    ///   date onlny, date with time, date with time with time zone.
-    ///   Sample ISO date: 2020-02-10T17:35:24.521+0200
+    /// Set current date and time from ISO format string. Supported are
+    /// date onlny, date with time, date with time with time zone.
+    /// Sample ISO date: 2020-02-10T17:35:24.521+0200
     /// </summary>
-    procedure SetDateISO (const aDateISO: string);
+    procedure SetDateISO(const aDateISO: string);
   end;
 
 implementation
@@ -170,13 +170,13 @@ end;
 
 function TDateTimeHelper.AsStringDateISO: string;
 begin
-  if Frac(Self)=0 then
-    Result := FormatDateTime('yyyy-mm-dd',Self)
+  if Frac(Self) = 0 then
+    Result := FormatDateTime('yyyy-mm-dd', Self)
   else
-    Result:= DateToISO8601(Self,true);
+    Result := DateToISO8601(Self, true);
 end;
 
-procedure TDateTimeHelper.SetDateISO (const aDateISO: string);
+procedure TDateTimeHelper.SetDateISO(const aDateISO: string);
 begin
   Self := ISO8601ToDate(aDateISO);
 end;

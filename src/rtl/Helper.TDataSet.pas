@@ -13,63 +13,63 @@ uses
 type
   TDataSetHelper = class helper for TDataSet
   private const
-    Version = '1.8';
+    Version = '1.9';
   public
     /// <summary>
-    ///   Iterates through the dataset and it's calling anonymous methods
-    ///   (proc) for each row. Disables all UI notification and preserving
-    ///   current dataset position.
+    /// Iterates through the dataset and it's calling anonymous methods
+    /// (proc) for each row. Disables all UI notification and preserving
+    /// current dataset position.
     /// </summary>
     procedure WhileNotEof(proc: TProc);
     /// <summary>
-    ///   Iterates through the dataset, clone "WhileNotEof" method.
+    /// Iterates through the dataset, clone "WhileNotEof" method.
     /// </summary>
     procedure ForEachRow(proc: TProc);
     /// <summary>
-    ///   Iterates through the dataset and calculates maximum value of
-    ///   the integer data field (TIntegerField) in all data rows.
+    /// Iterates through the dataset and calculates maximum value of
+    /// the integer data field (TIntegerField) in all data rows.
     /// </summary>
     function GetMaxIntegerValue(const fieldName: string): integer;
     /// <summary>
-    ///   Creates new TDataSource component assigned to this dataset.
-    ///   The owner of TDataSource is this dataset.
+    /// Creates new TDataSource component assigned to this dataset.
+    /// The owner of TDataSource is this dataset.
     /// </summary>
     function CreateDataSource: TDataSource;
     /// <summary>
-    ///   Iterates through base dataset and for each row creates new object
-    ///   using generic class T provided through a generic parameter.
-    ///   The attributes/fields in the newly created object are filled with
-    ///   values from the data set. Default mapping is: dataset field name
-    ///   have to equal to object attribute name. Different mapping can be
-    ///   applied with Custom attribute "MappedToField".
+    /// Iterates through base dataset and for each row creates new object
+    /// using generic class T provided through a generic parameter.
+    /// The attributes/fields in the newly created object are filled with
+    /// values from the data set. Default mapping is: dataset field name
+    /// have to equal to object attribute name. Different mapping can be
+    /// applied with Custom attribute "MappedToField".
     /// </summary>
     /// <exception cref="EInvalidMapping">
-    ///   Exception <b>EInvalidMapping</b> is thrown when you provide invalid
-    ///   mapping through MappedToField attribute, when filed name is not
-    ///   found in dataset.
+    /// Exception <b>EInvalidMapping</b> is thrown when you provide invalid
+    /// mapping through MappedToField attribute, when filed name is not
+    /// found in dataset.
     /// </exception>
     /// <remarks>
-    ///   To define custom mapping developer has to include unit
-    ///   Attribute.MappedToField.pas in which attribute "MappedToField" is
-    ///   defined. Sample mapping added above class field can look like:
-    ///   `[MapedToField('city')]`. For more mapping examples check sample code.
+    /// To define custom mapping developer has to include unit
+    /// Attribute.MappedToField.pas in which attribute "MappedToField" is
+    /// defined. Sample mapping added above class field can look like:
+    /// `[MapedToField('city')]`. For more mapping examples check sample code.
     /// </remarks>
     function LoadData<T: class, constructor>: TObjectList<T>;
     /// <summary>
-    ///   TODO: add documentation
+    /// TODO: add documentation
     /// </summary>
     function SaveData<T: class>(list: TObjectList<T>;
       const aNameOfChangedFlag: string = 'IsChanged'): integer;
     /// <summary>
-    ///   Allows to append multiple row into dataset. Each master item in
-    ///   the array is appended as a new row, and each detail item value
-    ///   from this array is assigned to following dataset fields - ordered
-    ///   by index. To skip a value assignment for one field put Null variant
-    ///   value in the array
+    /// Allows to append multiple row into dataset. Each master item in
+    /// the array is appended as a new row, and each detail item value
+    /// from this array is assigned to following dataset fields - ordered
+    /// by index. To skip a value assignment for one field put Null variant
+    /// value in the array
     /// </summary>
     /// <exception cref="EDatabaseError">
-    ///   Exception <b>EDatabaseError</b> has detailed information about
-    ///   row number and field index which was not able to assigned
+    /// Exception <b>EDatabaseError</b> has detailed information about
+    /// row number and field index which was not able to assigned
     /// </exception>
     procedure AppendRows(aRecordArray: TArray < TArray < Variant >> );
   end;
@@ -123,6 +123,15 @@ begin
     Result := False
   else
   begin
+    var
+    name := objectField.FieldType.QualifiedName;
+    var
+    typeString := objectField.FieldType.ToString;
+    if ((name <> 'Variant') and (typeString <> 'Variant')) and (field.IsNull)
+    then
+    begin
+      Exit(True);
+    end;
     if field is TBlobField then
       valueOfField := TValue.From((field as TBlobField).Value)
     else
@@ -228,13 +237,13 @@ begin
   begin
     rttiField := fRttiFields[i];
     if rttiField.Name.ToLower = lowerName then
-      exit(rttiField);
+      Exit(rttiField);
     for Attribute in rttiField.GetAttributes do
       if Attribute is MappedToDBFieldAttribute then
       begin
         attrFieldName := (Attribute as MappedToDBFieldAttribute).fieldName;
         if lowerName = attrFieldName.ToLower() then
-          exit(rttiField);
+          Exit(rttiField);
       end;
   end;
   Result := nil;
@@ -292,9 +301,12 @@ begin
             begin
               case field.DataType of
                 ftDate, ftTime, ftDateTime:
-                  if Value <= 0 then Value := Null;
-                 ftSmallint, ftInteger, ftWord, ftAutoInc, ftFloat, ftCurrency, ftBCD:
-                  if Value < 0 then Value := Null;
+                  if Value <= 0 then
+                    Value := Null;
+                ftSmallint, ftInteger, ftWord, ftAutoInc, ftFloat,
+                  ftCurrency, ftBCD:
+                  if Value < 0 then
+                    Value := Null;
               end;
             end;
           end;
@@ -327,9 +339,12 @@ begin
           begin
             case field.DataType of
               ftDate, ftTime, ftDateTime:
-                if Value <= 0 then Value := Null;
-               ftSmallint, ftInteger, ftWord, ftAutoInc, ftFloat, ftCurrency, ftBCD:
-                if Value < 0 then Value := Null;
+                if Value <= 0 then
+                  Value := Null;
+              ftSmallint, ftInteger, ftWord, ftAutoInc, ftFloat,
+                ftCurrency, ftBCD:
+                if Value < 0 then
+                  Value := Null;
             end;
           end;
         end;
@@ -428,12 +443,12 @@ const aNameOfChangedFlag: string = 'IsChanged'): integer;
 var
   item: T;
   mapper: TObjectToDataSetMapper;
-  autodetectNulls: Boolean;
+  autodetectNulls: boolean;
 begin
   Result := 0;
   if (list = nil) or (list.count = 0) then
-    exit;
-  autodetectNulls := true;
+    Exit;
+  autodetectNulls := True;
   mapper := TObjectToDataSetMapper.Create(self, list[0], autodetectNulls,
     aNameOfChangedFlag);
   try

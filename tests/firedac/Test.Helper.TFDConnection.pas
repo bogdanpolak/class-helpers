@@ -8,6 +8,7 @@ uses
   System.SysUtils,
   System.IOUtils,
   FireDAC.Comp.UI,
+  Tools.DatabaseGenerator,
 
   Helper.TFDConnection;
 
@@ -27,7 +28,7 @@ type
     procedure TearDown;
   published
     procedure CheckExistingConnectionDefinitions;
-    procedure WithConnectionDef_SQLite_Demo;
+    procedure WithConnectionDef_MyDatabase;
     procedure GetTableNamesAsArray;
     procedure GetFieldNamesAsArray;
   end;
@@ -63,17 +64,20 @@ procedure TestTFDConnectionHelper.CheckExistingConnectionDefinitions;
 var
   Def: IFDStanDefinition;
 begin
-  Def := FDManager.ConnectionDefs.FindDefinition('SQLite_Demo');
+  Def := FDManager.ConnectionDefs.FindDefinition
+    (TDatabaseGenerator.MyConnectionName);
   Assert.IsTrue(Def <> nil,
     'Definition "SQLite_Demo" is required to run tests');
 end;
 
-procedure TestTFDConnectionHelper.WithConnectionDef_SQLite_Demo;
+procedure TestTFDConnectionHelper.WithConnectionDef_MyDatabase;
 var
   connection: TFDConnection;
 begin
-  connection := TFDConnection.Create(fOwner).WithConnectionDef('SQLite_Demo');
-  Assert.AreEqual('SQLite_Demo', connection.ConnectionDefName);
+  connection := TFDConnection.Create(fOwner).WithConnectionDef
+    (TDatabaseGenerator.MyConnectionName);
+  Assert.AreEqual(TDatabaseGenerator.MyConnectionName,
+    connection.ConnectionDefName);
   connection.Open();
   Assert.IsTrue(connection.Connected,
     'Not able to connect to SQLite database using "SQLite_Demo" definition');
@@ -95,15 +99,16 @@ var
   connection: TFDConnection;
   tables: TArray<String>;
 begin
-  connection := TFDConnection.Create(fOwner).WithConnectionDef('SQLite_Demo');
+  connection := TFDConnection.Create(fOwner).WithConnectionDef
+    (TDatabaseGenerator.MyConnectionName);
   connection.Open();
   tables := connection.GetTableNamesAsArray();
-  Assert.IsTrue(IsItemOnTheArray('Employees', tables),
-    'Expected "Employees" table on the list');
+  Assert.IsTrue(IsItemOnTheArray('Orders', tables),
+    'Expected "Orders" table on the list');
   Assert.IsTrue(IsItemOnTheArray('Products', tables),
     'Expected "Suppliers" table on the list');
-  Assert.IsTrue(IsItemOnTheArray('Suppliers', tables),
-    'Expected "Suppliers" table on the list');
+  Assert.IsTrue(IsItemOnTheArray('Customers', tables),
+    'Expected "Customers" table on the list');
 end;
 
 procedure TestTFDConnectionHelper.GetFieldNamesAsArray;
@@ -112,13 +117,13 @@ var
   fields: TArray<String>;
   fieldsAsString: string;
 begin
-  connection := TFDConnection.Create(fOwner).WithConnectionDef('SQLite_Demo');
+  connection := TFDConnection.Create(fOwner).WithConnectionDef
+    (TDatabaseGenerator.MyConnectionName);
   connection.Open();
-  fields := connection.GetFieldNamesAsArray('Products');
+  fields := connection.GetFieldNamesAsArray('Items');
   fieldsAsString := String.Join(', ', fields);
-  Assert.AreEqual('ProductID, ProductName, SupplierID, CategoryID, ' +
-    'QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ' +
-    'ReorderLevel, Discontinued', fieldsAsString);
+  Assert.AreEqual('OrderId, ProductId, UnitPrice, DeductedPrice, Units',
+    fieldsAsString);
 end;
 
 initialization

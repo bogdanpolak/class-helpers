@@ -14,59 +14,59 @@ type
   public const
     SufixForAdditionalColumnWidth = '   ';
   private const
-    Version = '1.8';
+    Version = '1.9';
   public
     /// <summary>
-    ///   Counts and sets the width of the grid columns in pixels
+    /// Counts and sets the width of the grid columns in pixels
     /// </summary>
     /// <param name="CalcForNumberOfRows">
-    ///   The number of rows for which widths are counted
+    /// The number of rows for which widths are counted
     /// </param>
     function AutoSizeColumns(const CalcForNumberOfRows: integer = 25): integer;
     /// <summary>
-    ///   Allows to set TDBGrid columns layout: column visibility, column
-    ///   width and display column title. Layout definition is provided
-    ///   through JSON array.
+    /// Allows to set TDBGrid columns layout: column visibility, column
+    /// width and display column title. Layout definition is provided
+    /// through JSON array.
     /// </summary>
     /// <exception cref="EJSONProcessing">
-    ///   Exception <b>EJSONProcessing</b> is thrown when then passed JSON
-    ///   array has unexpected structure.
+    /// Exception <b>EJSONProcessing</b> is thrown when then passed JSON
+    /// array has unexpected structure.
     /// </exception>
     /// <remarks>
-    ///   Parameter <b>aStoredColumns</b> is JSON array contains JSON
-    ///   objects and each of them can has following fields:
-    ///   <b>fieldname</b> - name of DataSet field displayed in this column.
-    ///   <b>title</b> - title of the column displayed in header.
-    ///   <b>width</b> - column width in pixels (numeric value).
-    ///   <b>visible</b> - column visibility (boolean value)
+    /// Parameter <b>aStoredColumns</b> is JSON array contains JSON
+    /// objects and each of them can has following fields:
+    /// <b>fieldname</b> - name of DataSet field displayed in this column.
+    /// <b>title</b> - title of the column displayed in header.
+    /// <b>width</b> - column width in pixels (numeric value).
+    /// <b>visible</b> - column visibility (boolean value)
     /// </remarks>
     procedure LoadColumnsFromJson(aStoredColumns: TJSONArray);
     /// <summary>
-    ///   Allows to set TDBGrid columns layout: column visibility, column
-    ///   width and column title. Layout definition is provided through
-    ///   string parameter which contains valid JSON array.
+    /// Allows to set TDBGrid columns layout: column visibility, column
+    /// width and column title. Layout definition is provided through
+    /// string parameter which contains valid JSON array.
     /// </summary>
     /// <exception cref="EJSONProcessing">
-    ///   Exception <b>EJSONProcessing</b> is thrown when string parameter
-    ///   contains not valid JSON text or JSONArray stored there has
-    ///   unexpected structure.
+    /// Exception <b>EJSONProcessing</b> is thrown when string parameter
+    /// contains not valid JSON text or JSONArray stored there has
+    /// unexpected structure.
     /// </exception>
     /// <remarks>
-    ///   Parameter <b>aJsonString</b> is well formatted JSON array stored
-    ///   in String. This JSON array has contain JSON objects with following
-    ///   fields:
-    ///   <b>fieldname</b> - name of DataSet field displayed in this column.
-    ///   <b>title</b> - title of the column displayed in header.
-    ///   <b>width</b> - column width in pixels (numeric value).
-    ///   <b>visible</b> - column visibility (boolean value)
+    /// Parameter <b>aJsonString</b> is well formatted JSON array stored
+    /// in String. This JSON array has contain JSON objects with following
+    /// fields:
+    /// <b>fieldname</b> - name of DataSet field displayed in this column.
+    /// <b>title</b> - title of the column displayed in header.
+    /// <b>width</b> - column width in pixels (numeric value).
+    /// <b>visible</b> - column visibility (boolean value)
     /// </remarks>
     procedure LoadColumnsFromJsonString(const aJsonString: string);
     /// <summary>
-    ///   Saves TDBGrid columns layout into string formatted in JSON.
-    ///   Result is JSON array includes JSON objects (each one for one the 
-    ///   TBGrid column). This object contains: column field name, title, 
-    ///   width and visibility. JSON data format is compatible with method
-    ///   loading DBGrid columns.
+    /// Saves TDBGrid columns layout into string formatted in JSON.
+    /// Result is JSON array includes JSON objects (each one for one the
+    /// TBGrid column). This object contains: column field name, title,
+    /// width and visibility. JSON data format is compatible with method
+    /// loading DBGrid columns.
     /// </summary>
     function SaveColumnsToString: string;
   end;

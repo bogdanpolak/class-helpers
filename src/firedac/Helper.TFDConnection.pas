@@ -9,13 +9,13 @@ uses
 type
   TFDConnectionHelper = class helper for TFDConnection
   private const
-    Version = '1.8';
+    Version = '1.9';
   public
     /// <summary>
-    ///   Setts FireDAC connection definion using fluent method, which
-    ///	  allows to write more compact code 
+    /// Setts FireDAC connection definion using fluent method, which
+    /// allows to write more compact code
     /// </summary>
-	/// <example> aConn := TFDConnection.Create(aOwner).WithConnectionDef(aName); </code>
+    /// <example> aConn := TFDConnection.Create(aOwner).WithConnectionDef(aName); </code>
     function WithConnectionDef(const aDefinitionName: string): TFDConnection;
     function GetTableNamesAsArray: TArray<String>;
     function GetFieldNamesAsArray(const aTableName: string): TArray<String>;
@@ -40,7 +40,7 @@ var
 begin
   sl := TStringList.Create;
   try
-    Self.GetTableNames('', '', '', sl, //.
+    Self.GetTableNames('', '', '', sl, // .
       // TFDPhysObjectScopes = [osMy, osOther, osSystem]
       [osMy],
       // TFDPhysTableKinds = (tkSynonym, tkTable, tkView, tkTempTable, tkLocalTable)
