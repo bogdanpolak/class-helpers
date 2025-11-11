@@ -35,12 +35,16 @@ procedure SaveToStream(const aStream: TStream);
 procedure SaveToFile(const aFileName: string);
 procedure InitialiseFromBase64String(const aBase64Str: String);
 procedure LoadFromAscii(const aText: string);
+procedure LoadFromUtf8(const aText: string);
+function ToUtf8String(): string;
 ```
 
 * `LoadFromStream` and `LoadFromFile` populate a byte array with data from a file or from a stream,
 * `SaveToStream` and `SaveToFile` write a byte array to stream or file,
-* `InitialiseFromBase64String` encodes provided string using Base64 and writes fills bytes.
-* `LoadFromAscii` - Initilaze byte array with provided ASCII string
+* `InitialiseFromBase64String` encodes provided string using Base64 and writes fills bytes,
+* `LoadFromAscii` initialises byte array with provided ASCII string,
+* `LoadFromUtf8` initialises bytes from provided UTF-8 encoded string,
+* `ToUtf8String` interprets bytes as UTF-8 encoded string and return Delphi string,
 
 Sample:
 ```

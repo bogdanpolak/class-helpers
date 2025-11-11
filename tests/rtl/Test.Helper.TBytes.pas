@@ -38,6 +38,7 @@ type
     procedure SaveToStream;
     procedure SaveToFile_And_LoadFromFile;
     procedure SaveToStream_TwoBlocks;
+    procedure LoadFromUtf8_ToUtf8String_RoundTrip;
     // -----
     procedure GetSectorAsString;
     procedure GetSectorAsHex;
@@ -279,6 +280,17 @@ begin
   Assert.AreEqual(203, Integer(fBytes[4]));
 end;
 
+procedure TestTBytesHelper.LoadFromUtf8_ToUtf8String_RoundTrip;
+var
+  s, actual: string;
+begin
+  s := 'UTF8 Test. Polish:Zażółć gęślą jaźń  Arabic:ې  Symbols:⁂,⅐,⇄  Math:∑,⊂ Cyrillic:Д,Щ  Emoji:😀,💛';
+  fBytes.LoadFromUtf8(s);
+  Assert.AreEqual(122, Length(fBytes));
+  actual := fBytes.ToUtf8String;
+  Assert.AreEqual(s, actual);
+end;
+
 // -----------------------------------------------------------------------
 // Tests TBytes - Data getters
 // -----------------------------------------------------------------------
@@ -482,8 +494,7 @@ function StringAsUtf8Bytes(const text: String): TArray<byte>;
 var
   ss: TStringStream;
 begin
-  ss := TStringStream.Create(text, TEncoding.UTF8);
-  Result.LoadFromStream(ss);
+  Result := TEncoding.UTF8.GetBytes(text);
 end;
 
 function BytesAsUtf8String(const aBytes: TArray<byte>): String;

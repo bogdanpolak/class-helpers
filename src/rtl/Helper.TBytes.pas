@@ -50,6 +50,14 @@ type
     /// - Provided string has to contain only ASCII character #0 .. #128
     /// </summary>
     procedure LoadFromAscii(const aText: string);
+    /// <summary>
+    /// Initialise bytes from provided UTF-8 encoded string
+    /// </summary>
+    procedure LoadFromUtf8(const aText: string);
+    /// <summary>
+    /// Interpret bytes as UTF-8 encoded string and return Delphi string
+    /// </summary>
+    function ToUtf8String(): string;
     // ---------------------
     // Data getters
     // ---------------------
@@ -214,6 +222,18 @@ begin
   SetLength(Self, aText.Length);
   for idx := 0 to aText.Length - 1 do
     Self[idx] := ord(aText[idx + 1]);
+end;
+
+procedure TBytesHelper.LoadFromUtf8(const aText: string);
+begin
+  Self := TEncoding.UTF8.GetBytes(aText);
+end;
+
+function TBytesHelper.ToUtf8String: string;
+begin
+  if Length(Self) = 0 then
+    Exit('');
+  Result := TEncoding.UTF8.GetString(Self);
 end;
 
 // -----------------------------------------------------------------------
