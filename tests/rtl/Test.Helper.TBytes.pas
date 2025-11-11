@@ -63,6 +63,10 @@ type
     procedure CalculateCRC32_All;
     procedure CalculateCRC32_Empty;
     // -----
+    procedure ConvetToChunk;
+    procedure DropBytes;
+    procedure DropBytesWhile;
+
     procedure DecompressFromStream;
     procedure CompressToStream;
     procedure CompressAndDecompress;
@@ -504,6 +508,36 @@ begin
   ss := TStringStream.Create('', TEncoding.UTF8);
   aBytes.SaveToStream(ss);
   Result := ss.DataString;
+end;
+
+procedure TestTBytesHelper.ConvetToChunk;
+var
+  actualChunks: TArray<TBytes>;
+begin
+  fBytes := [0, 0, $4f, $50, $51, $52, $53, $54, $55, $56, $57, 0, 0];
+  actualChunks := fBytes.ConvertToChunks(5);
+  Assert.AreEqual(3, Length(actualChunks));
+  Assert.AreEqual('57 00 00',  BytesToHexString(actualChunks[3]));
+end;
+
+procedure TestTBytesHelper.DropBytes;
+var
+  actual: TBytes;
+begin
+  fBytes := [0, 0, $21, $22, $23, $24];
+  actual := fBytes.DropBytes(4);
+  Assert.AreEqual(2, Length(actual));
+  Assert.AreEqual('23 24',  BytesToHexString(actual));
+end;
+
+procedure TestTBytesHelper.DropBytesWhile;
+var
+  actual: TBytes;
+begin
+  fBytes := [0, 0, 0, $61, $62, 0, $63, 0, 0];
+  actual := fBytes.DropBytesWhile(0);
+  Assert.AreEqual(6, Length(actual));
+  Assert.AreEqual('61 62 00 63 00 00',  BytesToHexString(actual));
 end;
 
 function GetFirstSentence(const s: String): String;

@@ -128,6 +128,22 @@ type
     /// </summary>
     function CalculateCRC32(aIndex: Integer = 0; aLength: Integer = -1)
       : LongWord;
+    /// <summary>
+    /// Creates an array of chunks split into groups the length of size.
+    /// - Default chunk size is a 1KB = 1024 elements
+    /// - If array can't be split evenly, the final chunk will be the remaining elements.
+    /// </summary>
+    function ConvertToChunks(aSize: Integer = 1024): TArray<TBytes>;
+    /// <summary>
+    /// Creates a slice of array with n elements dropped from the beginning.
+    /// - n: the number of elements to drop.
+    /// </summary>
+    function DropBytes(n: Integer = 1): TBytes;
+    /// <summary>
+    /// Creates a slice of array excluding elements dropped from the beginning.
+    /// - Elements are dropped until the first byte will be not equat to `aValueToSkip`
+    /// </summary>
+    function DropBytesWhile(aValueToSkip: byte): TBytes;
     // ---------------------
     // Compress
     // ---------------------
@@ -412,6 +428,37 @@ begin
       { } crc32tab[Self[LongWord(aIndex) + i] xor byte(Result and $000000FF)];
   end;
   Result := not Result;
+end;
+
+function TBytesHelper.ConvertToChunks(aSize: Integer): TArray<TBytes>;
+begin
+  Result := [];
+end;
+
+function TBytesHelper.DropBytes(n: Integer): TBytes;
+var
+  size: integer;
+begin
+  if n <= 0 then
+    Exit(Self);
+  if n >= Length(Self) then
+    Exit(nil);
+  size := Length(Self)-n;
+  SetLength(Result, size);
+  move(Self[n], Result[0], size);
+end;
+
+function TBytesHelper.DropBytesWhile(aValueToSkip: byte): TBytes;
+var
+  idx, count, size: integer;
+begin
+  idx := 0;
+  count := Length(Self);
+  while (idx<count) and (Self[idx] = aValueToSkip) do
+    inc(idx);
+  size := Length(Self)-idx;
+  SetLength(Result, size);
+  move(Self[idx], Result[0], size);
 end;
 
 // ---------------------
