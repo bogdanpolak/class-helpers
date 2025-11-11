@@ -29,16 +29,18 @@ end;
 ## Load, Save and initialize
 
 ```
-procedure LoadFromStream(const aStream: TStream);
+procedure LoadFromStream(const aStream: TStream, );
 procedure LoadFromFile(const aFileName: string);
 procedure SaveToStream(const aStream: TStream);
 procedure SaveToFile(const aFileName: string);
 procedure InitialiseFromBase64String(const aBase64Str: String);
+procedure LoadFromAscii(const aText: string);
 ```
 
-* Procedures `LoadFromStream` and `LoadFromFile` allows to populate an array of bytes with data from a file or from a stream,
-* Procedures `SaveToStream` and `SaveToFile` allows to write an array of bytes in a stream or in a file,
-* Procedure `InitialiseFromBase64String` encodes provided string *aBase64Str* to an array of bytes using Base64 encoding algorithm.
+* `LoadFromStream` and `LoadFromFile` populate a byte array with data from a file or from a stream,
+* `SaveToStream` and `SaveToFile` write a byte array to stream or file,
+* `InitialiseFromBase64String` encodes provided string using Base64 and writes fills bytes.
+* `LoadFromAscii` - Initilaze byte array with provided ASCII string
 
 Sample:
 ```
@@ -59,6 +61,8 @@ begin
   bytes.LoadFromStream(memorystream);
   writeln(BytesToText(bytes));         // [6, 7]
   memorystream.Free;
+  Bytes.FromAscii('Bogdan Polak.');
+  var signature = IntToHex(fBytes.CalculateCRC32());
 end;
 ```
 
@@ -120,16 +124,21 @@ begin
 ```
 function CreateStream: TMemoryStream;
 function GenerateBase64Code(aLineLength: Integer = 68): string;
-function GetSectorCRC32(aIndex: Integer; aLength: Integer): LongWord;
+function CalculateCRC32(aIndex: Integer = 0; aLength: Integer = -1): LongWord;
 ```
 
 * Function `CreateStream` creates new TMemoryStream object and stores byte array. Method is not taking ownership of the stream memory and code which is calling that method should "Free" returned stream memory,
 * Function `GenerateBase64Code` converts a byte's array to a text string encoded using the Base64 algorithm,
-* Function `GetSectorCRC32` calculates check sum of the byte's array using the CRC32 algorithm.
+* Function `CalculateCRC32` calculates check sum of the byte's array using the CRC32 algorithm. By default it calcualtes check sum of the whole byte array, but parameters allows to provide range of bytes starting from the index `aIndex` and/or using `aLength` bytes.
 
 Sample:
 ```
-  // TODO: Add sample
+  fBytes.FromAscii('Bogdan Polak.');
+  writeln(IntToHex(fBytes.CalculateCRC32())); // '5ECDA8F5'
+  writeln(fBytes.GenerateBase64Code());  // 'AEJvZ2RhbiBQb2xhaw=='
+  ms := fBytes.CreateStream(); // ms: TMemoryStream
+  writeln(PAnsiChar(ms.Memory)+12)^); // '.'
+  ms.Free;
 ```
 
 ## ZLib compression

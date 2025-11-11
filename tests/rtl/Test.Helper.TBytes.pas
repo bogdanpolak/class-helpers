@@ -32,6 +32,9 @@ type
     // -----
     procedure InitialiseFromBase64String_SampleText;
     procedure LoadFromStream;
+    procedure LoadFromStream_Portion;
+    procedure LoadFromStream_Zero;
+    procedure LoadFromStream_SizeToLarge;
     procedure SaveToStream;
     procedure SaveToFile_And_LoadFromFile;
     procedure SaveToStream_TwoBlocks;
@@ -54,7 +57,10 @@ type
     procedure GenerateBase64Code_ElevnBytes;
     procedure GenerateBase64Code_MoreLines;
     procedure GenerateBase64Code_NarrowLines;
-    procedure GetSectorCRC32;
+    // -----
+    procedure CalculateCRC32_Portion;
+    procedure CalculateCRC32_All;
+    procedure CalculateCRC32_Empty;
     // -----
     procedure DecompressFromStream;
     procedure CompressToStream;
@@ -73,7 +79,7 @@ uses
 function GivenMemoryStream(const aBytes: TBytes): TMemoryStream;
 begin
   Result := TMemoryStream.Create;
-  if (aBytes=nil) or (Length(aBytes)=0) then
+  if (aBytes = nil) or (Length(aBytes) = 0) then
     exit;
   Result.Write(aBytes[0], Length(aBytes));
   Result.Position := 0;
@@ -193,6 +199,38 @@ begin
   ms.Free;
   Assert.AreEqual(7, fBytes.Size);
   Assert.AreEqual(107, Integer(fBytes[6]));
+end;
+
+procedure TestTBytesHelper.LoadFromStream_Portion;
+var
+  ms: TMemoryStream;
+begin
+  ms := GivenMemoryStream([101, 102, 103, 104, 105, 106, 107]);
+  fBytes.LoadFromStream(ms, 2);
+  ms.Free;
+  Assert.AreEqual(2, fBytes.Size);
+  Assert.AreEqual(102, Integer(fBytes[1]));
+end;
+
+procedure TestTBytesHelper.LoadFromStream_SizeToLarge;
+var
+  ms: TMemoryStream;
+begin
+  ms := GivenMemoryStream([101, 102, 103]);
+  fBytes.LoadFromStream(ms, 5);
+  ms.Free;
+  Assert.AreEqual(3, fBytes.Size);
+  Assert.AreEqual(103, Integer(fBytes[2]));
+end;
+
+procedure TestTBytesHelper.LoadFromStream_Zero;
+var
+  ms: TMemoryStream;
+begin
+  ms := GivenMemoryStream([101, 102, 103, 104, 105, 106, 107]);
+  fBytes.LoadFromStream(ms, 0);
+  ms.Free;
+  Assert.AreEqual(0, fBytes.Size);
 end;
 
 procedure TestTBytesHelper.SaveToStream;
@@ -396,15 +434,22 @@ begin
     { } '''cYGRobHB0e'');', actual);
 end;
 
-procedure TestTBytesHelper.GetSectorCRC32;
-var
-  actual: Cardinal;
-  expectedCRC32: Cardinal;
+procedure TestTBytesHelper.CalculateCRC32_All;
+begin
+  fBytes.LoadFromAscii('Bogdan Polak.');
+  Assert.AreEqual($1D92163C, fBytes.CalculateCRC32());
+end;
+
+procedure TestTBytesHelper.CalculateCRC32_Portion;
 begin
   fBytes := [0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57, 0, 0];
-  expectedCRC32 := $CBF43926;
-  actual := fBytes.GetSectorCRC32(2, 9);
-  Assert.AreEqual(expectedCRC32, actual);
+  Assert.AreEqual($CBF43926, fBytes.CalculateCRC32(2, 9));
+end;
+
+procedure TestTBytesHelper.CalculateCRC32_Empty;
+begin
+  fBytes := [];
+  Assert.AreEqual(0, fBytes.CalculateCRC32());
 end;
 
 // -----------------------------------------------------------------------
@@ -425,9 +470,7 @@ const
     'per inceptos himenaeos. Aenean dignissim dapibus libero et fringilla. ' +
     'Donec ultrices sem eget porttitor sodales.';
 
-procedure LoadStreamFromBase64(
-  stream: TStream;
-  const aBase64String: string);
+procedure LoadStreamFromBase64(stream: TStream; const aBase64String: string);
 var
   data: TArray<byte>;
 begin

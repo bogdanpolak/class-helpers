@@ -30,7 +30,13 @@ type
     // ---------------------
     // InitialiseFrom / Load / Save
     // ---------------------
-    procedure LoadFromStream(const aStream: TStream);
+    /// <summary>
+    /// Loads the contents of the specified stream.
+    /// - Replaces the current contents of the byte array with the data read from the stream.
+    /// - If the specified length exceeds the available bytes in the stream, only the available data will be read.
+    /// - If this value is less than or equal to zero, the entire stream is read.
+    /// </summary>
+    procedure LoadFromStream(const aStream: TStream; aLength: Integer = -1);
     procedure LoadFromFile(const aFileName: string);
     procedure SaveToStream(const aStream: TStream);
     procedure SaveToFile(const aFileName: string);
@@ -39,6 +45,11 @@ type
     /// Base64 encoding algorithm and stores it
     /// </summary>
     procedure InitialiseFromBase64String(const aBase64Str: String);
+    /// <summary>
+    /// Initilaze byte array from the string
+    /// - Provided string has to contain only ASCII character #0 .. #128
+    /// </summary>
+    procedure LoadFromAscii(const aText: string);
     // ---------------------
     // Data getters
     // ---------------------
@@ -104,9 +115,11 @@ type
     /// </summary>
     function GenerateBase64Code(aLineLength: Integer = 68): string;
     /// <summary>
-    /// Calculates check sum of the byte's array using CRC32 algorithm
+    /// Calculates check sum using CRC32 algorithm.
+    /// - Can calculate checksum fot the whole array or for selected block, starting from index and/or limited by lenght
     /// </summary>
-    function GetSectorCRC32(aIndex: Integer; aLength: Integer): LongWord;
+    function CalculateCRC32(aIndex: Integer = 0; aLength: Integer = -1)
+      : LongWord;
     // ---------------------
     // Compress
     // ---------------------
@@ -166,11 +179,15 @@ begin
   end;
 end;
 
-procedure TBytesHelper.LoadFromStream(const aStream: TStream);
+procedure TBytesHelper.LoadFromStream(const aStream: TStream; aLength: Integer);
 begin
   aStream.Position := 0;
-  SetLength(Self, aStream.Size);
-  aStream.Read(Self[0], aStream.Size);
+  aLength := IfThen(aLength >= 0, Min(aStream.Size, aLength), aStream.Size);
+  SetLength(Self, aLength);
+  if aLength > 0 then
+  begin
+    aStream.Read(Self[0], aLength);
+  end;
 end;
 
 procedure TBytesHelper.SaveToFile(const aFileName: string);
@@ -188,6 +205,15 @@ end;
 procedure TBytesHelper.SaveToStream(const aStream: TStream);
 begin
   aStream.Write(Self[0], Length(Self));
+end;
+
+procedure TBytesHelper.LoadFromAscii(const aText: string);
+var
+  idx: Integer;
+begin
+  SetLength(Self, aText.Length);
+  for idx := 0 to aText.Length - 1 do
+    Self[idx] := ord(aText[idx + 1]);
 end;
 
 // -----------------------------------------------------------------------
@@ -275,7 +301,7 @@ end;
 // Utils:
 // * CreateStream - Creates TMemoryStream and files it with bytes
 // * GenerateBase64Code - Fake code generator
-// * GetSectorCRC32 - Calc Checksums
+// * CalculateCRC32 - Calc Checksums
 // -----------------------------------------------------------------------
 
 function TBytesHelper.CreateStream: TMemoryStream;
@@ -306,7 +332,7 @@ begin
   Result := 'aBytes.InitialiseFromBase64String(' + sDecodedLines + ');';
 end;
 
-function TBytesHelper.GetSectorCRC32(aIndex: Integer; aLength: Integer)
+function TBytesHelper.CalculateCRC32(aIndex: Integer = 0; aLength: Integer = -1)
   : LongWord;
 const
   crc32tab: array [0 .. 255] of LongWord = ($00000000, $77073096, $EE0E612C,
@@ -351,9 +377,20 @@ var
   i: LongWord;
 begin
   Result := $FFFFFFFF;
-  for i := 0 to aLength - 1 do
-    Result := (Result shr 8) xor
-    { } crc32tab[Self[LongWord(aIndex) + i] xor byte(Result and $000000FF)];
+  if (aIndex < 0) then
+    aIndex := 0;
+  if aLength <= 0 then
+    aLength := Length(Self);
+  if aIndex + aLength > Length(Self) then
+  begin
+    aLength := Length(Self) - aIndex;
+  end;
+  if aLength > 0 then
+  begin
+    for i := 0 to aLength - 1 do
+      Result := (Result shr 8) xor
+      { } crc32tab[Self[LongWord(aIndex) + i] xor byte(Result and $000000FF)];
+  end;
   Result := not Result;
 end;
 

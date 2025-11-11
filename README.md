@@ -56,7 +56,7 @@ begin
   memoryStream := TMemoryStream.Create();
   bytes := CompressToStream(memoryStream);
   command.Image := bytes.GenerateBase64Code();
-  command.ControlSum := bytes.GetSectorCRC32(0, bytes.Size);
+  command.ControlSum := bytes.CalculateCRC32();
   SendCommandToRestServer(command);
 end.
 ```
@@ -70,30 +70,32 @@ uses
 var
   bytes: TBytes;
   idx: integer;
+  s: string;
   memoryStream: TMemoryStream;
   command := TUploadImageCommand;
 begin
   bytes.InitialiseFromBase64String('U2FtcGxlIHRleHQ=');
-  bytes.SaveToFile('notes.txt'); // save: Sample text
+  bytes.SaveToFile('notes.txt'); // saved content = Sample text
   memoryStream:= bytes.CreateStream();
   // memoryStream.Size = 11
   memoryStream.Free;
+  var s := Bytes.GetSectorAsString(0, 6);
+  Writeln(s); // 'Sample'
   // -----------------
-  s :=  bytes.GetSectorAsString(0, 6);  // ASCII only text
   bytes := [0, 0, 15, 16, $A0, 255, 0, 0, 0, 0, 1];
   if bytes.GetSectorAsHex(2, 4) = '0F 10 A0 FF' then
   begin
     memoryStream := TMemoryStream.Create();
     memoryStream.LoadFromFile('small.png');
     memoryStream.Position := 0;
-    signature.LoadFromStream(memoryStream,8);
+    signature.LoadFromStream(memoryStream, 8);
     if (signature.GetSectorAsHex = '89 50 4E 47 0D 0A 1A 0A') and
        (signature.GetSectorAsString(1, 3) = 'PNG') then
     begin
       memoryStream.Position := 0;
       pngImage := TPngImage.Create;
       pngImage.LoadFromStream(memoryStream);
-      // Image1.Picture := pngImage;
+      Image1.Picture := pngImage;
       pngImage.Free;
     end;
     memoryStream.Free;
