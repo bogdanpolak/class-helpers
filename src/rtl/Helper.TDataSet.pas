@@ -56,8 +56,57 @@ type
     /// </remarks>
     function LoadData<T: class, constructor>: TObjectList<T>;
     /// <summary>
-    /// TODO: add documentation
+    /// Saves modified objects from a TObjectList back to the dataset.
+    /// Iterates through the object list and for each object marked as changed,
+    /// it either updates an existing row (if primary key matches) or inserts
+    /// a new row into the dataset. The method automatically detects NULL values
+    /// for optional fields based on data type conventions.
     /// </summary>
+    /// <param name="list">
+    /// List of objects to save. Each object must have a boolean field
+    /// (default: "IsChanged") to indicate if it has been modified.
+    /// </param>
+    /// <param name="aNameOfChangedFlag">
+    /// Name of the boolean field in the object that indicates if the object
+    /// has been modified. Default value is "IsChanged". This field must exist
+    /// in the object class.
+    /// </param>
+    /// <returns>
+    /// Number of records that were actually saved (updated or inserted) to
+    /// the dataset.
+    /// </returns>
+    /// <exception cref="EDataMapperError">
+    /// Exception <b>EDataMapperError</b> is thrown when:
+    /// <para>1. The specified changed flag field (e.g., "IsChanged") is not
+    /// found in the object class.</para>
+    /// <para>2. No primary key is defined in the dataset. Primary key must be
+    /// defined using TField.ProviderFlags with pfInKey flag.</para>
+    /// </exception>
+    /// <remarks>
+    /// <para>The method determines whether to INSERT or UPDATE based on
+    /// whether a matching row is found in the dataset using the primary key
+    /// fields.</para>
+    /// <para><b>Auto-detect NULL:</b> The method automatically converts certain
+    /// values to NULL for optional (non-required) fields:</para>
+    /// <para>- Date/Time fields: values &lt;= 0 become NULL</para>
+    /// <para>- Numeric fields: values &lt; 0 become NULL</para>
+    /// <para><b>Field Mapping:</b> Uses the same mapping rules as LoadData.
+    /// Object field names should match dataset field names, or use the
+    /// MappedToDBField attribute for custom mapping.</para>
+    /// <para><b>Example usage:</b></para>
+    /// <code>
+    /// // Load data, modify, and save back
+    /// var cities := dataset.LoadData&lt;TCity&gt;;
+    /// try
+    ///   cities[0].CityName := 'New York';
+    ///   cities[0].IsChanged := True;
+    ///   var savedCount := dataset.SaveData&lt;TCity&gt;(cities);
+    ///   ShowMessage(Format('Saved %d records', [savedCount]));
+    /// finally
+    ///   cities.Free;
+    /// end;
+    /// </code>
+    /// </remarks>
     function SaveData<T: class>(list: TObjectList<T>;
       const aNameOfChangedFlag: string = 'IsChanged'): integer;
     /// <summary>
