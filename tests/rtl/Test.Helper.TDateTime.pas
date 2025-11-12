@@ -47,6 +47,18 @@ type
     procedure AsStringDateISO_DateAndTime;
     procedure SetDateISO_DateOnly;
     procedure SetDateISO_DateAndTime;
+    // Issue #68: Today, IsUndefined, New, and At
+    procedure Today_ReturnsCurrentDate;
+    procedure New_NoParameters_ReturnsUndefined;
+    procedure New_ValidDate_ReturnsEncodedDate;
+    procedure New_InvalidDate_RaisesException;
+    procedure At_ValidTime_AddsTimeToDate;
+    procedure At_InvalidHour_RaisesException;
+    procedure At_InvalidMinute_RaisesException;
+    procedure At_InvalidSecond_RaisesException;
+    procedure IsUndefined_UndefinedDate_ReturnsTrue;
+    procedure IsUndefined_DefinedDate_ReturnsFalse;
+    procedure Integration_NewAndAt_CreatesFullDateTime;
   end;
 
   [TestFixture]
@@ -366,6 +378,134 @@ begin
   expected := EncodeDate(2020,02,17) + EncodeTime(19,15,02,0);
   fDate.SetDateISO('2020-02-17T19:15:02');
   Assert.AreEqual(expected,fDate,0.000000001);
+end;
+
+// -----------------------------------------------------------------------
+// Test: Issue #68 - Today, IsUndefined, New, and At
+// -----------------------------------------------------------------------
+
+procedure TestDateTimeHelper.Today_ReturnsCurrentDate;
+var
+  actualDate: TDateTime;
+  expectedDate: TDateTime;
+begin
+  expectedDate := Date();
+  actualDate := TDateTime.Today;
+  Assert.AreEqual(expectedDate, actualDate, 0.000000001);
+  Assert.AreEqual(0.0, Frac(actualDate), 0.000000001, 'Today should have no time part');
+end;
+
+procedure TestDateTimeHelper.New_NoParameters_ReturnsUndefined;
+var
+  actualDate: TDateTime;
+begin
+  actualDate := TDateTime.New();
+  Assert.IsTrue(actualDate.IsUndefined, 'New() should return undefined date');
+end;
+
+procedure TestDateTimeHelper.New_ValidDate_ReturnsEncodedDate;
+var
+  actualDate: TDateTime;
+  expectedDate: TDateTime;
+begin
+  expectedDate := EncodeDate(2025, 11, 11);
+  actualDate := TDateTime.New(2025, 11, 11);
+  Assert.AreEqual(expectedDate, actualDate, 0.000000001);
+end;
+
+procedure TestDateTimeHelper.New_InvalidDate_RaisesException;
+begin
+  Assert.WillRaise(
+    procedure
+    begin
+      TDateTime.New(2025, 13, 32);
+    end,
+    Exception,
+    'Should raise exception for invalid date'
+  );
+end;
+
+procedure TestDateTimeHelper.At_ValidTime_AddsTimeToDate;
+var
+  baseDate: TDateTime;
+  actualDateTime: TDateTime;
+  expectedDateTime: TDateTime;
+begin
+  baseDate := EncodeDate(2025, 11, 11);
+  expectedDateTime := baseDate + EncodeTime(17, 29, 0, 0);
+  actualDateTime := baseDate.At(17, 29);
+  Assert.AreEqual(expectedDateTime, actualDateTime, 0.000000001);
+end;
+
+procedure TestDateTimeHelper.At_InvalidHour_RaisesException;
+var
+  baseDate: TDateTime;
+begin
+  baseDate := EncodeDate(2025, 11, 11);
+  Assert.WillRaise(
+    procedure
+    begin
+      baseDate.At(24, 0);
+    end,
+    Exception,
+    'Should raise exception for hour >= 24'
+  );
+end;
+
+procedure TestDateTimeHelper.At_InvalidMinute_RaisesException;
+var
+  baseDate: TDateTime;
+begin
+  baseDate := EncodeDate(2025, 11, 11);
+  Assert.WillRaise(
+    procedure
+    begin
+      baseDate.At(12, 60);
+    end,
+    Exception,
+    'Should raise exception for minute >= 60'
+  );
+end;
+
+procedure TestDateTimeHelper.At_InvalidSecond_RaisesException;
+var
+  baseDate: TDateTime;
+begin
+  baseDate := EncodeDate(2025, 11, 11);
+  Assert.WillRaise(
+    procedure
+    begin
+      baseDate.At(12, 30, 60);
+    end,
+    Exception,
+    'Should raise exception for second >= 60'
+  );
+end;
+
+procedure TestDateTimeHelper.IsUndefined_UndefinedDate_ReturnsTrue;
+var
+  undefinedDate: TDateTime;
+begin
+  undefinedDate := TDateTime.New(); // Creates undefined date
+  Assert.IsTrue(undefinedDate.IsUndefined);
+end;
+
+procedure TestDateTimeHelper.IsUndefined_DefinedDate_ReturnsFalse;
+var
+  definedDate: TDateTime;
+begin
+  definedDate := EncodeDate(2025, 11, 11);
+  Assert.IsFalse(definedDate.IsUndefined);
+end;
+
+procedure TestDateTimeHelper.Integration_NewAndAt_CreatesFullDateTime;
+var
+  actualDateTime: TDateTime;
+  expectedDateTime: TDateTime;
+begin
+  expectedDateTime := EncodeDate(2025, 11, 11) + EncodeTime(17, 29, 0, 0);
+  actualDateTime := TDateTime.New(2025, 11, 11).At(17, 29);
+  Assert.AreEqual(expectedDateTime, actualDateTime, 0.000000001);
 end;
 
 // -----------------------------------------------------------------------
